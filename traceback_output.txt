@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "C:\Users\ricky\Desktop\Progetti\rougelike-tutorial-tcod\main.py", line 47, in main
+    engine.render(console=root_console, context=context)
+  File "C:\Users\ricky\Desktop\Progetti\rougelike-tutorial-tcod\engine.py", line 38, in render
+    self.game_map.render(console=console)
+TypeError: GameMap.render() missing 1 required positional argument: 'self'
