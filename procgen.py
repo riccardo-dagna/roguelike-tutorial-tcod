@@ -3,6 +3,7 @@ from typing import Tuple, Iterator, List, TYPE_CHECKING
 import random
 import tcod
 
+import entity_factories
 from game_map import GameMap
 import tile_types
 
@@ -34,6 +35,20 @@ class RectangularRoom:
             self.x1 <= other.x2 and self.x2 >= other.x1 
             and self.y1 <= other.y2 and self.y2 >= other.y1
         )
+    
+def place_entities(room: RectangularRoom, dungeon: GameMap, maximum_monster: int) -> None:
+    number_of_monster = random.randint(0, maximum_monster)
+
+    for i in range(number_of_monster):
+        x = random.randint(room.x1 +1, room.x2 -1)
+        y = random.randint(room.y1 +1, room.y2 -1)
+
+        if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
+            if random.random() < 0.8:
+                entity_factories.orc.spawn(dungeon, x, y)
+            else:
+                entity_factories.troll.spawn(dungeon, x, y)
+
 
 
 def tunnel_between(start: Tuple[int, int], end: Tuple[int, int]) -> Iterator[Tuple[int, int]]:
@@ -52,9 +67,9 @@ def tunnel_between(start: Tuple[int, int], end: Tuple[int, int]) -> Iterator[Tup
             yield x, y
 
     
-def generate_dungeon(max_rooms: int, room_min_size: int, room_max_size: int, map_width: int, map_height: int, player: Entity) -> GameMap:
+def generate_dungeon(max_rooms: int, room_min_size: int, room_max_size: int, map_width: int, map_height: int, max_monster_per_rooms: int, player: Entity) -> GameMap:
     """Generate a new dungeon map"""
-    dungeon = GameMap(map_width, map_height)
+    dungeon = GameMap(map_width, map_height, entities=[player])
 
     rooms: List[RectangularRoom] = []
 
@@ -81,6 +96,8 @@ def generate_dungeon(max_rooms: int, room_min_size: int, room_max_size: int, map
         else: #Dig a tunnel between this room and the previous one
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
+
+        place_entities(new_room, dungeon, max_monster_per_rooms)
 
         rooms.append(new_room)
 
