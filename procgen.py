@@ -8,7 +8,7 @@ from game_map import GameMap
 import tile_types
 
 if TYPE_CHECKING:
-    from entity import Entity
+    from engine import Engine
 
 class RectangularRoom:
     def __init__(self, x: int, y: int, width: int, height: int):
@@ -67,9 +67,10 @@ def tunnel_between(start: Tuple[int, int], end: Tuple[int, int]) -> Iterator[Tup
             yield x, y
 
     
-def generate_dungeon(max_rooms: int, room_min_size: int, room_max_size: int, map_width: int, map_height: int, max_monster_per_rooms: int, player: Entity) -> GameMap:
+def generate_dungeon(max_rooms: int, room_min_size: int, room_max_size: int, map_width: int, map_height: int, max_monster_per_rooms: int, engine: Engine) -> GameMap:
     """Generate a new dungeon map"""
-    dungeon = GameMap(map_width, map_height, entities=[player])
+    player = engine.player
+    dungeon = GameMap(engine, map_width, map_height, entities=[player])
 
     rooms: List[RectangularRoom] = []
 
@@ -92,7 +93,7 @@ def generate_dungeon(max_rooms: int, room_min_size: int, room_max_size: int, map
         dungeon.tiles[new_room.inner] = tile_types.floor
 
         if len(rooms) == 0: #The first room is the one where the player starts
-            player.x, player.y = new_room.center
+            player.place(*new_room.center, dungeon)
         else: #Dig a tunnel between this room and the previous one
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
