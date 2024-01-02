@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
+from typing import Callable, Optional, Tuple, TYPE_CHECKING
 
 import tcod
+from tcod import libtcodpy
 
 import actions
 from actions import (
@@ -12,6 +13,7 @@ from actions import (
     WaitAction,
 )
 import color
+from engine import Engine
 import exceptions
 
 if TYPE_CHECKING:
@@ -58,6 +60,13 @@ WAIT_KEYS = {
 CONFIRM_KEYS = {
     tcod.event.KeySym.RETURN,
     tcod.event.KeySym.KP_ENTER,
+}
+
+CURSOR_Y_KEYS = {
+    tcod.event.KeySym.UP: -1,
+    tcod.event.KeySym.DOWN: 1,
+    tcod.event.KeySym.PAGEUP: -10,
+    tcod.event.KeySym.PAGEDOWN: 10,
 }
 
 
@@ -282,6 +291,17 @@ class LookHandler(SelectIndexHandler):
         self.engine.event_handler = MainGameEventHandler(self.engine)
 
 
+class SingleRangedAttackHandler(SelectIndexHandler):
+    """Handles targeting a single enemy. Only the enemy selected will be affected."""
+    def __init__(self, engine: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]):
+        super().__init__(engine)
+
+        self.callback = callback
+    
+    def on_index_selected(self, x: int, y: int) -> Optional[Action]:
+        return self.callback(x, y)
+
+
 class MainGameEventHandler(EventHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
@@ -321,14 +341,6 @@ class GameOverEventHandler(EventHandler):
             raise SystemExit()
 
 
-CURSOR_Y_KEYS = {
-    tcod.event.KeySym.UP: -1,
-    tcod.event.KeySym.DOWN: 1,
-    tcod.event.KeySym.PAGEUP: -10,
-    tcod.event.KeySym.PAGEDOWN: 10,
-}
-
-
 class HistoryViewer(EventHandler):
     """Print the history on a larger window which can be navigated."""
 
@@ -337,15 +349,15 @@ class HistoryViewer(EventHandler):
         self.log_length = len(engine.message_log.messages)
         self.cursor = self.log_length - 1
 
-    def on_render(self, console: tcod.Console) -> None:
+    def on_render(self, console: tcod.console.Console) -> None:
         super().on_render(console)  # Draw the main state as the background.
 
-        log_console = tcod.Console(console.width - 6, console.height - 6)
+        log_console = tcod.console.Console(console.width - 6, console.height - 6)
 
         # Draw a frame with a custom banner title.
         log_console.draw_frame(0, 0, log_console.width, log_console.height)
         log_console.print_box(
-            0, 0, log_console.width, 1, "┤Message history├", alignment=tcod.CENTER
+            0, 0, log_console.width, 1, "┤Message history├", alignment=libtcodpy.CENTER
         )
 
         # Render the message log using the cursor parameter.

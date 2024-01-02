@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from typing import List, Tuple, TYPE_CHECKING
+import random
+from typing import List, Optional, Tuple, TYPE_CHECKING
 
 import numpy as np  # type: ignore
 import tcod
 
-from actions import Action, MeleeAction, MovementAction, WaitAction
+from actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction
+from entity import Actor
 
 if TYPE_CHECKING:
     from entity import Actor
@@ -71,3 +73,35 @@ class HostileEnemy(BaseAI):
             ).perform()
 
         return WaitAction(self.entity).perform()
+
+class ConfusedEnemy(BaseAI):
+    """A confused enemy will randomly stumble for a given numer of turns. If an actor occupies a tile it is randomly moving into, it will attack."""
+    def __init__(self, entity: Actor, previous_ai: Optional[BaseAI], turns_remaining):
+        super().__init__(entity)
+
+        self.previous_ai = previous_ai
+        self.turns_remaining = turns_remaining
+
+    def perform(self) -> None:
+        #Revert the AI back to the original state if there are no turns remaining.
+        if self.turns_remaining <= 0:
+            self.engine.message_log.add_message(f"The {self.entity.name} is no longer confused.")
+            self.entity.ai = self.previous_ai
+        else:
+            #Pick a random direction.
+            direction_x, direction_y = random.choice(
+                [
+                    (-1, -1), #Northwest
+                    (0, -1),  #North
+                    (1, -1),  #Northeast
+                    (-1, 0),  #West
+                    (1, 0),   #East
+                    (-1, 1),  #Southwest
+                    (0, 1),   #South
+                    (1, 1),   #Southeast
+                ]
+            )
+            self.turns_remaining -= 1
+
+            #The actor will try to move/attack in a random direction. It's possible the actor will waste turns.
+            return BumpAction(self.entity, direction_x, direction_y).perform()
