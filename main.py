@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import traceback
+import warnings
 
 import tcod
 
@@ -19,6 +20,8 @@ def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
 def main() -> None:
     screen_width = 80
     screen_height = 50
+
+    warnings.filterwarnings("ignore")
 
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD

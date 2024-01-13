@@ -1,4 +1,4 @@
-"""Handle the loading and initializaztion of the game session."""
+"""Handle the loading and initialization of game sessions."""
 from __future__ import annotations
 
 import copy
@@ -12,14 +12,17 @@ import tcod
 import color
 from engine import Engine
 import entity_factories
-import input_handlers
 from game_map import GameWorld
+import input_handlers
 
-#Load the background image and remove the alpha channel.
+
+# Load the background image and remove the alpha channel.
 background_image = tcod.image.load("menu_background.png")[:, :, :3]
 
-def new_game() -> Engine:
 
+def new_game() -> Engine:
+    """Return a brand new game session as an Engine instance."""
+    print("Prima riga nel new_game().")
     map_width = 80
     map_height = 43
 
@@ -27,13 +30,13 @@ def new_game() -> Engine:
     room_min_size = 6
     max_rooms = 30
 
-    tileset = tcod.tileset.load_tilesheet(
-        "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
-    )
-
     player = copy.deepcopy(entity_factories.player)
 
+    print("Creato il giocatore.")
+
     engine = Engine(player=player)
+
+    print("Creato l'engine.")
 
     engine.game_world = GameWorld(
         engine=engine,
@@ -43,28 +46,39 @@ def new_game() -> Engine:
         map_width=map_width,
         map_height=map_height,
     )
+
+    print("Creato il GameWorld.")
+
     engine.game_world.generate_floor()
     engine.update_fov()
+
+    print("Creato il mondo di gioco.")
 
     engine.message_log.add_message(
         "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
     )
 
-    dagger= copy.deepcopy(entity_factories.dagger)
+    dagger = copy.deepcopy(entity_factories.dagger)
     leather_armor = copy.deepcopy(entity_factories.leather_armor)
 
+    print("Creati gli oggetti.")
+
     dagger.parent = player.inventory
-    leather_armor = player.inventory
+    leather_armor.parent = player.inventory
 
     player.inventory.items.append(dagger)
     player.equipment.toggle_equip(dagger, add_message=False)
+
     player.inventory.items.append(leather_armor)
     player.equipment.toggle_equip(leather_armor, add_message=False)
 
+    print("Aggiunti gli oggetti all'inventario e equipaggiamento.")
+
     return engine
 
+
 def load_game(filename: str) -> Engine:
-    """Load an engine instante from a file."""
+    """Load an Engine instance from a file."""
     with open(filename, "rb") as f:
         engine = pickle.loads(lzma.decompress(f.read()))
     assert isinstance(engine, Engine)
@@ -74,22 +88,23 @@ def load_game(filename: str) -> Engine:
 class MainMenu(input_handlers.BaseEventHandler):
     """Handle the main menu rendering and input."""
 
-    def on_render(self, console: tcod.console.Console) -> None:
+    def on_render(self, console: tcod.Console) -> None:
+        """Render the main menu on a background image."""
         console.draw_semigraphics(background_image, 0, 0)
 
         console.print(
-            console.width // 2, 
-            console.height // 2 -4,
+            console.width // 2,
+            console.height // 2 - 4,
             "TOMBS OF THE ANCIENT KINGS",
             fg=color.menu_title,
-            aligment=tcod.CENTER,
+            alignment=tcod.CENTER,
         )
         console.print(
-            console.width // 2, 
-            console.height -2,
+            console.width // 2,
+            console.height - 2,
             "By Just_RD",
             fg=color.menu_title,
-            aligment=tcod.CENTER,
+            alignment=tcod.CENTER,
         )
 
         menu_width = 24
@@ -97,27 +112,29 @@ class MainMenu(input_handlers.BaseEventHandler):
             ["[N] Play a new game", "[C] Continue last game", "[Q] Quit"]
         ):
             console.print(
-                console.width // 2, 
-                console.height // 2 -2+i,
+                console.width // 2,
+                console.height // 2 - 2 + i,
                 text.ljust(menu_width),
                 fg=color.menu_text,
                 bg=color.black,
-                aligment=tcod.CENTER,
-                bg_blend=tcod.BKGND_ALPHA(64)
+                alignment=tcod.CENTER,
+                bg_blend=tcod.BKGND_ALPHA(64),
             )
 
-    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[input_handlers.BaseEventHandler]:
+    def ev_keydown(
+        self, event: tcod.event.KeyDown
+    ) -> Optional[input_handlers.BaseEventHandler]:
         if event.sym in (tcod.event.KeySym.q, tcod.event.KeySym.ESCAPE):
-            raise SystemExit
+            raise SystemExit()
         elif event.sym == tcod.event.KeySym.c:
             try:
-                return input_handlers.MainGameEventHandler(load_game("savegame.sav"))            
+                return input_handlers.MainGameEventHandler(load_game("savegame.sav"))
             except FileNotFoundError:
                 return input_handlers.PopupMessage(self, "No saved game to load.")
             except Exception as exc:
-                traceback.print_exc() #Print to stderr.
-                return input_handlers.PopupMessage(self, f"Failed to load save: \n{exc}")
+                traceback.print_exc()  # Print to stderr.
+                return input_handlers.PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.KeySym.n:
             return input_handlers.MainGameEventHandler(new_game())
-        
+
         return None

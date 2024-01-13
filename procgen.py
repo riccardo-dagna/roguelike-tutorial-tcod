@@ -6,13 +6,13 @@ from typing import Dict, Iterator, List, Tuple, TYPE_CHECKING
 import tcod
 
 import entity_factories
+from game_map import GameMap
 import tile_types
 
 
 if TYPE_CHECKING:
     from engine import Engine
     from entity import Entity
-    from game_map import GameMap
 
 
 max_items_by_floor = [
@@ -27,24 +27,26 @@ max_monsters_by_floor = [
 ]
 
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [entity_factories.health_potion, 35],
-    2: [entity_factories.confusion_scroll, 10],
-    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)], 
+    0: [(entity_factories.health_potion, 35)],
+    2: [(entity_factories.confusion_scroll, 10)],
+    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)],
     6: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
 }
 
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [entity_factories.orc, 80],
-    3: [entity_factories.troll, 15],
-    5: [entity_factories.troll, 30],
-    7: [entity_factories.troll, 60],
+    0: [(entity_factories.orc, 80)],
+    3: [(entity_factories.troll, 15)],
+    5: [(entity_factories.troll, 30)],
+    7: [(entity_factories.troll, 60)],
 }
 
 
-def get_max_value_by_floor(weighter_chances_by_floor: List[Tuple[int, int]], floor: int) -> int:
+def get_max_value_for_floor(
+    max_value_by_floor: List[Tuple[int, int]], floor: int
+) -> int:
     current_value = 0
 
-    for floor_minimum, value in weighter_chances_by_floor:
+    for floor_minimum, value in max_value_by_floor:
         if floor_minimum > floor:
             break
         else:
@@ -53,23 +55,29 @@ def get_max_value_by_floor(weighter_chances_by_floor: List[Tuple[int, int]], flo
     return current_value
 
 
-def get_entities_at_random (weighter_chances_by_floor: Dict[int, List[Tuple[Entity, int]]], number_of_entities: int, floor: int) -> List[Entity]:
+def get_entities_at_random(
+    weighted_chances_by_floor: Dict[int, List[Tuple[Entity, int]]],
+    number_of_entities: int,
+    floor: int,
+) -> List[Entity]:
     entity_weighted_chances = {}
 
-    for key, values in weighter_chances_by_floor.items():
+    for key, values in weighted_chances_by_floor.items():
         if key > floor:
             break
-        else: 
+        else:
             for value in values:
                 entity = value[0]
                 weighted_chance = value[1]
 
                 entity_weighted_chances[entity] = weighted_chance
-    
+
     entities = list(entity_weighted_chances.keys())
-    entity_weighted_chances_values = list(entity_weighted_chances.values())
-    
-    chosen_entities = random.choices(entities, weights=entity_weighted_chances_values, k=number_of_entities)
+    entity_weighted_chance_values = list(entity_weighted_chances.values())
+
+    chosen_entities = random.choices(
+        entities, weights=entity_weighted_chance_values, k=number_of_entities
+    )
 
     return chosen_entities
 
@@ -103,20 +111,24 @@ class RectangularRoom:
         )
 
 
-def place_entities(
-    room: RectangularRoom, dungeon: GameMap, floor_number: int
-) -> None:
-    number_of_monsters = random.randint(0, get_max_value_by_floor(max_monsters_by_floor, floor=floor_number))
-    number_of_items = random.randint(0, get_max_value_by_floor(max_items_by_floor, floor=floor_number))
+def place_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int,) -> None:
+    number_of_monsters = random.randint(
+        0, get_max_value_for_floor(max_monsters_by_floor, floor_number)
+    )
+    number_of_items = random.randint(
+        0, get_max_value_for_floor(max_items_by_floor, floor_number)
+    )
 
-    monsters: List[Entity] = get_entities_at_random(enemy_chances, number_of_entities=number_of_monsters, floor=floor_number)
-    items: List[Entity] = get_entities_at_random(item_chances, number_of_entities=number_of_items, floor=floor_number)
+    monsters: List[Entity] = get_entities_at_random(
+        enemy_chances, number_of_monsters, floor_number
+    )
+    items: List[Entity] = get_entities_at_random(
+        item_chances, number_of_items, floor_number
+    )
 
     for entity in monsters + items:
         x = random.randint(room.x1 + 1, room.x2 - 1)
         y = random.randint(room.y1 + 1, room.y2 - 1)
-
-        item_chance = random.random()
 
         if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
             entity.spawn(dungeon, x, y)
@@ -183,7 +195,7 @@ def generate_dungeon(
             # Dig out a tunnel between this room and the previous one.
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.floor
-        
+
             center_of_last_room = new_room.center
 
         place_entities(new_room, dungeon, engine.game_world.current_floor)
