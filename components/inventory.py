@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
-from components.base_components import BaseComponent
+from components.base_component import BaseComponent
 
 if TYPE_CHECKING:
     from entity import Actor, Item

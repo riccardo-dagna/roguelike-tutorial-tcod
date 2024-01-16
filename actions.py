@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Tuple
 
 import color
 import exceptions
@@ -59,9 +59,7 @@ class PickupAction(Action):
 
 
 class ItemAction(Action):
-    def __init__(
-        self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None
-    ):
+    def __init__(self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None):
         super().__init__(entity)
         self.item = item
         if not target_xy:
@@ -88,11 +86,11 @@ class DropItem(ItemAction):
 
 
 class EquipAction(Action):
-    def __init(self, entity: Actor, item: Item):
+    def __init__(self, entity: Actor, item: Item):
         super().__init__(entity)
 
         self.item = item
-    
+
     def perform(self) -> None:
         self.entity.equipment.toggle_equip(self.item)
 
@@ -104,11 +102,13 @@ class WaitAction(Action):
 
 class TakeStairsAction(Action):
     def perform(self) -> None:
-        """Take the stairs, if any exist at the entity's location."""
+        """
+        Take the stairs, if any exist at the entity's location.
+        """
         if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
             self.engine.game_world.generate_floor()
             self.engine.message_log.add_message("You descend the staircase.", color.descend)
-        else: 
+        else:
             raise exceptions.Impossible("There are no stairs here.")
 
 
@@ -153,14 +153,10 @@ class MeleeAction(ActionWithDirection):
             attack_color = color.enemy_atk
 
         if damage > 0:
-            self.engine.message_log.add_message(
-                f"{attack_desc} for {damage} hit points.", attack_color
-            )
+            self.engine.message_log.add_message(f"{attack_desc} for {damage} hit points.", attack_color)
             target.fighter.hp -= damage
         else:
-            self.engine.message_log.add_message(
-                f"{attack_desc} but does no damage.", attack_color
-            )
+            self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)
 
 
 class MovementAction(ActionWithDirection):

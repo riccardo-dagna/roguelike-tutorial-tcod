@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from components.base_components import BaseComponent
+from components.base_component import BaseComponent
 from render_order import RenderOrder
 import color
 
@@ -32,22 +32,22 @@ class Fighter(BaseComponent):
     @property
     def defense(self) -> int:
         return self.base_defense + self.defense_bonus
-    
+
     @property
     def power(self) -> int:
         return self.base_power + self.power_bonus
 
     @property
-    def power_bonus(self) -> int:
+    def defense_bonus(self) -> int:
         if self.parent.equipment:
-            return self.parent.equipment.power_bonus
+            return self.parent.equipment.defense_bonus
         else:
             return 0
 
     @property
-    def defense_bonus(self) -> int:
+    def power_bonus(self) -> int:
         if self.parent.equipment:
-            return self.parent.equipment.defense_bonus
+            return self.parent.equipment.power_bonus
         else:
             return 0
 
@@ -87,5 +87,3 @@ class Fighter(BaseComponent):
 
     def take_damage(self, amount: int) -> None:
         self.hp -= amount
-
-        

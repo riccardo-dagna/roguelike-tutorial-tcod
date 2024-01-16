@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Optional, Tuple, Type, TypeVar, Union
 import copy
 import math
-from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING, Union
 
 from render_order import RenderOrder
 
@@ -74,8 +74,10 @@ class Entity:
             gamemap.entities.add(self)
 
     def distance(self, x: int, y: int) -> float:
-        """Return the distance between the current entity and the given (x, y) coordinate."""
-        return math.sqrt((x - self.x) **2 +(y - self.y) **2)
+        """
+        Return the distance between the current entity and the given (x, y) coordinate.
+        """
+        return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
 
     def move(self, dx: int, dy: int) -> None:
         # Move the entity by a given amount
@@ -96,7 +98,7 @@ class Actor(Entity):
         equipment: Equipment,
         fighter: Fighter,
         inventory: Inventory,
-        level: Level
+        level: Level,
     ):
         super().__init__(
             x=x,
@@ -118,6 +120,7 @@ class Actor(Entity):
 
         self.inventory = inventory
         self.inventory.parent = self
+
         self.level = level
         self.level.parent = self
 
@@ -150,9 +153,11 @@ class Item(Entity):
         )
 
         self.consumable = consumable
+
         if self.consumable:
             self.consumable.parent = self
 
         self.equippable = equippable
+
         if self.equippable:
             self.equippable.parent = self

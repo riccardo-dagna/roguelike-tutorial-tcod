@@ -1,28 +1,28 @@
 """Handle the loading and initialization of game sessions."""
 from __future__ import annotations
 
+from typing import Optional
 import copy
 import lzma
 import pickle
 import traceback
-from typing import Optional
 
+from PIL import Image  # type: ignore
 import tcod
+import libtcodpy
 
-import color
 from engine import Engine
-import entity_factories
 from game_map import GameWorld
+import color
+import entity_factories
 import input_handlers
 
-
-# Load the background image and remove the alpha channel.
-background_image = tcod.image.load("menu_background.png")[:, :, :3]
+# Load the background image.  Pillow returns an object convertable into a NumPy array.
+background_image = Image.open("data/menu_background.png")
 
 
 def new_game() -> Engine:
     """Return a brand new game session as an Engine instance."""
-    print("Prima riga nel new_game().")
     map_width = 80
     map_height = 43
 
@@ -32,11 +32,7 @@ def new_game() -> Engine:
 
     player = copy.deepcopy(entity_factories.player)
 
-    print("Creato il giocatore.")
-
     engine = Engine(player=player)
-
-    print("Creato l'engine.")
 
     engine.game_world = GameWorld(
         engine=engine,
@@ -47,21 +43,13 @@ def new_game() -> Engine:
         map_height=map_height,
     )
 
-    print("Creato il GameWorld.")
-
     engine.game_world.generate_floor()
     engine.update_fov()
 
-    print("Creato il mondo di gioco.")
-
-    engine.message_log.add_message(
-        "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
-    )
+    engine.message_log.add_message("Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text)
 
     dagger = copy.deepcopy(entity_factories.dagger)
     leather_armor = copy.deepcopy(entity_factories.leather_armor)
-
-    print("Creati gli oggetti.")
 
     dagger.parent = player.inventory
     leather_armor.parent = player.inventory
@@ -71,8 +59,6 @@ def new_game() -> Engine:
 
     player.inventory.items.append(leather_armor)
     player.equipment.toggle_equip(leather_armor, add_message=False)
-
-    print("Aggiunti gli oggetti all'inventario e equipaggiamento.")
 
     return engine
 
@@ -97,33 +83,29 @@ class MainMenu(input_handlers.BaseEventHandler):
             console.height // 2 - 4,
             "TOMBS OF THE ANCIENT KINGS",
             fg=color.menu_title,
-            alignment=tcod.CENTER,
+            alignment=libtcodpy.CENTER,
         )
         console.print(
             console.width // 2,
             console.height - 2,
-            "By Just_RD",
+            "By (Your name here)",
             fg=color.menu_title,
-            alignment=tcod.CENTER,
+            alignment=libtcodpy.CENTER,
         )
 
         menu_width = 24
-        for i, text in enumerate(
-            ["[N] Play a new game", "[C] Continue last game", "[Q] Quit"]
-        ):
+        for i, text in enumerate(["[N] Play a new game", "[C] Continue last game", "[Q] Quit"]):
             console.print(
                 console.width // 2,
                 console.height // 2 - 2 + i,
                 text.ljust(menu_width),
                 fg=color.menu_text,
                 bg=color.black,
-                alignment=tcod.CENTER,
-                bg_blend=tcod.BKGND_ALPHA(64),
+                alignment=libtcodpy.CENTER,
+                bg_blend=libtcodpy.BKGND_ALPHA(64),
             )
 
-    def ev_keydown(
-        self, event: tcod.event.KeyDown
-    ) -> Optional[input_handlers.BaseEventHandler]:
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[input_handlers.BaseEventHandler]:
         if event.sym in (tcod.event.KeySym.q, tcod.event.KeySym.ESCAPE):
             raise SystemExit()
         elif event.sym == tcod.event.KeySym.c:

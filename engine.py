@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 import lzma
 import pickle
-from typing import TYPE_CHECKING
 
 from tcod.console import Console
 from tcod.map import compute_fov
 
-import exceptions
 from message_log import MessageLog
+import exceptions
 import render_functions
 
 if TYPE_CHECKING:
@@ -55,7 +55,11 @@ class Engine:
             total_width=20,
         )
 
-        render_functions.render_dungeon_level(console=console, dungeon_level=self.game_world.current_floor, location=(0, 47))
+        render_functions.render_dungeon_level(
+            console=console,
+            dungeon_level=self.game_world.current_floor,
+            location=(0, 47),
+        )
 
         render_functions.render_names_at_mouse_location(console=console, x=21, y=44, engine=self)
 

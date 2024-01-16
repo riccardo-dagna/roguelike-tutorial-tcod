@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
-from components.base_components import BaseComponent
+from components.base_component import BaseComponent
 from equipment_types import EquipmentType
 
 if TYPE_CHECKING:
@@ -44,14 +44,10 @@ class Equipment(BaseComponent):
         return self.weapon == item or self.armor == item
 
     def unequip_message(self, item_name: str) -> None:
-        self.parent.gamemap.engine.message_log.add_message(
-            f"You remove the {item_name}."
-        )
+        self.parent.gamemap.engine.message_log.add_message(f"You remove the {item_name}.")
 
     def equip_message(self, item_name: str) -> None:
-        self.parent.gamemap.engine.message_log.add_message(
-            f"You equip the {item_name}."
-        )
+        self.parent.gamemap.engine.message_log.add_message(f"You equip the {item_name}.")
 
     def equip_to_slot(self, slot: str, item: Item, add_message: bool) -> None:
         current_item = getattr(self, slot)
@@ -73,10 +69,7 @@ class Equipment(BaseComponent):
         setattr(self, slot, None)
 
     def toggle_equip(self, equippable_item: Item, add_message: bool = True) -> None:
-        if (
-            equippable_item.equippable
-            and equippable_item.equippable.equipment_type == EquipmentType.WEAPON
-        ):
+        if equippable_item.equippable and equippable_item.equippable.equipment_type == EquipmentType.WEAPON:
             slot = "weapon"
         else:
             slot = "armor"
@@ -85,5 +78,3 @@ class Equipment(BaseComponent):
             self.unequip_from_slot(slot, add_message)
         else:
             self.equip_to_slot(slot, equippable_item, add_message)
-
-
