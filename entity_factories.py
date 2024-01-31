@@ -75,3 +75,7 @@ leather_armor = Item(
 )
 
 chain_mail = Item(char="[", color=(139, 69, 19), name="Chain Mail", equippable=equippable.ChainMail())
+
+attack_ring = Item(char="[", color=(0, 191, 255), name="Power Ring", equippable=equippable.AttackRing())
+
+defense_ring = Item(char="[", color=(139, 69, 19), name="Armor Ring", equippable=equippable.DefenseRing())

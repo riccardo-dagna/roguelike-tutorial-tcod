@@ -43,10 +43,12 @@ class ChainMail(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.ARMOR, defense_bonus=3)
 
+
 class AttackRing(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.ACCESSORY, power_bonus=3)
-        
+
+
 class DefenseRing(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.ACCESSORY, defense_bonus=3)
