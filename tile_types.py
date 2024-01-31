@@ -54,3 +54,9 @@ down_stairs = new_tile(
     dark=(ord(">"), (100, 100, 100), (0, 0, 0)),
     light=(ord(">"), (200, 200, 200), (0, 0, 0)),
 )
+chest = new_tile(
+    walkable=False,
+    transparent=False,
+    dark=(ord("("), (100, 100, 100), (0, 0, 0)),
+    light=(ord("("), (200, 200, 200), (0, 0, 0)),
+)

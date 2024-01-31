@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Dict, Iterator, List, Tuple
 import random
+import copy
 
 import tcod
 
@@ -11,8 +12,9 @@ import tile_types
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Entity
+    from entity import Entity, Item, Chest
 
+max_chest_by_floor = 2
 
 max_items_by_floor = [
     (1, 1),
@@ -76,6 +78,23 @@ def get_entities_at_random(
 
     return chosen_entities
 
+"""
+def create_chest(x: int, y: int) -> Entity:
+    inside_item: Item = None
+
+    if random.random() < 0.25:
+        inside_item = entity_factories.chain_mail
+    elif random.random() < 0.5:
+        inside_item = entity_factories.sword
+    elif random.random() < 0.75:
+        inside_item = entity_factories.attack_ring
+    else:
+        inside_item = entity_factories.defense_ring
+    
+    chest = Chest(x, y, inside_item)
+    
+    return chest
+"""
 
 class RectangularRoom:
     def __init__(self, x: int, y: int, width: int, height: int):
@@ -150,6 +169,8 @@ def generate_dungeon(
 
     center_of_last_room = (0, 0)
 
+    total_chest = 0
+
     for _ in range(max_rooms):
         room_width = random.randint(room_min_size, room_max_size)
         room_height = random.randint(room_min_size, room_max_size)
@@ -167,6 +188,20 @@ def generate_dungeon(
 
         # Dig out this rooms inner area.
         dungeon.tiles[new_room.inner] = tile_types.floor
+        
+        #Create a chest in the room, if the total of chest is minor to the max number of chest
+        if total_chest <= max_chest_by_floor:
+            x = random.randint(new_room.x1 + 1, new_room.x2 - 1)
+            y = random.randint(new_room.y1 + 1, new_room.y2 - 1)
+
+            if not any (entity.x == x and entity.y == y for entity in dungeon.entities):
+                if random.random() < 0.8:
+                    pass
+                else:
+                    dungeon.tiles[x, y] = tile_types.chest
+                    #dungeon.entities.add(create_chest(x, y))
+                    total_chest += 1
+
 
         if len(rooms) == 0:
             # The first room, where the player starts.
