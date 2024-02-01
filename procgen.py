@@ -194,12 +194,13 @@ def generate_dungeon(
             x = random.randint(new_room.x1 + 1, new_room.x2 - 1)
             y = random.randint(new_room.y1 + 1, new_room.y2 - 1)
 
-            if not any (entity.x == x and entity.y == y for entity in dungeon.entities):
-                if random.random() < 0.8:
+            if not any (chest.x == x and chest.y == y for chests in dungeon.chests):
+                if random.random() < 0.1:
                     pass
                 else:
                     dungeon.tiles[x, y] = tile_types.chest
-                    dungeon.chests.add(create_chest(x, y))
+                    chest = create_chest(x, y)
+                    dungeon.chests.add(chest)
                     total_chest += 1
 
 
