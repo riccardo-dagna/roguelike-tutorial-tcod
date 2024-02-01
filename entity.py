@@ -175,7 +175,7 @@ class Chest(Entity):
             item: Item = None,
             locked: bool = False
     ):
-        super().__init__(x=x, y=y, char=char, color=color, name=name, blocks_movement=True)
+        super().__init__(x=x, y=y, char=char, color=color, name=name, blocks_movement=True, render_order=RenderOrder.ACTOR)
 
         self.item = item
         self.opened = False

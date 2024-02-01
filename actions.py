@@ -7,7 +7,7 @@ import exceptions
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Actor, Entity, Item
+    from entity import Actor, Entity, Item, Chest
 
 
 class Action:
@@ -133,6 +133,11 @@ class ActionWithDirection(Action):
     def target_actor(self) -> Optional[Actor]:
         """Return the actor at this actions destination."""
         return self.engine.game_map.get_actor_at_location(*self.dest_xy)
+    
+    @property
+    def target_chest(self) -> Optional[Chest]:
+        """Return the chest at this action destination."""
+        return self.engine.game_map.get_chest_at_location(*self.dest_xy)
 
     def perform(self) -> None:
         raise NotImplementedError()
@@ -159,6 +164,12 @@ class MeleeAction(ActionWithDirection):
             self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)
 
 
+class ChestAction(ActionWithDirection):
+    def perform(self) -> None:
+        target = self.target_chest
+        self.engine.message_log.add_message(f"You tried to open a chest, but it's locked. It contains {target.item}.")
+
+
 class MovementAction(ActionWithDirection):
     def perform(self) -> None:
         dest_x, dest_y = self.dest_xy
@@ -180,6 +191,7 @@ class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         if self.target_actor:
             return MeleeAction(self.entity, self.dx, self.dy).perform()
-
+        elif self.target_chest:
+            return ChestAction(self.entity, self.dx, self.dy).perform()
         else:
             return MovementAction(self.entity, self.dx, self.dy).perform()

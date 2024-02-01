@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Iterable, Iterator, Optional
 from tcod.console import Console
 import numpy as np
 
-from entity import Actor, Item
+from entity import Actor, Item, Chest
 import tile_types
 
 if TYPE_CHECKING:
@@ -14,10 +14,11 @@ if TYPE_CHECKING:
 
 
 class GameMap:
-    def __init__(self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()):
+    def __init__(self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = (), chests: Iterable[Entity] = ()):
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
+        self.chests = set(chests)
         self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
 
         self.visible = np.full((width, height), fill_value=False, order="F")  # Tiles the player can currently see
@@ -53,6 +54,13 @@ class GameMap:
         for actor in self.actors:
             if actor.x == x and actor.y == y:
                 return actor
+
+        return None
+    
+    def get_chest_at_location(self, x: int, y: int) -> Optional[Chest]:
+        for chest in self.chests:
+            if chest.x == x and chest.y == y:
+                return chest
 
         return None
 

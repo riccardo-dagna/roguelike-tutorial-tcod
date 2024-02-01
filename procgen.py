@@ -12,7 +12,7 @@ import tile_types
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Entity, Item, Chest
+    from entity import Entity, Item
 
 max_chest_by_floor = 2
 
@@ -78,7 +78,6 @@ def get_entities_at_random(
 
     return chosen_entities
 
-"""
 def create_chest(x: int, y: int) -> Entity:
     inside_item: Item = None
 
@@ -91,10 +90,11 @@ def create_chest(x: int, y: int) -> Entity:
     else:
         inside_item = entity_factories.defense_ring
     
-    chest = Chest(x, y, inside_item)
+    chest = entity_factories.chest
+    chest.item = inside_item
     
     return chest
-"""
+
 
 class RectangularRoom:
     def __init__(self, x: int, y: int, width: int, height: int):
@@ -199,7 +199,7 @@ def generate_dungeon(
                     pass
                 else:
                     dungeon.tiles[x, y] = tile_types.chest
-                    #dungeon.entities.add(create_chest(x, y))
+                    dungeon.chests.add(create_chest(x, y))
                     total_chest += 1
 
 

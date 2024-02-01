@@ -4,7 +4,7 @@ from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
-from entity import Actor, Item
+from entity import Actor, Item, Chest
 
 player = Actor(
     char="@",
@@ -79,3 +79,5 @@ chain_mail = Item(char="[", color=(139, 69, 19), name="Chain Mail", equippable=e
 attack_ring = Item(char="[", color=(0, 191, 255), name="Power Ring", equippable=equippable.AttackRing())
 
 defense_ring = Item(char="[", color=(139, 69, 19), name="Armor Ring", equippable=equippable.DefenseRing())
+
+chest = Chest(char="(", color=(139, 69, 19), name="Chest")
