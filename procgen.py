@@ -91,6 +91,8 @@ def create_chest(x: int, y: int) -> Entity:
         inside_item = entity_factories.defense_ring
     
     chest = entity_factories.chest
+    chest.x = x
+    chest.y = y
     chest.item = inside_item
     
     return chest
@@ -195,7 +197,7 @@ def generate_dungeon(
             y = random.randint(new_room.y1 + 1, new_room.y2 - 1)
 
             if not any (chest.x == x and chest.y == y for chests in dungeon.chests):
-                if random.random() < 0.1:
+                if random.random() < 0.7:
                     pass
                 else:
                     dungeon.tiles[x, y] = tile_types.chest

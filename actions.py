@@ -167,7 +167,7 @@ class MeleeAction(ActionWithDirection):
 class ChestAction(ActionWithDirection):
     def perform(self) -> None:
         target = self.target_chest
-        self.engine.message_log.add_message(f"You tried to open a chest, but it's locked. It contains {target.item}.")
+        self.engine.message_log.add_message(f"The locked chest contains {target.item.name}.")
 
 
 class MovementAction(ActionWithDirection):
@@ -177,6 +177,9 @@ class MovementAction(ActionWithDirection):
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # Destination is out of bounds.
             raise exceptions.Impossible("That way is blocked.")
+        if self.engine.game_map.get_chest_at_location(dest_x, dest_y):
+            #There is a chest.
+            raise exceptions.Impossible("There is a chest.")
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             # Destination is blocked by a tile.
             raise exceptions.Impossible("That way is blocked.")
