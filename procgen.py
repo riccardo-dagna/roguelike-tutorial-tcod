@@ -78,7 +78,7 @@ def get_entities_at_random(
 
     return chosen_entities
 
-def create_chest(x: int, y: int) -> Entity:
+def item_chests() -> Item:
     inside_item: Item = None
 
     if random.random() < 0.25:
@@ -90,12 +90,7 @@ def create_chest(x: int, y: int) -> Entity:
     else:
         inside_item = entity_factories.defense_ring
     
-    chest = entity_factories.chest
-    chest.x = x
-    chest.y = y
-    chest.item = inside_item
-    
-    return chest
+    return inside_item
 
 
 class RectangularRoom:
@@ -196,13 +191,12 @@ def generate_dungeon(
             x = random.randint(new_room.x1 + 1, new_room.x2 - 1)
             y = random.randint(new_room.y1 + 1, new_room.y2 - 1)
 
-            if not any (chest.x == x and chest.y == y for chests in dungeon.chests):
+            if not any (chest.x == x and chest.y == y for chest in dungeon.chests):
                 if random.random() < 0.7:
                     pass
                 else:
                     dungeon.tiles[x, y] = tile_types.chest
-                    chest = create_chest(x, y)
-                    dungeon.chests.add(chest)
+                    entity_factories.chest.spawn(gamemap=dungeon, x=x, y=y, item=item_chests())
                     total_chest += 1
 
 

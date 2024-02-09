@@ -181,4 +181,14 @@ class Chest(Entity):
         self.opened = False
         self.locked = locked
 
+    def spawn(self: T, gamemap: GameMap, x: int, y: int, item: Item) -> T:
+        """Spawn a copy of this chest at the given location."""
+        clone = copy.deepcopy(self)
+        clone.x = x
+        clone.y = y
+        clone.item = item
+        clone.parent = gamemap
+        gamemap.chests.add(clone)
+        return clone
+
 
