@@ -167,7 +167,30 @@ class MeleeAction(ActionWithDirection):
 class ChestAction(ActionWithDirection):
     def perform(self) -> None:
         target = self.target_chest
-        self.engine.message_log.add_message(f"The locked chest contains {target.item.name}.")
+        actor_location_x = self.entity.x
+        actor_location_y = self.entity.y
+        inventory = self.entity.inventory
+
+        for chest in self.engine.game_map.chests:
+            if target == chest:
+                if target.item != None:
+                    if target.locked is False:
+                        if len(inventory.items) >= inventory.capacity:
+                            raise exceptions.Impossible("Your inventory is full.")
+
+                        item = target.item
+                        item.parent = self.entity.inventory
+                        inventory.items.append(item)
+                        target.item = None
+
+                        self.engine.message_log.add_message(f"The locked chest contains {item.name}. You added it to your inventory.")
+                        return
+                    else:
+                        raise exceptions.Impossible("The chest is locked.")
+                else:
+                    raise exceptions.Impossible("The chest is empty.")
+            else:
+                pass
 
 
 class MovementAction(ActionWithDirection):
@@ -177,9 +200,6 @@ class MovementAction(ActionWithDirection):
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # Destination is out of bounds.
             raise exceptions.Impossible("That way is blocked.")
-        if self.engine.game_map.get_chest_at_location(dest_x, dest_y):
-            #There is a chest.
-            raise exceptions.Impossible("There is a chest.")
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             # Destination is blocked by a tile.
             raise exceptions.Impossible("That way is blocked.")
