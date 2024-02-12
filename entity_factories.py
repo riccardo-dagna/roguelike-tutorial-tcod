@@ -4,6 +4,7 @@ from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
+from components.status import Status
 from entity import Actor, Item, Chest
 
 player = Actor(
@@ -15,6 +16,7 @@ player = Actor(
     fighter=Fighter(hp=30, base_defense=1, base_power=2),
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
+    status=Status(),
 )
 
 orc = Actor(
@@ -26,6 +28,7 @@ orc = Actor(
     fighter=Fighter(hp=10, base_defense=0, base_power=3),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=35),
+    status=Status(),
 )
 troll = Actor(
     char="T",
@@ -36,6 +39,7 @@ troll = Actor(
     fighter=Fighter(hp=16, base_defense=1, base_power=4),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=100),
+    status=Status(),
 )
 
 confusion_scroll = Item(
