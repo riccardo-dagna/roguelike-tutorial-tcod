@@ -221,6 +221,8 @@ class CharacterScreenEventHandler(AskUserEventHandler):
 
         console.print(x=x + 1, y=y + 4, string=f"Attack: {self.engine.player.fighter.power}")
         console.print(x=x + 1, y=y + 5, string=f"Defense: {self.engine.player.fighter.defense}")
+        console.print(x=x + 1, y=y + 6, string=f"Status: {"burn" if self.engine.player.status.flag_burn
+                                                          else "poison" if self.engine.player.status.flag_poison else "None"}")
 
 
 class LevelUpEventHandler(AskUserEventHandler):

@@ -121,6 +121,27 @@ class HealingConsumable(Consumable):
             raise Impossible("Your health is already full.")
 
 
+class HealingStatusConsumable(Consumable):
+    def __init__(self, amount: int):
+        self.amount = amount
+    
+    def activate(self, action: actions.ItemAction) -> None:
+        consumer = action.entity
+        amount_recovered = consumer.fighter.heal(self.amount)
+        flag_status = consumer.status.flag_burn or consumer.status.flag_poison
+        
+        if amount_recovered > 0 or flag_status:
+            consumer.status.flag_burn = False
+            consumer.status.flag_poison = False
+            self.engine.message_log.add_message(
+                f"You are healed from your affliction!",
+                color.health_recovered,
+            )
+            self.consume()
+        else:
+            raise Impossible("You don't have any affliction.")
+
+
 class LightningDamageConsumable(Consumable):
     def __init__(self, damage: int, maximum_range: int):
         self.damage = damage

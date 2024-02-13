@@ -13,10 +13,10 @@ player = Actor(
     name="Player",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=30, base_defense=1, base_power=2),
+    fighter=Fighter(hp=99, base_defense=10, base_power=20),
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
-    status=Status(),
+    status=Status(flag_poison=True),
 )
 
 orc = Actor(
@@ -59,6 +59,12 @@ health_potion = Item(
     color=(127, 0, 255),
     name="Health Potion",
     consumable=consumable.HealingConsumable(amount=4),
+)
+status_potion = Item(
+    char="!",
+    color=(127, 0, 255),
+    name="Status Potion",
+    consumable=consumable.HealingStatusConsumable(amount=2)
 )
 lightning_scroll = Item(
     char="~",
