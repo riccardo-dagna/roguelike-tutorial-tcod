@@ -13,7 +13,7 @@ class Status(BaseComponent):
     damage_burn: int = 1
     damage_poison: int = 2
     turns_poison: int = 4
-    turns_burn: int = 2
+    turns_burn: int = 4
 
     def __init__(self, 
                  flag_burn: int = False, 

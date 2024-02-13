@@ -212,6 +212,16 @@ class MovementAction(ActionWithDirection):
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
+        
+        if self.entity.status.check_turns_burns:
+            self.entity.status.effect_hp_damage()
+            self.entity.status.turns_passed = 0
+        elif self.entity.status.check_turns_poison:
+            self.entity.status.effect_hp_damage()
+            self.entity.status.turns_passed = 0
+        else:
+            self.entity.status.turns_passed += 1
+
         if self.target_actor:
             return MeleeAction(self.entity, self.dx, self.dy).perform()
         elif self.target_chest:
