@@ -13,10 +13,10 @@ player = Actor(
     name="Player",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=30, base_defense=1, base_power=2),
+    fighter=Fighter(hp=99, base_defense=10, base_power=2),
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
-    status=Status(flag_poison=True),
+    status=Status(),
 )
 
 orc = Actor(
@@ -41,6 +41,7 @@ troll = Actor(
     level=Level(xp_given=100),
     status=Status(),
 )
+
 
 confusion_scroll = Item(
     char="~",
@@ -73,21 +74,20 @@ lightning_scroll = Item(
     consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5),
 )
 
+
 dagger = Item(char="/", color=(0, 191, 255), name="Dagger", equippable=equippable.Dagger())
 
 sword = Item(char="/", color=(0, 191, 255), name="Sword", equippable=equippable.Sword())
 
-leather_armor = Item(
-    char="[",
-    color=(139, 69, 19),
-    name="Leather Armor",
-    equippable=equippable.LeatherArmor(),
-)
+leather_armor = Item(char="[", color=(139, 69, 19), name="Leather Armor", equippable=equippable.LeatherArmor())
 
 chain_mail = Item(char="[", color=(139, 69, 19), name="Chain Mail", equippable=equippable.ChainMail())
 
 attack_ring = Item(char="[", color=(0, 191, 255), name="Power Ring", equippable=equippable.AttackRing())
 
 defense_ring = Item(char="[", color=(139, 69, 19), name="Armor Ring", equippable=equippable.DefenseRing())
+
+fire_sword = Item(char="/", color=(0, 191, 255), name="Fire Sword", equippable=equippable.FireSword())
+
 
 chest = Chest(char="(", color=(139, 69, 19), name="Chest")

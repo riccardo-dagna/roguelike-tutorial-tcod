@@ -161,7 +161,17 @@ class MeleeAction(ActionWithDirection):
             self.engine.message_log.add_message(f"{attack_desc} for {damage} hit points.", attack_color)
             target.fighter.hp -= damage
         else:
-            self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)
+            self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)        
+
+        if self.entity.equipment.weapon is None and self.entity.equipment.accessory_1 is None and self.entity.equipment.accessory_2 is None:
+            pass
+        else:
+            if (self.entity.equipment.weapon.equippable.status_effect == "burn" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "burn")) and target.status.flag_burn == False:
+                target.status.flag_burn = True
+                self.engine.message_log.add_message(f"The {target.name} is on fire!", attack_color)
+            if (self.entity.equipment.weapon.equippable.status_effect == "poison" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "poison")) and target.status.flag_poison == False:
+                target.status.flag_poison = True
+                self.engine.message_log.add_message(f"The {target.name} is poisoned!", attack_color)
 
 
 class ChestAction(ActionWithDirection):
