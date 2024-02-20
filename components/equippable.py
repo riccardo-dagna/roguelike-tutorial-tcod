@@ -34,9 +34,9 @@ class Sword(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=4)
 
-class FireSword(Equippable):
+class VorpalSword(Equippable):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=4, status_effect="burn")
+        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=4, status_effect="bleed")
 
 class PoisonSword(Equippable):
     def __init__(self) -> None:
@@ -60,9 +60,9 @@ class DefenseRing(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.ACCESSORY, defense_bonus=3)
 
-class FireAttackRing(Equippable):
+class VorpalAttackRing(Equippable):
     def __init__(self):
-        super().__init__(equipment_type=EquipmentType.ACCESSORY, power_bonus=2, status_effect="burn")
+        super().__init__(equipment_type=EquipmentType.ACCESSORY, power_bonus=2, status_effect="bleed")
 
 class PoisonAttackRing(Equippable):
     def __init__(self):

@@ -163,22 +163,41 @@ class MeleeAction(ActionWithDirection):
         else:
             self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)        
 
+        """This checks if the entity is an enemy or the player."""
         if self.entity.equipment.weapon is None and self.entity.equipment.accessory_1 is None and self.entity.equipment.accessory_2 is None:
-            pass
-        else:
-            if (self.entity.equipment.weapon.equippable.status_effect == "burn" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "burn")):
-                if target.status.flag_burn == False:
-                    if not target.status.check_burn_immunity:
-                        target.status.flag_burn = True
-                        self.engine.message_log.add_message(f"The {target.name} is on fire!", attack_color)
+            if self.entity.status.dict_condition_attack["attack_bleed"] == True:
+                if target.status.dict_condition_afflicted["flag_bleed"] == False:
+                    if not target.status.check_bleed_immunity:
+                        target.status.dict_condition_afflicted["flag_bleed"] = True
+                        self.engine.message_log.add_message(f"The {target.name} is bleeding!", attack_color)
                     else:
-                        self.engine.message_log.add_message(f"The {target.name} is resistant to burning!", attack_color)
-                else:
-                    self.engine.message_log.add_message(f"The {target.name} is already burning!", attack_color)
-            if (self.entity.equipment.weapon.equippable.status_effect == "poison" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "poison")):
-                if target.status.flag_poison == False:
+                        self.engine.message_log.add_message(f"The {target.name} is resistant to bleeding!", attack_color)
+            if self.entity.status.dict_condition_attack["attack_poison"] == True:
+                if target.status.dict_condition_afflicted["flag_poison"] == False:
                     if not target.status.check_poison_immunity:
-                        target.status.flag_poison = True
+                        target.status.dict_condition_afflicted["flag_poison"] = True
+                        self.engine.message_log.add_message(f"The {target.name} is poisoned!", attack_color)
+                    else:
+                        self.engine.message_log.add_message(f"The {target.name} is resistant to poison!", attack_color)
+                else:
+                    self.engine.message_log.add_message(f"The {target.name} is already poisoned!", attack_color)
+
+        else:
+            """If the equipment of the player can create the status, it will check the other condition. 
+               Then, it will check if the monster is already afflicted by the condition or if it's immune to the condition."""
+            if (self.entity.equipment.weapon.equippable.status_effect == "bleed" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "bleed")):
+                if target.status.dict_condition_afflicted["flag_bleed"] == False:
+                    if not target.status.check_bleed_immunity:
+                        target.status.dict_condition_afflicted["flag_bleed"] = True
+                        self.engine.message_log.add_message(f"The {target.name} is bleeding!", attack_color)
+                    else:
+                        self.engine.message_log.add_message(f"The {target.name} is resistant to bleeding!", attack_color)
+                else:
+                    self.engine.message_log.add_message(f"The {target.name} is already bleeding!", attack_color)
+            if (self.entity.equipment.weapon.equippable.status_effect == "poison" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "poison")):
+                if target.status.dict_condition_afflicted["flag_poison"] == False:
+                    if not target.status.check_poison_immunity:
+                        target.status.dict_condition_afflicted["flag_poison"] = True
                         self.engine.message_log.add_message(f"The {target.name} is poisoned!", attack_color)
                     else:
                         self.engine.message_log.add_message(f"The {target.name} is resistant to poison!", attack_color)
@@ -235,7 +254,7 @@ class MovementAction(ActionWithDirection):
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         
-        if self.entity.status.check_turns_burns:
+        if self.entity.status.check_turns_bleed:
             self.entity.status.effect_hp_damage()
             self.entity.status.turns_passed = 0
         elif self.entity.status.check_turns_poison:

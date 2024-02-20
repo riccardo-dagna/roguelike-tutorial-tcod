@@ -28,7 +28,7 @@ orc = Actor(
     fighter=Fighter(hp=10, base_defense=0, base_power=3),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=35),
-    status=Status(),
+    status=Status(attack_bleed=True),
 )
 troll = Actor(
     char="T",
@@ -87,7 +87,7 @@ attack_ring = Item(char="[", color=(0, 191, 255), name="Power Ring", equippable=
 
 defense_ring = Item(char="[", color=(139, 69, 19), name="Armor Ring", equippable=equippable.DefenseRing())
 
-fire_sword = Item(char="/", color=(0, 191, 255), name="Fire Sword", equippable=equippable.FireSword())
+vorpal_sword = Item(char="/", color=(0, 191, 255), name="Fire Sword", equippable=equippable.VorpalSword())
 
 
 chest = Chest(char="(", color=(139, 69, 19), name="Chest")
