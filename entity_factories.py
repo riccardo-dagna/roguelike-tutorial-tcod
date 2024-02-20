@@ -73,6 +73,12 @@ lightning_scroll = Item(
     name="Lightning Scroll",
     consumable=consumable.LightningDamageConsumable(damage=20, maximum_range=5),
 )
+stun_scroll = Item(
+    char="~",
+    color=(255, 255, 0),
+    name="Stun Scroll",
+    consumable=consumable.StunConsumable(number_of_turns=1),
+)
 
 
 dagger = Item(char="/", color=(0, 191, 255), name="Dagger", equippable=equippable.Dagger())

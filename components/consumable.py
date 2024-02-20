@@ -168,3 +168,36 @@ class LightningDamageConsumable(Consumable):
             self.consume()
         else:
             raise Impossible("No enemy is close enough to strike.")
+
+class StunConsumable(Consumable):
+    def __init__(self, number_of_turns: int) -> None:
+        self.number_of_turns = number_of_turns
+    
+    def get_action(self, consumer: actions.Actor) -> SingleRangedAttackHandler:
+        self.engine.message_log.add_message("Select a target location.", color.needs_target)
+        return SingleRangedAttackHandler(
+            self.engine,
+            callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
+        )
+    
+    def activate(self, action: actions.ItemAction) -> None:
+        consumer = action.entity
+        target = action.target_actor
+
+        if not self.engine.game_map.visible[action.target_xy]:
+            raise Impossible("You cannot target an area that you cannot see.")
+        if not target:
+            raise Impossible("You must select an enemy to target.")
+        if target is consumer:
+            raise Impossible("You cannot stun yourself!")
+        
+        self.engine.message_log.add_message(
+            f"The {target.name} is trying to focus, but it can't!",
+            color.status_effect_applied,
+        )
+        target.ai = components.ai.StunnedEnemy(
+            entity=target,
+            previous_ai=target.ai,
+            turns_remaining=self.number_of_turns
+        )
+        self.consume()
