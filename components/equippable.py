@@ -28,7 +28,7 @@ class Equippable(BaseComponent):
 
 class Dagger(Equippable):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=2, status_effect="burn")
+        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=2)
 
 class Sword(Equippable):
     def __init__(self) -> None:

@@ -16,11 +16,15 @@ class Status(BaseComponent):
     turns_burn: int = 4
 
     def __init__(self, 
-                 flag_burn: int = False, 
-                 flag_poison: int = False
+                 flag_burn: bool = False, 
+                 flag_poison: bool = False,
+                 immunity_burn: bool = False,
+                 immunity_poison: bool = False
     ):
         self.flag_burn = flag_burn
         self.flag_poison = flag_poison
+        self.immunity_burn = immunity_burn
+        self.immunity_poison = immunity_poison
         self.turns_passed = 0
     
     @property
@@ -30,6 +34,14 @@ class Status(BaseComponent):
     @property
     def check_turns_burns(self) -> bool:
         return self.flag_burn and self.turns_passed > self.turns_burn
+    
+    @property
+    def check_burn_immunity(self) -> bool:
+        return self.immunity_burn
+    
+    @property
+    def check_poison_immunity(self) -> bool:
+        return self.immunity_poison
         
     def effect_hp_damage(self) -> None:
         if self.flag_burn:

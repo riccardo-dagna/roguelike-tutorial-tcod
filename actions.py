@@ -166,12 +166,24 @@ class MeleeAction(ActionWithDirection):
         if self.entity.equipment.weapon is None and self.entity.equipment.accessory_1 is None and self.entity.equipment.accessory_2 is None:
             pass
         else:
-            if (self.entity.equipment.weapon.equippable.status_effect == "burn" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "burn")) and target.status.flag_burn == False:
-                target.status.flag_burn = True
-                self.engine.message_log.add_message(f"The {target.name} is on fire!", attack_color)
-            if (self.entity.equipment.weapon.equippable.status_effect == "poison" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "poison")) and target.status.flag_poison == False:
-                target.status.flag_poison = True
-                self.engine.message_log.add_message(f"The {target.name} is poisoned!", attack_color)
+            if (self.entity.equipment.weapon.equippable.status_effect == "burn" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "burn")):
+                if target.status.flag_burn == False:
+                    if not target.status.check_burn_immunity:
+                        target.status.flag_burn = True
+                        self.engine.message_log.add_message(f"The {target.name} is on fire!", attack_color)
+                    else:
+                        self.engine.message_log.add_message(f"The {target.name} is resistant to burning!", attack_color)
+                else:
+                    self.engine.message_log.add_message(f"The {target.name} is already burning!", attack_color)
+            if (self.entity.equipment.weapon.equippable.status_effect == "poison" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "poison")):
+                if target.status.flag_poison == False:
+                    if not target.status.check_poison_immunity:
+                        target.status.flag_poison = True
+                        self.engine.message_log.add_message(f"The {target.name} is poisoned!", attack_color)
+                    else:
+                        self.engine.message_log.add_message(f"The {target.name} is resistant to poison!", attack_color)
+                else:
+                    self.engine.message_log.add_message(f"The {target.name} is already poisoned!", attack_color)
 
 
 class ChestAction(ActionWithDirection):
