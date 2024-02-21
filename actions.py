@@ -254,15 +254,49 @@ class MovementAction(ActionWithDirection):
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         
+        # Check for all the different condition flags
+        # Check for the bleed turns
         if self.entity.status.check_turns_bleed:
             self.entity.status.effect_hp_damage()
             self.entity.status.turns_passed = 0
+        
+        # Check for the poison turns
         elif self.entity.status.check_turns_poison:
             self.entity.status.effect_hp_damage()
             self.entity.status.turns_passed = 0
+
+        # Check if the player is afflicted by confusion
+        elif self.entity.status.dict_condition_afflicted["flag_confusion"] and self.entity == self.engine.player:
+            # If the number of turns is minor than the max number of turns, it creates a random direction and return the action for the random direction
+            if self.entity.status.check_turns_confusion:
+                self.entity.status.turns_passed += 1
+                direction_x, direction_y = self.entity.status.confusion_direction()
+                # Then check if there are actors or chests at the random direction
+                if self.engine.game_map.get_actor_at_location(self.x + direction_x, self.y + direction_y):
+                    return MeleeAction(self.entity, direction_x, direction_y).perform()
+                elif self.engine.game_map.get_chest_at_location(self.x + direction_x, self.y + direction_y):
+                    return ChestAction(self.entity, direction_x, direction_y).perform()
+                else:
+                    return MovementAction(self.entity, direction_x, direction_y).perform()
+            # Else, end the confusion effect and reset the turns
+            else:
+                self.entity.status.dict_condition_afflicted["flag_confusion"] = False
+                self.entity.status.turns_passed = 0
+
+        # Check if the player is afflicted by stun
+        elif self.entity.status.dict_condition_afflicted["flag_stun"] and self.entity == self.engine.player:
+            ""
+            if self.entity.status.turns_passed >=1:
+                self.entity.status.dict_condition_afflicted["flag_stun"] = False
+                self.entity.status.turns_passed = 0
+            # Else, it does the wait action for a turn
+            else:
+                self.entity.status.turns_passed += 1
+                return WaitAction(self.entity)
         else:
             self.entity.status.turns_passed += 1
 
+        #
         if self.target_actor:
             return MeleeAction(self.entity, self.dx, self.dy).perform()
         elif self.target_chest:

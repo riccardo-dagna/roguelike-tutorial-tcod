@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple, Optional
+import random
 
 from components.base_component import BaseComponent
 
@@ -14,20 +15,18 @@ class Status(BaseComponent):
     damage_poison: int = 2
     turns_poison: int = 4
     turns_bleed: int = 4
+    turns_confusion: int = 5
 
     def __init__(self, 
-                 flag_bleed: bool = False, 
-                 flag_poison: bool = False,
-                 immunity_bleed: bool = False,
-                 immunity_poison: bool = False,
-                 attack_bleed: bool = False,
-                 attack_poison: bool = False,
+                 flag_bleed: bool = False, flag_poison: bool = False, flag_stun: bool = False, flag_confusion: bool = False,
+                 immunity_bleed: bool = False, immunity_poison: bool = False, immunity_stun: bool = False, immunity_confusion: bool = False,
+                 attack_bleed: bool = False, attack_poison: bool = False, attack_stun: bool = False, attack_confusion: bool = False,
     ):
-        self.dict_condition_afflicted = dict(flag_bleed = flag_bleed, flag_poison = flag_poison)
+        self.dict_condition_afflicted = dict(flag_bleed = flag_bleed, flag_poison = flag_poison, flag_stun = flag_stun, flag_confusion = flag_confusion)
 
-        self.dict_condition_immunity = dict(immunity_bleed = immunity_bleed, immunity_poison = immunity_poison)
+        self.dict_condition_immunity = dict(immunity_bleed = immunity_bleed, immunity_poison = immunity_poison, immunity_stun = immunity_stun, immunity_confusion = immunity_confusion)
 
-        self.dict_condition_attack = dict(attack_bleed = attack_bleed, attack_poison = attack_poison)
+        self.dict_condition_attack = dict(attack_bleed = attack_bleed, attack_poison = attack_poison, attack_stun = attack_stun, attack_confusion = attack_confusion)
 
         self.turns_passed = 0
     
@@ -40,12 +39,24 @@ class Status(BaseComponent):
         return self.dict_condition_afflicted["flag_poison"] and self.turns_passed > self.turns_bleed
     
     @property
+    def check_turns_confusion(self) -> bool:
+        return self.turns_passed > self.turns_confusion
+
+    @property
     def check_bleed_immunity(self) -> bool:
         return self.dict_condition_immunity["immunity_bleed"]
     
     @property
     def check_poison_immunity(self) -> bool:
         return self.dict_condition_immunity["immunity_poison"]
+    
+    @property
+    def check_stun_immunity(self) -> bool:
+        return self.dict_condition_immunity["immunity_stun"]
+    
+    @property
+    def check_confusion_immunity(self) -> bool:
+        return self.dict_condition_immunity["immunity_confusion"]
         
     def effect_hp_damage(self) -> None:
         if self.dict_condition_afflicted["flag_bleed"]:
@@ -57,4 +68,19 @@ class Status(BaseComponent):
             self.engine.message_log.add_message(f"You receive {self.damage_poison} damage from the poison!")
             self.turns_passed = 0
 
-    
+    def confusion_direction(self) -> Tuple[int, int]:
+        # Return a random direction to the player.
+        direction_x, direction_y = random.choice(
+            [
+                    (-1, -1),  # Northwest
+                    (0, -1),  # North
+                    (1, -1),  # Northeast
+                    (-1, 0),  # West
+                    (1, 0),  # East
+                    (-1, 1),  # Southwest
+                    (0, 1),  # South
+                    (1, 1),  # Southeast
+            ]
+        )
+
+        return direction_x, direction_y
