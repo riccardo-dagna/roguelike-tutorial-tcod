@@ -13,5 +13,23 @@ The list of commands is below:
 - "g" to pick up intems on the floor
 - "Period" with "Shift" to take the stairs
 - "c" to open the Character Sheet
-- "i" to open inventory to use an item (if the item is a equipment, when you use the item you equip it)
+- "i" to open inventory to use an item: if the item is a equipment, when you use the item you equip it; if the item is a potion, it is used; if it's a scroll, it will target an enemy or an area on the floor
 - "d" to open inventory to drop an item (if the item is a equipment, when you drop the item you unequip it)
+
+Mechanics added in the game, already tested:
+- Movement and basic attacks
+- Random map generation
+- Item spawning in the map
+- Inventory capability (and dropping capability)
+- Targeting ability with scrolls (single-target and area)
+- Equipment (weapon, armor and accessory)
+- Condition (bleeding, poison, stun (for the enemy only) and confusion (for the enemy only))
+
+Mechanics added in the game, to test:
+- Condition (stun (for the player) and confusion (for the player))
+
+Mechanics to add in the game:
+- Condition (blindness, grab, petrification)
+- Elemental damage and extra effect
+- New monster and items
+- Shopkeeper (with random item)
