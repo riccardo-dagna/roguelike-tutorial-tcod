@@ -253,8 +253,8 @@ class MovementAction(ActionWithDirection):
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
-        
-        # Check for all the different condition flags
+        # Before any action is performed, check for all the different condition flags
+
         # Check for the bleed turns
         if self.entity.status.check_turns_bleed:
             self.entity.status.effect_hp_damage()
@@ -286,7 +286,7 @@ class BumpAction(ActionWithDirection):
         # Check if the player is afflicted by stun
         elif self.entity.status.dict_condition_afflicted["flag_stun"] and self.entity == self.engine.player:
             ""
-            if self.entity.status.turns_passed >=1:
+            if self.entity.status.check_turns_stun:
                 self.entity.status.dict_condition_afflicted["flag_stun"] = False
                 self.entity.status.turns_passed = 0
             # Else, it does the wait action for a turn
@@ -296,10 +296,10 @@ class BumpAction(ActionWithDirection):
         else:
             self.entity.status.turns_passed += 1
 
-        #
+        # After all the status, checks for the target actors or chests
         if self.target_actor:
             return MeleeAction(self.entity, self.dx, self.dy).perform()
-        elif self.target_chest:
+        elif self.target_chest and self.entity == self.engine.player:
             return ChestAction(self.entity, self.dx, self.dy).perform()
         else:
             return MovementAction(self.entity, self.dx, self.dy).perform()

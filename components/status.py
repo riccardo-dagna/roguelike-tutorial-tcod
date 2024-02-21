@@ -15,6 +15,7 @@ class Status(BaseComponent):
     damage_poison: int = 2
     turns_poison: int = 4
     turns_bleed: int = 4
+    turns_stun: int = 1
     turns_confusion: int = 5
 
     def __init__(self, 
@@ -37,6 +38,10 @@ class Status(BaseComponent):
     @property
     def check_turns_bleed(self) -> bool:
         return self.dict_condition_afflicted["flag_poison"] and self.turns_passed > self.turns_bleed
+    
+    @property
+    def check_turns_stun(self) -> bool:
+        return self.turns_passed > self.turns_stun
     
     @property
     def check_turns_confusion(self) -> bool:
