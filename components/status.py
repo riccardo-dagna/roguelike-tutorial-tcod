@@ -41,7 +41,7 @@ class Status(BaseComponent):
     
     @property
     def check_turns_stun(self) -> bool:
-        return self.turns_passed > self.turns_stun
+        return self.turns_passed >= self.turns_stun
     
     @property
     def check_turns_confusion(self) -> bool:

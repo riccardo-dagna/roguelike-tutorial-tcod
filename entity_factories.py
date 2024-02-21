@@ -28,7 +28,7 @@ orc = Actor(
     fighter=Fighter(hp=10, base_defense=0, base_power=3),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=35),
-    status=Status(attack_bleed=True),
+    status=Status(),
 )
 troll = Actor(
     char="T",

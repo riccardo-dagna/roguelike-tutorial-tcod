@@ -23,10 +23,10 @@ Mechanics added in the game, already tested:
 - Inventory capability (and dropping capability)
 - Targeting ability with scrolls (single-target and area)
 - Equipment (weapon, armor and accessory)
-- Condition (bleeding, poison, stun (for the enemy only) and confusion (for the enemy only))
+- Condition (bleeding, poison, stun and confusion)
 
 Mechanics added in the game, to test:
-- Condition (stun (for the player) and confusion (for the player))
+- 
 
 Mechanics to add in the game:
 - Condition (blindness, grab, petrification)

@@ -181,6 +181,26 @@ class MeleeAction(ActionWithDirection):
                         self.engine.message_log.add_message(f"The {target.name} is resistant to poison!", attack_color)
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already poisoned!", attack_color)
+            if self.entity.status.dict_condition_attack["attack_stun"] == True:
+                if target.status.dict_condition_afflicted["flag_stun"] == False:
+                    if not target.status.check_stun_immunity:
+                        target.status.dict_condition_afflicted["flag_stun"] = True
+                        target.status.turns_passed = 0
+                        self.engine.message_log.add_message(f"The {target.name} is stunned!", attack_color)
+                    else:
+                        self.engine.message_log.add_message(f"The {target.name} is resistant to stun!", attack_color)
+                else:
+                    self.engine.message_log.add_message(f"The {target.name} is already stunned!", attack_color)
+            if self.entity.status.dict_condition_attack["attack_confusion"] == True:
+                if target.status.dict_condition_afflicted["flag_confusion"] == False:
+                    if not target.status.check_confusion_immunity:
+                        target.status.dict_condition_afflicted["flag_confusion"] = True
+                        target.status.turns_passed = 0
+                        self.engine.message_log.add_message(f"The {target.name} is confusion!", attack_color)
+                    else:
+                        self.engine.message_log.add_message(f"The {target.name} is resistant to confusion!", attack_color)
+                else:
+                    self.engine.message_log.add_message(f"The {target.name} is already confusion!", attack_color)
 
         else:
             """If the equipment of the player can create the status, it will check the other condition. 
@@ -203,6 +223,26 @@ class MeleeAction(ActionWithDirection):
                         self.engine.message_log.add_message(f"The {target.name} is resistant to poison!", attack_color)
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already poisoned!", attack_color)
+            if (self.entity.equipment.weapon.equippable.status_effect == "stun" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "stun")):
+                if target.status.dict_condition_afflicted["flag_stun"] == False:
+                    if not target.status.check_stun_immunity:
+                        target.status.dict_condition_afflicted["flag_stun"] = True
+                        target.status.turns_passed = 0
+                        self.engine.message_log.add_message(f"The {target.name} is stunned!", attack_color)
+                    else:
+                        self.engine.message_log.add_message(f"The {target.name} is resistant to stun!", attack_color)
+                else:
+                    self.engine.message_log.add_message(f"The {target.name} is already stunned!", attack_color)
+            if (self.entity.equipment.weapon.equippable.status_effect == "confusion" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "confusion")):
+                if target.status.dict_condition_afflicted["flag_confusion"] == False:
+                    if not target.status.check_confusion_immunity:
+                        target.status.dict_condition_afflicted["flag_confusion"] = True
+                        target.status.turns_passed = 0
+                        self.engine.message_log.add_message(f"The {target.name} is confusion!", attack_color)
+                    else:
+                        self.engine.message_log.add_message(f"The {target.name} is resistant to confusion!", attack_color)
+                else:
+                    self.engine.message_log.add_message(f"The {target.name} is already confusion!", attack_color)
 
 
 class ChestAction(ActionWithDirection):
@@ -267,31 +307,35 @@ class BumpAction(ActionWithDirection):
 
         # Check if the player is afflicted by confusion
         elif self.entity.status.dict_condition_afflicted["flag_confusion"] and self.entity == self.engine.player:
-            # If the number of turns is minor than the max number of turns, it creates a random direction and return the action for the random direction
+
+            # If the number of turns is over the number of turns required for the confusion, end the confusion effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_confusion:
+                self.entity.status.dict_condition_afflicted["flag_confusion"] = False
+                self.entity.status.turns_passed = 0
+                self.engine.message_log.add_message(f"You are no longer confused!")
+            # Else, it creates a random direction and return the action for the random direction
+            else:
                 self.entity.status.turns_passed += 1
                 direction_x, direction_y = self.entity.status.confusion_direction()
                 # Then check if there are actors or chests at the random direction
-                if self.engine.game_map.get_actor_at_location(self.x + direction_x, self.y + direction_y):
+                if self.engine.game_map.get_actor_at_location(self.dx + direction_x, self.dy + direction_y):
                     return MeleeAction(self.entity, direction_x, direction_y).perform()
-                elif self.engine.game_map.get_chest_at_location(self.x + direction_x, self.y + direction_y):
+                elif self.engine.game_map.get_chest_at_location(self.dx + direction_x, self.dy + direction_y):
                     return ChestAction(self.entity, direction_x, direction_y).perform()
                 else:
                     return MovementAction(self.entity, direction_x, direction_y).perform()
-            # Else, end the confusion effect and reset the turns
-            else:
-                self.entity.status.dict_condition_afflicted["flag_confusion"] = False
-                self.entity.status.turns_passed = 0
 
         # Check if the player is afflicted by stun
         elif self.entity.status.dict_condition_afflicted["flag_stun"] and self.entity == self.engine.player:
-            ""
+            # If the number of turns is over the number of turns required for the stun, end the stun effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_stun:
                 self.entity.status.dict_condition_afflicted["flag_stun"] = False
                 self.entity.status.turns_passed = 0
+                self.engine.message_log.add_message(f"You are no longer stunned!")
             # Else, it does the wait action for a turn
             else:
                 self.entity.status.turns_passed += 1
+                self.engine.message_log.add_message(f"You are stunned!")
                 return WaitAction(self.entity)
         else:
             self.entity.status.turns_passed += 1
