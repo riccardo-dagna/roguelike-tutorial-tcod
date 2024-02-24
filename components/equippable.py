@@ -18,12 +18,14 @@ class Equippable(BaseComponent):
         power_bonus: int = 0,
         defense_bonus: int = 0,
         status_effect: str = "",
+        damage_type: str = ""
     ):
         self.equipment_type = equipment_type
 
         self.power_bonus = power_bonus
         self.defense_bonus = defense_bonus
         self.status_effect = status_effect
+        self.damage_type = damage_type
 
 
 class Dagger(Equippable):
@@ -41,6 +43,18 @@ class VorpalSword(Equippable):
 class PoisonSword(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=4, status_effect="poison")
+
+class FireSword(Equippable):
+    def __init__(self):
+        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=4, damage_type="fire")
+
+class IceSword(Equippable):
+    def __init__(self):
+        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=4, damage_type="ice")
+        
+class ElectricSword(Equippable):
+    def __init__(self):
+        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=4, damage_type="electric")
 
 
 class LeatherArmor(Equippable):

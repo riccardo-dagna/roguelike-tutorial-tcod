@@ -8,6 +8,7 @@ import exceptions
 if TYPE_CHECKING:
     from engine import Engine
     from entity import Actor, Entity, Item, Chest
+    from components.damageinfo import DamageInfo
 
 
 class Action:
@@ -156,12 +157,23 @@ class MeleeAction(ActionWithDirection):
             attack_color = color.player_atk
         else:
             attack_color = color.enemy_atk
-
-        if damage > 0:
-            self.engine.message_log.add_message(f"{attack_desc} for {damage} hit points.", attack_color)
-            target.fighter.hp -= damage
+        
+        if self.entity == self.engine.player:
+            damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.weapon.equippable.damage_type)
         else:
-            self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)        
+            damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
+
+        if damage > 0 and damage_modificator > 0:
+            self.engine.message_log.add_message(f"{attack_desc} for {damage * damage_modificator} hit points.", attack_color)
+            if damage_modificator == 2:
+                self.engine.message_log.add_message(f"The damage is critical!", attack_color)
+            elif damage_modificator == 0.5:
+                self.engine.message_log.add_message(f"The damage is resisted!", attack_color)
+            target.fighter.hp -= damage * damage_modificator
+        else:
+            self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color) 
+            if damage_modificator == 0:
+                self.engine.message_log.add_message(f"The {target.name} is immune.", attack_color)      
 
         """This checks if the entity is an enemy or the player."""
         if self.entity.equipment.weapon is None and self.entity.equipment.accessory_1 is None and self.entity.equipment.accessory_2 is None:

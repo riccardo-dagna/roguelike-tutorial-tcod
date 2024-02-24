@@ -9,6 +9,7 @@ from render_order import RenderOrder
 if TYPE_CHECKING:
     from components.ai import BaseAI
     from components.consumable import Consumable
+    from components.damageinfo import DamageInfo
     from components.equipment import Equipment
     from components.equippable import Equippable
     from components.fighter import Fighter
@@ -100,7 +101,8 @@ class Actor(Entity):
         fighter: Fighter,
         inventory: Inventory,
         level: Level,
-        status: Status
+        status: Status,
+        damage_info: DamageInfo
     ):
         super().__init__(
             x=x,
@@ -128,6 +130,9 @@ class Actor(Entity):
 
         self.status = status
         self.status.parent = self
+
+        self.damage_info = damage_info
+        self.damage_info.parent = self
 
     @property
     def is_alive(self) -> bool:

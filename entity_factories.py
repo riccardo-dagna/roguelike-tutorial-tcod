@@ -1,5 +1,6 @@
 from components import consumable, equippable
 from components.ai import HostileEnemy
+from components.damageinfo import DamageInfo
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
@@ -17,6 +18,7 @@ player = Actor(
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
     status=Status(),
+    damage_info=DamageInfo(),
 )
 
 orc = Actor(
@@ -29,6 +31,7 @@ orc = Actor(
     inventory=Inventory(capacity=0),
     level=Level(xp_given=35),
     status=Status(),
+    damage_info=DamageInfo(),
 )
 troll = Actor(
     char="T",
@@ -40,6 +43,7 @@ troll = Actor(
     inventory=Inventory(capacity=0),
     level=Level(xp_given=100),
     status=Status(),
+    damage_info=DamageInfo(),
 )
 
 
