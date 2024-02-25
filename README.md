@@ -16,6 +16,7 @@ The list of commands is below:
 - "i" to open inventory to use an item: if the item is a equipment, when you use the item you equip it; if the item is a potion, it is used; if it's a scroll, it will target an enemy or an area on the floor
 - "d" to open inventory to drop an item (if the item is a equipment, when you drop the item you unequip it)
 
+
 Mechanics added in the game, already tested:
 - Movement and basic attacks
 - Random map generation
@@ -30,6 +31,7 @@ Mechanics added in the game, to test:
 
 Mechanics to add in the game:
 - Condition (blindness, grab, petrification)
-- Elemental damage and extra effect
+- Extra effect of elemental damage
 - New monster and items
 - Shopkeeper (with random item)
+- Boss monster (with special attack)
