@@ -205,7 +205,7 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             x=x,
             y=y,
             width=width,
-            height=7,
+            height=8,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -222,7 +222,16 @@ class CharacterScreenEventHandler(AskUserEventHandler):
 
         console.print(x=x + 1, y=y + 4, string=f"Attack: {self.engine.player.fighter.power}")
         console.print(x=x + 1, y=y + 5, string=f"Defense: {self.engine.player.fighter.defense}")
-        #console.print(x=x + 1, y=y + 6, string=f"Status: {"burn" if self.engine.player.status.flag_burn else "poison" if self.engine.player.status.flag_poison else "None"}")
+        if self.engine.player.status.dict_condition_afflicted["flag_bleed"]:
+            console.print(x=x + 1, y=y + 6, string=f"Status: bleeding")
+        elif self.engine.player.status.dict_condition_afflicted["flag_poison"]:
+            console.print(x=x + 1, y=y + 6, string=f"Status: poisoned")
+        elif self.engine.player.status.dict_condition_afflicted["flag_stun"]:
+            console.print(x=x + 1, y=y + 6, string=f"Status: stunned")
+        elif self.engine.player.status.dict_condition_afflicted["flag_confusion"]:
+            console.print(x=x + 1, y=y + 6, string=f"Status: confused")
+        else:
+            console.print(x=x + 1, y=y + 6, string=f"Status: healthy")
 
 
 class LevelUpEventHandler(AskUserEventHandler):
