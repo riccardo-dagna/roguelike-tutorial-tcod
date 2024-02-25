@@ -46,7 +46,7 @@ def new_game() -> Engine:
     engine.game_world.generate_floor()
     engine.update_fov()
 
-    engine.message_log.add_message("Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text)
+    engine.message_log.add_message("Welcome to the dungeon, adventurer!", color.welcome_text)
 
     dagger = copy.deepcopy(entity_factories.dagger)
     leather_armor = copy.deepcopy(entity_factories.leather_armor)
@@ -88,7 +88,7 @@ class MainMenu(input_handlers.BaseEventHandler):
         console.print(
             console.width // 2,
             console.height - 2,
-            "By (Your name here)",
+            "By Just RD",
             fg=color.menu_title,
             alignment=libtcodpy.CENTER,
         )
