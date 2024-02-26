@@ -14,6 +14,11 @@ if TYPE_CHECKING:
     from engine import Engine
     from entity import Entity, Item
 
+# This is the list of the max enemy, item in floor and item in chests per floor
+"""max_chest_by_floor = [
+    (1, 1),
+    (4, 2),
+]"""
 max_chest_by_floor = 2
 
 max_items_by_floor = [
@@ -27,20 +32,29 @@ max_monsters_by_floor = [
     (6, 5),
 ]
 
+# This is the dictionary that contain the spawning items on the floor and weight
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
     0: [(entity_factories.health_potion, 35)],
     0: [(entity_factories.status_potion, 35)],
     2: [(entity_factories.stun_scroll, 10)],
     2: [(entity_factories.confusion_scroll, 10)],
-    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)],
-    6: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
+    4: [(entity_factories.lightning_scroll, 25)],
+    6: [(entity_factories.fireball_scroll, 25)],
 }
 
+# This is the dictionary that contain the spawning enemy and weight
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
     0: [(entity_factories.orc, 80)],
     3: [(entity_factories.troll, 15)],
     5: [(entity_factories.troll, 30)],
     7: [(entity_factories.troll, 60)],
+}
+
+# This is the dictionary that contain the spawning items in chances and weight
+chest_chances: Dict[int, List[Tuple[Entity, int]]] = {
+    0: [(entity_factories.sword, 80), (entity_factories.chain_mail, 80)],
+    2: [(entity_factories.sword, 0), (entity_factories.chain_mail, 0), (entity_factories.attack_ring, 80), (entity_factories.defense_ring, 80)],
+    4: [(entity_factories.sword, 0), (entity_factories.chain_mail, 0), (entity_factories.attack_ring, 15), (entity_factories.defense_ring, 15), (entity_factories.vorpal_sword, 60)],
 }
 
 
@@ -79,6 +93,30 @@ def get_entities_at_random(
     chosen_entities = random.choices(entities, weights=entity_weighted_chance_values, k=number_of_entities)
 
     return chosen_entities
+
+def get_chest_item_at_random(
+    weighted_chances_by_floor: Dict[int, List[Tuple[Entity, int]]],
+    floor: int
+) -> Item:
+    item_weighted_chances = {}
+    
+    for key, values in weighted_chances_by_floor.items():
+        if key > floor:
+            break
+        else:
+            for value in values:
+                item = value[0]
+                weighted_chance = value[1]
+
+                item_weighted_chances[item] = weighted_chance
+    
+    items_list = list(item_weighted_chances.keys())
+    item_weighted_chances_values = list(item_weighted_chances.values())
+    
+    chosen_item = random.choices(items_list, weights=item_weighted_chances_values, k=1)
+    return chosen_item[0]
+    
+
 
 def item_chests() -> Item:
     inside_item: Item = None
@@ -198,7 +236,7 @@ def generate_dungeon(
                     pass
                 else:
                     dungeon.tiles[x, y] = tile_types.chest
-                    entity_factories.chest.spawn(gamemap=dungeon, x=x, y=y, item=item_chests())
+                    entity_factories.chest.spawn(gamemap=dungeon, x=x, y=y, item=get_chest_item_at_random(chest_chances, floor=engine.game_world.current_floor))
                     total_chest += 1
 
 
