@@ -17,6 +17,8 @@ The list of commands is below:
 - "d" to open inventory to drop an item (if the item is a equipment, when you drop the item you unequip it)
 
 
+## List of mechanics
+
 Mechanics added in the game, already tested:
 - Movement and basic attacks
 - Random map generation
@@ -35,3 +37,4 @@ Mechanics to add in the game:
 - New monster and items
 - Shopkeeper (with random item)
 - Boss monster (with special attack)
+
