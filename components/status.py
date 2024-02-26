@@ -19,15 +19,21 @@ class Status(BaseComponent):
     turns_confusion: int = 5
 
     def __init__(self, 
-                 flag_bleed: bool = False, flag_poison: bool = False, flag_stun: bool = False, flag_confusion: bool = False,
-                 immunity_bleed: bool = False, immunity_poison: bool = False, immunity_stun: bool = False, immunity_confusion: bool = False,
-                 attack_bleed: bool = False, attack_poison: bool = False, attack_stun: bool = False, attack_confusion: bool = False,
+                 flag_bleed: bool = False, flag_poison: bool = False, flag_stun: bool = False, flag_confusion: bool = False, flag_grab: bool = False,
+                 immunity_bleed: bool = False, immunity_poison: bool = False, immunity_stun: bool = False, immunity_confusion: bool = False, immunity_grab: bool = False,
+                 attack_bleed: bool = False, attack_poison: bool = False, attack_stun: bool = False, attack_confusion: bool = False, attack_grab: bool = False,
     ):
-        self.dict_condition_afflicted = dict(flag_bleed = flag_bleed, flag_poison = flag_poison, flag_stun = flag_stun, flag_confusion = flag_confusion)
+        self.dict_condition_afflicted = dict(flag_bleed = flag_bleed, flag_poison = flag_poison, flag_stun = flag_stun, flag_confusion = flag_confusion, 
+                                             flag_grab = flag_grab
+                                             )
 
-        self.dict_condition_immunity = dict(immunity_bleed = immunity_bleed, immunity_poison = immunity_poison, immunity_stun = immunity_stun, immunity_confusion = immunity_confusion)
+        self.dict_condition_immunity = dict(immunity_bleed = immunity_bleed, immunity_poison = immunity_poison, immunity_stun = immunity_stun, immunity_confusion = immunity_confusion, 
+                                            immunity_grab = immunity_grab
+                                            )
 
-        self.dict_condition_attack = dict(attack_bleed = attack_bleed, attack_poison = attack_poison, attack_stun = attack_stun, attack_confusion = attack_confusion)
+        self.dict_condition_attack = dict(attack_bleed = attack_bleed, attack_poison = attack_poison, attack_stun = attack_stun, attack_confusion = attack_confusion, 
+                                          attack_grab = attack_grab
+                                          )
 
         self.turns_passed = 0
     
@@ -46,6 +52,10 @@ class Status(BaseComponent):
     @property
     def check_turns_confusion(self) -> bool:
         return self.turns_passed > self.turns_confusion
+    
+    @property
+    def check_grabbed_condition(self) -> bool:
+        return self.dict_condition_afflicted["flag_grab"]
 
     @property
     def check_bleed_immunity(self) -> bool:
@@ -62,6 +72,10 @@ class Status(BaseComponent):
     @property
     def check_confusion_immunity(self) -> bool:
         return self.dict_condition_immunity["immunity_confusion"]
+    
+    @property
+    def check_grab_immunity(self) -> bool:
+        return self.dict_condition_immunity["immunity_grab"]
         
     def effect_hp_damage(self) -> None:
         if self.dict_condition_afflicted["flag_bleed"]:

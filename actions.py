@@ -157,12 +157,14 @@ class MeleeAction(ActionWithDirection):
             attack_color = color.player_atk
         else:
             attack_color = color.enemy_atk
-        
+
+        # Check if the entity is the player or the enemy to calculate the type of damage        
         if self.entity == self.engine.player:
             damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.weapon.equippable.damage_type)
         else:
             damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
 
+        # Calculate the damage to inflict to the target and elemental resistance/vulnerability
         if damage > 0 and damage_modificator > 0:
             self.engine.message_log.add_message(f"{attack_desc} for {damage * damage_modificator} hit points.", attack_color)
             if damage_modificator == 2:
@@ -171,20 +173,31 @@ class MeleeAction(ActionWithDirection):
                 self.engine.message_log.add_message(f"The damage is resisted!", attack_color)
             target.fighter.hp -= damage * damage_modificator
         else:
-            self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color) 
+            self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)
             if damage_modificator == 0:
-                self.engine.message_log.add_message(f"The {target.name} is immune.", attack_color)      
+                self.engine.message_log.add_message(f"The {target.name} is immune.", attack_color)
+        
+        # This checks if the player is grabbed and the enemy is dead, and then release the player from the grabbed grabbed condition
+        if self.entity == self.engine.player and self.entity.status.check_grabbed_condition:
+            if (target.fighter.hp <= 0 or not target.is_alive) and target.status.dict_condition_attack["attack_grab"]:
+                self.entity.status.dict_condition_afflicted["flag_grab"] = False
+                self.engine.message_log.add_message(f"You are free from the grab.", attack_color)
 
-        """This checks if the entity is an enemy or the player."""
+        # After the damage, there is the check for the conditions effect.
+        # This checks if the entity is an enemy or the player.
         if self.entity.equipment.weapon is None and self.entity.equipment.accessory_1 is None and self.entity.equipment.accessory_2 is None:
-            if self.entity.status.dict_condition_attack["attack_bleed"] == True:
+            """ If the enemy can affect the player with a condition from an attack, it will not check the other condition. 
+               Then, it will check if the player is already afflicted by the condition or if it's immune to the condition."""
+            if self.entity.status.dict_condition_attack["attack_bleed"]:
                 if target.status.dict_condition_afflicted["flag_bleed"] == False:
                     if not target.status.check_bleed_immunity:
                         target.status.dict_condition_afflicted["flag_bleed"] = True
                         self.engine.message_log.add_message(f"The {target.name} is bleeding!", attack_color)
                     else:
                         self.engine.message_log.add_message(f"The {target.name} is resistant to bleeding!", attack_color)
-            if self.entity.status.dict_condition_attack["attack_poison"] == True:
+                else:
+                    self.engine.message_log.add_message(f"The {target.name} is already bleeding!", attack_color)
+            if self.entity.status.dict_condition_attack["attack_poison"]:
                 if target.status.dict_condition_afflicted["flag_poison"] == False:
                     if not target.status.check_poison_immunity:
                         target.status.dict_condition_afflicted["flag_poison"] = True
@@ -193,7 +206,7 @@ class MeleeAction(ActionWithDirection):
                         self.engine.message_log.add_message(f"The {target.name} is resistant to poison!", attack_color)
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already poisoned!", attack_color)
-            if self.entity.status.dict_condition_attack["attack_stun"] == True:
+            if self.entity.status.dict_condition_attack["attack_stun"]:
                 if target.status.dict_condition_afflicted["flag_stun"] == False:
                     if not target.status.check_stun_immunity:
                         target.status.dict_condition_afflicted["flag_stun"] = True
@@ -203,7 +216,7 @@ class MeleeAction(ActionWithDirection):
                         self.engine.message_log.add_message(f"The {target.name} is resistant to stun!", attack_color)
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already stunned!", attack_color)
-            if self.entity.status.dict_condition_attack["attack_confusion"] == True:
+            if self.entity.status.dict_condition_attack["attack_confusion"]:
                 if target.status.dict_condition_afflicted["flag_confusion"] == False:
                     if not target.status.check_confusion_immunity:
                         target.status.dict_condition_afflicted["flag_confusion"] = True
@@ -213,9 +226,21 @@ class MeleeAction(ActionWithDirection):
                         self.engine.message_log.add_message(f"The {target.name} is resistant to confusion!", attack_color)
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already confusion!", attack_color)
+            if self.entity.status.dict_condition_attack["attack_grab"]:
+                if not target.status.check_grabbed_condition:
+                    if not target.status.check_grab_immunity:
+                        target.status.dict_condition_afflicted["flag_grab"] = True
+                        target.status.turns_passed = 0
+                        self.engine.message_log.add_message(f"The {target.name} is grabbed by the {self.entity.name}!", attack_color)
+                    else:
+                        self.engine.message_log.add_message(f"The {target.name} is too agile to be grabbed!", attack_color)
+                else:
+                    self.engine.message_log.add_message(f"The {target.name} is already grabbed by {self.entity.name}!", attack_color)
+
+
 
         else:
-            """If the equipment of the player can create the status, it will check the other condition. 
+            """Check if the equipment of the player can create the conditions specified. 
                Then, it will check if the monster is already afflicted by the condition or if it's immune to the condition."""
             if (self.entity.equipment.weapon.equippable.status_effect == "bleed" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "bleed")):
                 if target.status.dict_condition_afflicted["flag_bleed"] == False:
@@ -250,11 +275,21 @@ class MeleeAction(ActionWithDirection):
                     if not target.status.check_confusion_immunity:
                         target.status.dict_condition_afflicted["flag_confusion"] = True
                         target.status.turns_passed = 0
-                        self.engine.message_log.add_message(f"The {target.name} is confusion!", attack_color)
+                        self.engine.message_log.add_message(f"The {target.name} is confused!", attack_color)
                     else:
                         self.engine.message_log.add_message(f"The {target.name} is resistant to confusion!", attack_color)
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already confusion!", attack_color)
+            if (self.entity.equipment.weapon.equippable.status_effect == "grab" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "grab")):
+                if not target.status.check_grabbed_condition:
+                    if not target.status.check_grab_immunity:
+                        target.status.dict_condition_afflicted["flag_grab"] = True
+                        target.status.turns_passed = 0
+                        self.engine.message_log.add_message(f"The {target.name} is grabbed by the {self.entity.name}!", attack_color)
+                    else:
+                        self.engine.message_log.add_message(f"The {target.name} is too agile to be grabbed!", attack_color)
+                else:
+                    self.engine.message_log.add_message(f"The {target.name} is already grabbed by the {self.entity.name}!", attack_color)
 
 
 class ChestAction(ActionWithDirection):
@@ -299,6 +334,9 @@ class MovementAction(ActionWithDirection):
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             # Destination is blocked by an entity.
             raise exceptions.Impossible("That way is blocked.")
+        if self.entity.status.check_grabbed_condition:
+            # The entity is grabbed and can't move.
+            raise exceptions.Impossible("You are grabbed, you can't move.")
 
         self.entity.move(self.dx, self.dy)
 
@@ -351,6 +389,8 @@ class BumpAction(ActionWithDirection):
                 return WaitAction(self.entity)
         else:
             self.entity.status.turns_passed += 1
+
+        
 
         # After all the status, checks for the target actors or chests
         if self.target_actor:
