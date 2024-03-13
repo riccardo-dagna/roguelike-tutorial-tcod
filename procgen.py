@@ -115,22 +115,6 @@ def get_chest_item_at_random(
     
     chosen_item = random.choices(items_list, weights=item_weighted_chances_values, k=1)
     return chosen_item[0]
-    
-
-
-def item_chests() -> Item:
-    inside_item: Item = None
-
-    if random.random() < 0.25:
-        inside_item = entity_factories.chain_mail
-    elif random.random() < 0.5:
-        inside_item = entity_factories.sword
-    elif random.random() < 0.75:
-        inside_item = entity_factories.attack_ring
-    else:
-        inside_item = entity_factories.defense_ring
-    
-    return inside_item
 
 
 class RectangularRoom:
