@@ -7,6 +7,7 @@ import color
 import exceptions
 import input_handlers
 import setup_game
+from utilty import resource_path
 
 
 def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
@@ -20,7 +21,7 @@ def main() -> None:
     screen_width = 80
     screen_height = 50
 
-    tileset = tcod.tileset.load_tilesheet("data/dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD)
+    tileset = tcod.tileset.load_tilesheet(resource_path("data/dejavu10x10_gs_tc.png"), 32, 8, tcod.tileset.CHARMAP_TCOD)
 
     handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
 

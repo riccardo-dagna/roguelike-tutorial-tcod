@@ -16,9 +16,10 @@ from game_map import GameWorld
 import color
 import entity_factories
 import input_handlers
+from utilty import resource_path
 
 # Load the background image.  Pillow returns an object convertable into a NumPy array.
-background_image = Image.open("data/menu_background.png")
+background_image = Image.open(resource_path("data/menu_background.png"))
 
 
 def new_game() -> Engine:
