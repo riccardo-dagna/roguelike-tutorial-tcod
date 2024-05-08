@@ -189,7 +189,7 @@ class MeleeAction(ActionWithDirection):
             """ If the enemy can affect the player with a condition from an attack, it will not check the other condition. 
                Then, it will check if the player is already afflicted by the condition or if it's immune to the condition."""
             if self.entity.status.dict_condition_attack["attack_bleed"]:
-                if target.status.dict_condition_afflicted["flag_bleed"] == False:
+                if not target.status.dict_condition_afflicted["flag_bleed"]:
                     if not target.status.check_bleed_immunity:
                         target.status.dict_condition_afflicted["flag_bleed"] = True
                         self.engine.message_log.add_message(f"The {target.name} is bleeding!", attack_color)
@@ -198,7 +198,7 @@ class MeleeAction(ActionWithDirection):
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already bleeding!", attack_color)
             if self.entity.status.dict_condition_attack["attack_poison"]:
-                if target.status.dict_condition_afflicted["flag_poison"] == False:
+                if not target.status.dict_condition_afflicted["flag_poison"]:
                     if not target.status.check_poison_immunity:
                         target.status.dict_condition_afflicted["flag_poison"] = True
                         self.engine.message_log.add_message(f"The {target.name} is poisoned!", attack_color)
@@ -207,7 +207,7 @@ class MeleeAction(ActionWithDirection):
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already poisoned!", attack_color)
             if self.entity.status.dict_condition_attack["attack_stun"]:
-                if target.status.dict_condition_afflicted["flag_stun"] == False:
+                if not target.status.dict_condition_afflicted["flag_stun"]:
                     if not target.status.check_stun_immunity:
                         target.status.dict_condition_afflicted["flag_stun"] = True
                         target.status.turns_passed = 0
@@ -217,7 +217,7 @@ class MeleeAction(ActionWithDirection):
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already stunned!", attack_color)
             if self.entity.status.dict_condition_attack["attack_confusion"]:
-                if target.status.dict_condition_afflicted["flag_confusion"] == False:
+                if not target.status.dict_condition_afflicted["flag_confusion"]:
                     if not target.status.check_confusion_immunity:
                         target.status.dict_condition_afflicted["flag_confusion"] = True
                         target.status.turns_passed = 0
@@ -243,7 +243,7 @@ class MeleeAction(ActionWithDirection):
             """Check if the equipment of the player can create the conditions specified. 
                Then, it will check if the monster is already afflicted by the condition or if it's immune to the condition."""
             if (self.entity.equipment.weapon.equippable.status_effect == "bleed" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "bleed")):
-                if target.status.dict_condition_afflicted["flag_bleed"] == False:
+                if not target.status.dict_condition_afflicted["flag_bleed"]:
                     if not target.status.check_bleed_immunity:
                         target.status.dict_condition_afflicted["flag_bleed"] = True
                         self.engine.message_log.add_message(f"The {target.name} is bleeding!", attack_color)
@@ -252,7 +252,7 @@ class MeleeAction(ActionWithDirection):
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already bleeding!", attack_color)
             if (self.entity.equipment.weapon.equippable.status_effect == "poison" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "poison")):
-                if target.status.dict_condition_afflicted["flag_poison"] == False:
+                if not target.status.dict_condition_afflicted["flag_poison"]:
                     if not target.status.check_poison_immunity:
                         target.status.dict_condition_afflicted["flag_poison"] = True
                         self.engine.message_log.add_message(f"The {target.name} is poisoned!", attack_color)
@@ -261,7 +261,7 @@ class MeleeAction(ActionWithDirection):
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already poisoned!", attack_color)
             if (self.entity.equipment.weapon.equippable.status_effect == "stun" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "stun")):
-                if target.status.dict_condition_afflicted["flag_stun"] == False:
+                if not target.status.dict_condition_afflicted["flag_stun"]:
                     if not target.status.check_stun_immunity:
                         target.status.dict_condition_afflicted["flag_stun"] = True
                         target.status.turns_passed = 0
@@ -271,7 +271,7 @@ class MeleeAction(ActionWithDirection):
                 else:
                     self.engine.message_log.add_message(f"The {target.name} is already stunned!", attack_color)
             if (self.entity.equipment.weapon.equippable.status_effect == "confusion" or (self.entity.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "confusion")):
-                if target.status.dict_condition_afflicted["flag_confusion"] == False:
+                if not target.status.dict_condition_afflicted["flag_confusion"]:
                     if not target.status.check_confusion_immunity:
                         target.status.dict_condition_afflicted["flag_confusion"] = True
                         target.status.turns_passed = 0
