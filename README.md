@@ -5,6 +5,8 @@ This is a rougelike created with the tutorial from http://rogueliketutorials.com
 To start the project, simply download the project, execute "pip install -r requirements.txt".
 And then, move into "roguelike-tutorial-tcod" and then execute "python main.py".
 
+Or, if you want a .exe file, use the command: "pyinstaller main.py --onefile --add-data "data/menu_background.png;data/" --add-data "data/dejavu10x10_gs_tc.png;data/" "
+
 The list of commands is below:
 - "movement arrow" to move and attack
 - "numpad arrow" (excluded 5) to move and attack in the direction
