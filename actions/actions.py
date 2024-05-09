@@ -361,13 +361,16 @@ class BumpAction(ActionWithDirection):
             self.entity.status.turns_passed = 0
 
         # Check if the player is afflicted by confusion
-        elif self.entity.status.dict_condition_afflicted["flag_confusion"] and self.entity == self.engine.player:
+        elif self.entity.status.dict_condition_afflicted["flag_confusion"]:
 
             # If the number of turns is over the number of turns required for the confusion, end the confusion effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_confusion:
                 self.entity.status.dict_condition_afflicted["flag_confusion"] = False
                 self.entity.status.turns_passed = 0
-                self.engine.message_log.add_message(f"You are no longer confused!")
+                if self.entity == self.engine.player:
+                    self.engine.message_log.add_message(f"You are no longer confused!")
+                else:
+                    self.engine.message_log.add_message(f"The {self.entity.name} is no longer confused.")
             # Else, it creates a random direction and return the action for the random direction
             else:
                 self.entity.status.turns_passed += 1
@@ -381,16 +384,22 @@ class BumpAction(ActionWithDirection):
                     return MovementAction(self.entity, direction_x, direction_y).perform()
 
         # Check if the player is afflicted by stun
-        elif self.entity.status.dict_condition_afflicted["flag_stun"] and self.entity == self.engine.player:
+        elif self.entity.status.dict_condition_afflicted["flag_stun"]:
             # If the number of turns is over the number of turns required for the stun, end the stun effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_stun:
                 self.entity.status.dict_condition_afflicted["flag_stun"] = False
                 self.entity.status.turns_passed = 0
-                self.engine.message_log.add_message(f"You are no longer stunned!")
+                if self.entity == self.engine.player:
+                    self.engine.message_log.add_message(f"You are no longer stunned!")
+                else:
+                    self.engine.message_log.add_message(f"The {self.entity.name} are no longer stunned!")
             # Else, it does the wait action for a turn
             else:
                 self.entity.status.turns_passed += 1
-                self.engine.message_log.add_message(f"You are stunned!")
+                if self.entity == self.engine.player:
+                    self.engine.message_log.add_message(f"You are stunned!")
+                else:
+                    self.engine.message_log.add_message(f"The {self.entity.name} is stunned and can't move!")
                 return WaitAction(self.entity)
         else:
             self.entity.status.turns_passed += 1
