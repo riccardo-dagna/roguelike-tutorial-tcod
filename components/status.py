@@ -91,19 +91,19 @@ class Status(BaseComponent):
         pass
 
 
-def confusion_direction(self) -> Tuple[int, int]:
-        # Return a random direction to the player.
-        direction_x, direction_y = random.choice(
-            [
-                    (-1, -1),  # Northwest
-                    (0, -1),  # North
-                    (1, -1),  # Northeast
-                    (-1, 0),  # West
-                    (1, 0),  # East
-                    (-1, 1),  # Southwest
-                    (0, 1),  # South
-                    (1, 1),  # Southeast
-            ]
-        )
+def confusion_direction() -> Tuple[int, int]:
+    # Return a random direction to the player.
+    direction_x, direction_y = random.choice(
+        [
+            (-1, -1),  # Northwest
+            (0, -1),  # North
+            (1, -1),  # Northeast
+            (-1, 0),  # West
+            (1, 0),  # East
+            (-1, 1),  # Southwest
+            (0, 1),  # South
+            (1, 1),  # Southeast
+        ]
+    )
 
-        return direction_x, direction_y
+    return direction_x, direction_y

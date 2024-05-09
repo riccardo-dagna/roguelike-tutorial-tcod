@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Tuple
+import random
 
 import game_map.color as color
 import utility_files.exceptions as exceptions
@@ -9,7 +10,7 @@ if TYPE_CHECKING:
     from game_logic.engine import Engine
     from entity.entity import Actor, Entity, Item, Chest
     from components.damageinfo import DamageInfo
-    from components.status import confusion_direction
+    #from components.status import confusion_direction
 
 
 class Action:
@@ -361,7 +362,7 @@ class BumpAction(ActionWithDirection):
             self.entity.status.turns_passed = 0
 
         # Check if the player is afflicted by confusion
-        elif self.entity.status.dict_condition_afflicted["flag_confusion"] and self.entity == self.engine.player:
+        elif self.entity.status.dict_condition_afflicted["flag_confusion"]:
 
             # If the number of turns is over the number of turns required for the confusion, end the confusion effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_confusion:
@@ -374,7 +375,18 @@ class BumpAction(ActionWithDirection):
             # Else, it creates a random direction and return the action for the random direction
             else:
                 self.entity.status.turns_passed += 1
-                direction_x, direction_y = confusion_direction()
+                direction_x, direction_y = random.choice(
+                    [
+                        (-1, -1),  # Northwest
+                        (0, -1),  # North
+                        (1, -1),  # Northeast
+                        (-1, 0),  # West
+                        (1, 0),  # East
+                        (-1, 1),  # Southwest
+                        (0, 1),  # South
+                        (1, 1),  # Southeast
+                    ]
+                )
                 # Then check if there are actors or chests at the random direction
                 if self.engine.game_map.get_actor_at_location(self.dx + direction_x, self.dy + direction_y):
                     return MeleeAction(self.entity, direction_x, direction_y).perform()

@@ -54,10 +54,11 @@ class HostileEnemy(BaseAI):
         self.path: List[Tuple[int, int]] = []
 
     def perform(self) -> None:
+        target = self.engine.player
+        dx = target.x - self.entity.x
+        dy = target.y - self.entity.y
+
         if not self.entity.status.dict_condition_afflicted["flag_confusion"]:
-            target = self.engine.player
-            dx = target.x - self.entity.x
-            dy = target.y - self.entity.y
             distance = max(abs(dx), abs(dy))  # Chebyshev distance.
 
             if self.engine.game_map.visible[self.entity.x, self.entity.y]:
@@ -74,7 +75,7 @@ class HostileEnemy(BaseAI):
                     dest_y - self.entity.y,
                 ).perform()
         else:
-            pass
+            return BumpAction(self.entity, dx, dy).perform()
 
         return WaitAction(self.entity).perform()
 
