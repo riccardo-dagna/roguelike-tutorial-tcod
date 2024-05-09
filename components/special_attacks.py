@@ -6,7 +6,7 @@ import random
 from components.base_component import BaseComponent
 
 if TYPE_CHECKING:
-    from entity import Actor
+    from entity.entity import Actor
 
 class SpecialAttacks(BaseComponent):
     parent: Actor

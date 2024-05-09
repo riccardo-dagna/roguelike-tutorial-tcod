@@ -6,14 +6,14 @@ import os
 import tcod
 from tcod import libtcodpy
 
-from actions import Action, BumpAction, PickupAction, WaitAction
-import actions
-import color
+from actions.actions import Action, BumpAction, PickupAction, WaitAction
+import actions.actions
+import game_map.color as color
 import exceptions
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Item
+    from entity.entity import Item
 
 
 MOVE_KEYS = {

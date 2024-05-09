@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Entity
-    from game_map import GameMap
+    from entity.entity import Entity
+    from game_map.game_map import GameMap
 
 
 class BaseComponent:

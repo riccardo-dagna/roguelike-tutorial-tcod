@@ -3,7 +3,7 @@ import textwrap
 
 import tcod
 
-import color
+import game_map.color as color
 
 
 class Message:

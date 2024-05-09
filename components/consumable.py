@@ -4,14 +4,14 @@ from typing import TYPE_CHECKING, Optional
 
 from components.base_component import BaseComponent
 from exceptions import Impossible
-from input_handlers import ActionOrHandler, AreaRangedAttackHandler, SingleRangedAttackHandler
-import actions
-import color
+from actions.input_handlers import ActionOrHandler, AreaRangedAttackHandler, SingleRangedAttackHandler
+import actions.actions
+import game_map.color as color
 import components.ai
 import components.inventory
 
 if TYPE_CHECKING:
-    from entity import Actor, Item
+    from entity.entity import Actor, Item
 
 
 class Consumable(BaseComponent):

@@ -6,7 +6,7 @@ from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
 from components.status import Status
-from entity import Actor, Item, Chest
+from entity.entity import Actor, Item, Chest
 
 player = Actor(
     char="@",

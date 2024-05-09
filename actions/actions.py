@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Tuple
 
-import color
+import game_map.color as color
 import exceptions
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Actor, Entity, Item, Chest
+    from entity.entity import Actor, Entity, Item, Chest
     from components.damageinfo import DamageInfo
 
 

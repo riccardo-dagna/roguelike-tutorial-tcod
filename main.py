@@ -3,9 +3,9 @@ import traceback
 
 import tcod
 
-import color
+import game_map.color as color
 import exceptions
-import input_handlers
+import actions.input_handlers as input_handlers
 import setup_game
 from utilty import resource_path
 

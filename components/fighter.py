@@ -3,11 +3,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from components.base_component import BaseComponent
-from render_order import RenderOrder
-import color
+from render_logic.render_order import RenderOrder
+import game_map.color as color
 
 if TYPE_CHECKING:
-    from entity import Actor
+    from entity.entity import Actor
 
 
 class Fighter(BaseComponent):

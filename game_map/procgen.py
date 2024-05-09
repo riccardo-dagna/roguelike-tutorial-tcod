@@ -6,13 +6,13 @@ import copy
 
 import tcod
 
-from game_map import GameMap
-import entity_factories
-import tile_types
+from game_map.game_map import GameMap
+import entity.entity_factories as entity_factories
+import game_map.tile_types as tile_types
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Entity, Item
+    from entity.entity import Entity, Item
 
 # This is the list of the max enemy, item in floor and item in chests per floor
 """max_chest_by_floor = [

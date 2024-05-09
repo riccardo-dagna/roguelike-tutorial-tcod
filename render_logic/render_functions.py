@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Tuple
 
-import color
+import game_map.color as color
 
 if TYPE_CHECKING:
     from tcod import Console
 
     from engine import Engine
-    from game_map import GameMap
+    from game_map.game_map import GameMap
 
 
 def get_names_at_location(x: int, y: int, game_map: GameMap) -> str:

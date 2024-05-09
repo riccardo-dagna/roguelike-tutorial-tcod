@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional, Tuple, Type, TypeVar, Union
 import copy
 import math
 
-from render_order import RenderOrder
+from render_logic.render_order import RenderOrder
 
 if TYPE_CHECKING:
     from components.ai import BaseAI

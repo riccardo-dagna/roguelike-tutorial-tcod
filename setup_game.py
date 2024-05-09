@@ -12,10 +12,10 @@ import tcod
 import libtcodpy
 
 from engine import Engine
-from game_map import GameWorld
-import color
-import entity_factories
-import input_handlers
+from game_map.game_map import GameWorld
+import game_map.color as color
+import entity.entity_factories as entity_factories
+import actions.input_handlers as input_handlers
 from utilty import resource_path
 
 # Load the background image.  Pillow returns an object convertable into a NumPy array.

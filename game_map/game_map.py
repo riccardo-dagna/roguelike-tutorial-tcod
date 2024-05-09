@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING, Iterable, Iterator, Optional
 from tcod.console import Console
 import numpy as np
 
-from entity import Actor, Item, Chest
-import tile_types
+from entity.entity import Actor, Item, Chest
+import game_map.tile_types as tile_types
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Entity
+    from entity.entity import Entity
 
 
 class GameMap:
@@ -118,7 +118,7 @@ class GameWorld:
         self.current_floor = current_floor
 
     def generate_floor(self) -> None:
-        from procgen import generate_dungeon
+        from game_map.procgen import generate_dungeon
 
         self.current_floor += 1
 
