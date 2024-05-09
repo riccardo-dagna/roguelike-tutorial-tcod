@@ -5,7 +5,7 @@ import tcod
 
 import game_map.color as color
 import utility_files.exceptions as exceptions
-import actions.input_handlers as input_handlers
+import actions_logic.input_handlers as input_handlers
 import game_logic.setup_game as setup_game
 from utility_files.utility import resource_path
 

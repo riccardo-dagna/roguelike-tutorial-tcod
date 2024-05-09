@@ -361,7 +361,7 @@ class BumpAction(ActionWithDirection):
             self.entity.status.turns_passed = 0
 
         # Check if the player is afflicted by confusion
-        elif self.entity.status.dict_condition_afflicted["flag_confusion"]:
+        elif self.entity.status.dict_condition_afflicted["flag_confusion"] and self.entity == self.engine.player:
 
             # If the number of turns is over the number of turns required for the confusion, end the confusion effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_confusion:

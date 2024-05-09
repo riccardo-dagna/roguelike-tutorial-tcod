@@ -15,7 +15,7 @@ from game_logic.engine import Engine
 from game_map.game_map import GameWorld
 import game_map.color as color
 import entity.entity_factories as entity_factories
-import actions.input_handlers as input_handlers
+import actions_logic.input_handlers as input_handlers
 from utility_files.utility import resource_path
 
 # Load the background image.  Pillow returns an object convertable into a NumPy array.

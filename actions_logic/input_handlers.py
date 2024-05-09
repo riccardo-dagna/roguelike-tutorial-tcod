@@ -6,8 +6,8 @@ import os
 import tcod
 from tcod import libtcodpy
 
-from actions.actions import Action, BumpAction, PickupAction, WaitAction
-import actions.actions
+from actions_logic.actions import Action, BumpAction, PickupAction, WaitAction
+import actions_logic.actions as actions
 import game_map.color as color
 import utility_files.exceptions as exceptions
 

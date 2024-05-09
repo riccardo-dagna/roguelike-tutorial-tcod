@@ -6,7 +6,7 @@ import random
 import numpy as np
 import tcod
 
-from actions.actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction
+from actions_logic.actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction
 from entity.entity import Actor
 
 if TYPE_CHECKING:
@@ -54,24 +54,27 @@ class HostileEnemy(BaseAI):
         self.path: List[Tuple[int, int]] = []
 
     def perform(self) -> None:
-        target = self.engine.player
-        dx = target.x - self.entity.x
-        dy = target.y - self.entity.y
-        distance = max(abs(dx), abs(dy))  # Chebyshev distance.
+        if not self.entity.status.dict_condition_afflicted["flag_confusion"]:
+            target = self.engine.player
+            dx = target.x - self.entity.x
+            dy = target.y - self.entity.y
+            distance = max(abs(dx), abs(dy))  # Chebyshev distance.
 
-        if self.engine.game_map.visible[self.entity.x, self.entity.y]:
-            if distance <= 1:
-                return MeleeAction(self.entity, dx, dy).perform()
+            if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+                if distance <= 1:
+                    return MeleeAction(self.entity, dx, dy).perform()
 
-            self.path = self.get_path_to(target.x, target.y)
+                self.path = self.get_path_to(target.x, target.y)
 
-        if self.path:
-            dest_x, dest_y = self.path.pop(0)
-            return MovementAction(
-                self.entity,
-                dest_x - self.entity.x,
-                dest_y - self.entity.y,
-            ).perform()
+            if self.path:
+                dest_x, dest_y = self.path.pop(0)
+                return MovementAction(
+                    self.entity,
+                    dest_x - self.entity.x,
+                    dest_y - self.entity.y,
+                ).perform()
+        else:
+            pass
 
         return WaitAction(self.entity).perform()
 

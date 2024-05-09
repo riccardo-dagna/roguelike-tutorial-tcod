@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING, Optional
 
 from components.base_component import BaseComponent
 from utility_files.exceptions import Impossible
-from actions.input_handlers import ActionOrHandler, AreaRangedAttackHandler, SingleRangedAttackHandler
-import actions.actions
+from actions_logic.input_handlers import ActionOrHandler, AreaRangedAttackHandler, SingleRangedAttackHandler
+import actions_logic.actions as actions
 import game_map.color as color
-import components.ai
+import components.ai as ai
 import components.inventory
 import components.status
 
