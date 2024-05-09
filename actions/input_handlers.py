@@ -230,6 +230,8 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             console.print(x=x + 1, y=y + 6, string=f"Status: stunned")
         elif self.engine.player.status.dict_condition_afflicted["flag_confusion"]:
             console.print(x=x + 1, y=y + 6, string=f"Status: confused")
+        elif self.engine.player.status.dict_condition_afflicted["flag_grab"]:
+            console.print(x=x + 1, y=y + 6, string=f"Status: grabbed")
         else:
             console.print(x=x + 1, y=y + 6, string=f"Status: healthy")
 
