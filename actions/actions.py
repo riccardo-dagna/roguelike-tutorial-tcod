@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from game_logic.engine import Engine
     from entity.entity import Actor, Entity, Item, Chest
     from components.damageinfo import DamageInfo
+    from components.status import confusion_direction
 
 
 class Action:
@@ -185,6 +186,7 @@ class MeleeAction(ActionWithDirection):
 
         # After the damage, there is the check for the conditions effect.
         # This checks if the entity is an enemy or the player.
+        # affect_new_status(self, target)
         if self.entity.equipment.weapon is None and self.entity.equipment.accessory_1 is None and self.entity.equipment.accessory_2 is None:
             """ If the enemy can affect the player with a condition from an attack, it will not check the other condition. 
                Then, it will check if the player is already afflicted by the condition or if it's immune to the condition."""
@@ -334,6 +336,9 @@ class MovementAction(ActionWithDirection):
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             # Destination is blocked by an entity.
             raise exceptions.Impossible("That way is blocked.")
+        if self.engine.game_map.get_chest_at_location(dest_x, dest_y) and self.entity != self.engine.player:
+            # Destination is blocked by an chest for a non player.
+            raise exceptions.Impossible("That way is blocked.")
         if self.entity.status.check_grabbed_condition:
             # The entity is grabbed and can't move.
             raise exceptions.Impossible("You are grabbed, you can't move.")
@@ -366,11 +371,11 @@ class BumpAction(ActionWithDirection):
             # Else, it creates a random direction and return the action for the random direction
             else:
                 self.entity.status.turns_passed += 1
-                direction_x, direction_y = self.entity.status.confusion_direction()
+                direction_x, direction_y = confusion_direction()
                 # Then check if there are actors or chests at the random direction
                 if self.engine.game_map.get_actor_at_location(self.dx + direction_x, self.dy + direction_y):
                     return MeleeAction(self.entity, direction_x, direction_y).perform()
-                elif self.engine.game_map.get_chest_at_location(self.dx + direction_x, self.dy + direction_y):
+                elif self.engine.game_map.get_chest_at_location(self.dx + direction_x, self.dy + direction_y) and self.entity == self.engine.player:
                     return ChestAction(self.entity, direction_x, direction_y).perform()
                 else:
                     return MovementAction(self.entity, direction_x, direction_y).perform()

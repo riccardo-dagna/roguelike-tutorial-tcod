@@ -10,7 +10,8 @@ from actions.actions import Action, BumpAction, MeleeAction, MovementAction, Wai
 from entity.entity import Actor
 
 if TYPE_CHECKING:
-    from entity import Actor
+    from entity.entity import Actor
+    from components.status import confusion_direction
 
 
 class BaseAI(Action):
@@ -94,19 +95,7 @@ class ConfusedEnemy(BaseAI):
             self.entity.ai = self.previous_ai
         else:
             # Pick a random direction
-            direction_x, direction_y = random.choice(
-                [
-                    (-1, -1),  # Northwest
-                    (0, -1),  # North
-                    (1, -1),  # Northeast
-                    (-1, 0),  # West
-                    (1, 0),  # East
-                    (-1, 1),  # Southwest
-                    (0, 1),  # South
-                    (1, 1),  # Southeast
-                ]
-            )
-
+            direction_x, direction_y = confusion_direction()
             self.turns_remaining -= 1
 
             # The actor will either try to move or attack in the chosen random direction.
