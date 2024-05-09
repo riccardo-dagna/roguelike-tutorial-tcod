@@ -9,6 +9,7 @@ import actions.actions
 import game_map.color as color
 import components.ai
 import components.inventory
+import components.status
 
 if TYPE_CHECKING:
     from entity.entity import Actor, Item
@@ -62,11 +63,8 @@ class ConfusionConsumable(Consumable):
             f"The eyes of the {target.name} look vacant, as it starts to stumble around!",
             color.status_effect_applied,
         )
-        target.ai = components.ai.ConfusedEnemy(
-            entity=target,
-            previous_ai=target.ai,
-            turns_remaining=self.number_of_turns,
-        )
+        target.status.dict_condition_afflicted["flag_confusion"] = True
+        target.status.turns_passed = 0
         self.consume()
 
 
@@ -195,9 +193,6 @@ class StunConsumable(Consumable):
             f"The {target.name} is trying to focus, but it can't!",
             color.status_effect_applied,
         )
-        target.ai = components.ai.StunnedEnemy(
-            entity=target,
-            previous_ai=target.ai,
-            turns_remaining=self.number_of_turns
-        )
+        target.status.dict_condition_afflicted["flag_stun"] = True
+        target.status.turns_passed = 0
         self.consume()
