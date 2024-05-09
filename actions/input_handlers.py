@@ -9,10 +9,10 @@ from tcod import libtcodpy
 from actions.actions import Action, BumpAction, PickupAction, WaitAction
 import actions.actions
 import game_map.color as color
-import exceptions
+import utility_files.exceptions as exceptions
 
 if TYPE_CHECKING:
-    from engine import Engine
+    from game_logic.engine import Engine
     from entity.entity import Item
 
 

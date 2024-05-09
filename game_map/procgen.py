@@ -11,7 +11,7 @@ import entity.entity_factories as entity_factories
 import game_map.tile_types as tile_types
 
 if TYPE_CHECKING:
-    from engine import Engine
+    from game_logic.engine import Engine
     from entity.entity import Entity, Item
 
 # This is the list of the max enemy, item in floor and item in chests per floor

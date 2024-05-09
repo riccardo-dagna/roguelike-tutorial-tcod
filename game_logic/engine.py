@@ -8,7 +8,7 @@ from tcod.console import Console
 from tcod.map import compute_fov
 
 from render_logic.message_log import MessageLog
-import exceptions
+import utility_files.exceptions as exceptions
 import render_logic.render_functions as render_functions
 
 if TYPE_CHECKING:

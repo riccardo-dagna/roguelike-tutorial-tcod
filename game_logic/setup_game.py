@@ -11,12 +11,12 @@ from PIL import Image  # type: ignore
 import tcod
 import libtcodpy
 
-from engine import Engine
+from game_logic.engine import Engine
 from game_map.game_map import GameWorld
 import game_map.color as color
 import entity.entity_factories as entity_factories
 import actions.input_handlers as input_handlers
-from utilty import resource_path
+from utility_files.utility import resource_path
 
 # Load the background image.  Pillow returns an object convertable into a NumPy array.
 background_image = Image.open(resource_path("data/menu_background.png"))

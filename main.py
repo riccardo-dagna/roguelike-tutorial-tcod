@@ -4,10 +4,10 @@ import traceback
 import tcod
 
 import game_map.color as color
-import exceptions
+import utility_files.exceptions as exceptions
 import actions.input_handlers as input_handlers
-import setup_game
-from utilty import resource_path
+import game_logic.setup_game as setup_game
+from utility_files.utility import resource_path
 
 
 def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:

@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Tuple
 
 import game_map.color as color
-import exceptions
+import utility_files.exceptions as exceptions
 
 if TYPE_CHECKING:
-    from engine import Engine
+    from game_logic.engine import Engine
     from entity.entity import Actor, Entity, Item, Chest
     from components.damageinfo import DamageInfo
 

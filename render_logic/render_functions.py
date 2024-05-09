@@ -7,7 +7,7 @@ import game_map.color as color
 if TYPE_CHECKING:
     from tcod import Console
 
-    from engine import Engine
+    from game_logic.engine import Engine
     from game_map.game_map import GameMap
 
 

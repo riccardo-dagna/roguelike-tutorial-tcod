@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from components.base_component import BaseComponent
-from exceptions import Impossible
+from utility_files.exceptions import Impossible
 from actions.input_handlers import ActionOrHandler, AreaRangedAttackHandler, SingleRangedAttackHandler
 import actions.actions
 import game_map.color as color

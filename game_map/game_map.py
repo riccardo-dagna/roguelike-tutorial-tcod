@@ -9,7 +9,7 @@ from entity.entity import Actor, Item, Chest
 import game_map.tile_types as tile_types
 
 if TYPE_CHECKING:
-    from engine import Engine
+    from game_logic.engine import Engine
     from entity.entity import Entity
 
 
