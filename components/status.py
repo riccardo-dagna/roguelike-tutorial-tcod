@@ -87,7 +87,11 @@ class Status(BaseComponent):
             self.engine.message_log.add_message(f"You receive {self.damage_poison} damage from the poison!")
             self.turns_passed = 0
 
-    def confusion_direction(self) -> Tuple[int, int]:
+    def affect_new_status(self, actor, target) -> None:
+        pass
+
+
+def confusion_direction(self) -> Tuple[int, int]:
         # Return a random direction to the player.
         direction_x, direction_y = random.choice(
             [
