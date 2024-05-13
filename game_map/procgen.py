@@ -9,16 +9,14 @@ import tcod
 from game_map.game_map import GameMap
 import entity.entity_factories as entity_factories
 import game_map.tile_types as tile_types
+import game_map.floor_values as floor_values
 
 if TYPE_CHECKING:
     from game_logic.engine import Engine
     from entity.entity import Entity, Item
 
+"""
 # This is the list of the max enemy, item in floor and item in chests per floor
-"""max_chest_by_floor = [
-    (1, 1),
-    (4, 2),
-]"""
 max_chest_by_floor = 2
 
 max_items_by_floor = [
@@ -56,6 +54,7 @@ chest_chances: Dict[int, List[Tuple[Entity, int]]] = {
     2: [(entity_factories.sword, 0), (entity_factories.chain_mail, 0), (entity_factories.attack_ring, 80), (entity_factories.defense_ring, 80)],
     4: [(entity_factories.sword, 0), (entity_factories.chain_mail, 0), (entity_factories.attack_ring, 15), (entity_factories.defense_ring, 15), (entity_factories.vorpal_sword, 60)],
 }
+"""
 
 
 def get_max_value_for_floor(max_value_by_floor: List[Tuple[int, int]], floor: int) -> int:
@@ -142,11 +141,11 @@ class RectangularRoom:
 
 
 def place_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int) -> None:
-    number_of_monsters = random.randint(0, get_max_value_for_floor(max_monsters_by_floor, floor_number))
-    number_of_items = random.randint(0, get_max_value_for_floor(max_items_by_floor, floor_number))
+    number_of_monsters = random.randint(0, get_max_value_for_floor(floor_values.max_monsters_by_floor, floor_number))
+    number_of_items = random.randint(0, get_max_value_for_floor(floor_values.max_items_by_floor, floor_number))
 
-    monsters: List[Entity] = get_entities_at_random(enemy_chances, number_of_monsters, floor_number)
-    items: List[Entity] = get_entities_at_random(item_chances, number_of_items, floor_number)
+    monsters: List[Entity] = get_entities_at_random(floor_values.enemy_chances, number_of_monsters, floor_number)
+    items: List[Entity] = get_entities_at_random(floor_values.item_chances, number_of_items, floor_number)
 
     for entity in monsters + items:
         x = random.randint(room.x1 + 1, room.x2 - 1)
@@ -211,7 +210,7 @@ def generate_dungeon(
         dungeon.tiles[new_room.inner] = tile_types.floor
         
         #Create a chest in the room, if the total of chest is minor to the max number of chest
-        if total_chest <= max_chest_by_floor:
+        if total_chest <= floor_values.max_chest_by_floor:
             x = random.randint(new_room.x1 + 1, new_room.x2 - 1)
             y = random.randint(new_room.y1 + 1, new_room.y2 - 1)
 
@@ -220,9 +219,8 @@ def generate_dungeon(
                     pass
                 else:
                     dungeon.tiles[x, y] = tile_types.chest
-                    entity_factories.chest.spawn(gamemap=dungeon, x=x, y=y, item=get_chest_item_at_random(chest_chances, floor=engine.game_world.current_floor))
+                    entity_factories.chest.spawn(gamemap=dungeon, x=x, y=y, item=get_chest_item_at_random(floor_values.chest_chances, floor=engine.game_world.current_floor))
                     total_chest += 1
-
 
         if len(rooms) == 0:
             # The first room, where the player starts.
