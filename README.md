@@ -27,12 +27,12 @@ The list of commands is below:
 
 Mechanics added in the game, already tested:
 - Movement and basic attacks
-- Random map generation
-- Item spawning in the map
+- Random map generation and floor difficulty
+- Item spawning in the map (depending on the floor the player is)
 - Inventory capability (and dropping capability)
 - Targeting ability with scrolls (single-target and area)
 - Equipment (weapon, armor and accessory)
-- Chests containing equipment
+- Chests containing equipment (depending on the floor the player is)
 - Condition (bleeding, poison, stun and confusion and item that cause status, grab (only for the enemy), condemnation)
 - Elemental damage (fire, ice, and electric) - only damage
 

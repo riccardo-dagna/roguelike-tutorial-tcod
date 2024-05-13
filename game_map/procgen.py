@@ -34,10 +34,10 @@ max_monsters_by_floor = [
 
 # This is the dictionary that contain the spawning items on the floor and weight
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.stun_scroll, 80)],
-    0: [(entity_factories.confusion_scroll, 80)],
-    2: [(entity_factories.health_potion, 35)],
-    2: [(entity_factories.status_potion, 35)],
+    0: [(entity_factories.health_potion, 35)],
+    0: [(entity_factories.status_potion, 35)],
+    2: [(entity_factories.stun_scroll, 80)],
+    2: [(entity_factories.confusion_scroll, 80)],
     4: [(entity_factories.lightning_scroll, 25)],
     6: [(entity_factories.fireball_scroll, 25)],
 }
