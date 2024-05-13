@@ -17,41 +17,49 @@ class Status(BaseComponent):
     turns_bleed: int = 4
     turns_stun: int = 1
     turns_confusion: int = 5
+    turns_condemnation: int = 10
 
     def __init__(self, 
-                 flag_bleed: bool = False, flag_poison: bool = False, flag_stun: bool = False, flag_confusion: bool = False, flag_grab: bool = False,
-                 immunity_bleed: bool = False, immunity_poison: bool = False, immunity_stun: bool = False, immunity_confusion: bool = False, immunity_grab: bool = False,
-                 attack_bleed: bool = False, attack_poison: bool = False, attack_stun: bool = False, attack_confusion: bool = False, attack_grab: bool = False,
+                 flag_bleed: bool = False, flag_poison: bool = False, flag_stun: bool = False, flag_confusion: bool = False, flag_grab: bool = False, flag_condemnation: bool = False,
+                 immunity_bleed: bool = False, immunity_poison: bool = False, immunity_stun: bool = False, immunity_confusion: bool = False, immunity_grab: bool = False, immunity_condemnation: bool = False,
+                 attack_bleed: bool = False, attack_poison: bool = False, attack_stun: bool = False, attack_confusion: bool = False, attack_grab: bool = False, attack_condemnation: bool = False,
     ):
         self.dict_condition_afflicted = dict(flag_bleed = flag_bleed, flag_poison = flag_poison, flag_stun = flag_stun, flag_confusion = flag_confusion, 
-                                             flag_grab = flag_grab
+                                             flag_grab = flag_grab, flag_condemnation = flag_condemnation
                                              )
 
         self.dict_condition_immunity = dict(immunity_bleed = immunity_bleed, immunity_poison = immunity_poison, immunity_stun = immunity_stun, immunity_confusion = immunity_confusion, 
-                                            immunity_grab = immunity_grab
+                                            immunity_grab = immunity_grab, immunity_condemnation = immunity_condemnation
                                             )
 
         self.dict_condition_attack = dict(attack_bleed = attack_bleed, attack_poison = attack_poison, attack_stun = attack_stun, attack_confusion = attack_confusion, 
-                                          attack_grab = attack_grab
+                                          attack_grab = attack_grab, attack_condemnation = attack_condemnation
                                           )
+        
+        self.dict_turns_passed = dict(poison = 0, burn = 0, stun = 0, confusion = 0, condemnation = 0)
 
         self.turns_passed = 0
     
     @property
     def check_turns_poison(self) -> bool:
-        return self.dict_condition_afflicted["flag_bleed"] and self.turns_passed > self.turns_poison
+        return self.dict_condition_afflicted["flag_poison"] and self.dict_turns_passed["poison"] > self.turns_poison
         
     @property
     def check_turns_bleed(self) -> bool:
-        return self.dict_condition_afflicted["flag_poison"] and self.turns_passed > self.turns_bleed
+        return self.dict_condition_afflicted["flag_bleed"] and self.dict_turns_passed["bleed"] > self.turns_bleed
     
     @property
     def check_turns_stun(self) -> bool:
-        return self.turns_passed >= self.turns_stun
+        return self.dict_turns_passed["stun"] >= self.turns_stun
     
     @property
     def check_turns_confusion(self) -> bool:
-        return self.turns_passed > self.turns_confusion
+        return self.dict_turns_passed["confusion"] > self.turns_confusion
+    
+    @property
+    def check_turns_condemnation(self) -> bool:
+        return self.dict_condition_afflicted["flag_condemnation"] and self.dict_turns_passed["condemnation"] > self.turns_condemnation
+        
     
     @property
     def check_grabbed_condition(self) -> bool:
@@ -76,16 +84,20 @@ class Status(BaseComponent):
     @property
     def check_grab_immunity(self) -> bool:
         return self.dict_condition_immunity["immunity_grab"]
+    
+    @property
+    def check_condemnation_immunity(self) -> bool:
+        return self.dict_condition_immunity["immunity_condemnation"]
         
     def effect_hp_damage(self) -> None:
         if self.dict_condition_afflicted["flag_bleed"]:
             self.parent.fighter.hp -= self.damage_bleed
             self.engine.message_log.add_message(f"You receive {self.damage_bleed} damage from the bleeding!")
-            self.turns_passed = 0
+            self.dict_turns_passed["bleed"] = 0
         if self.dict_condition_afflicted["flag_poison"]:
             self.parent.fighter.hp -= self.damage_poison
             self.engine.message_log.add_message(f"You receive {self.damage_poison} damage from the poison!")
-            self.turns_passed = 0
+            self.dict_turns_passed["poison"] = 0
 
     def affect_new_status(self, actor, target, attack_color) -> None:
         # After the damage, there is the check for the conditions effect.
@@ -116,7 +128,7 @@ class Status(BaseComponent):
                 if not target.status.dict_condition_afflicted["flag_stun"]:
                     if not target.status.check_stun_immunity:
                         target.status.dict_condition_afflicted["flag_stun"] = True
-                        target.status.turns_passed = 0
+                        target.status.dict_turns_passed["stun"] = 0
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is stunned!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to stun!", attack_color)
@@ -126,7 +138,7 @@ class Status(BaseComponent):
                 if not target.status.dict_condition_afflicted["flag_confusion"]:
                     if not target.status.check_confusion_immunity:
                         target.status.dict_condition_afflicted["flag_confusion"] = True
-                        target.status.turns_passed = 0
+                        target.status.dict_turns_passed["confusion"] = 0
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is confusion!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to confusion!", attack_color)
@@ -136,12 +148,20 @@ class Status(BaseComponent):
                 if not target.status.check_grabbed_condition:
                     if not target.status.check_grab_immunity:
                         target.status.dict_condition_afflicted["flag_grab"] = True
-                        target.status.turns_passed = 0
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is grabbed by the {self.entity.name}!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too agile to be grabbed!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already grabbed by {self.entity.name}!", attack_color)
+            if self.parent.status.dict_condition_attack["attack_condemnation"]:
+                if not target.status.dict_condition_afflicted["flag_condemnation"]:
+                    if not target.status.check_condemnation_immunity:
+                        target.status.dict_condition_afflicted["flag_condemnation"] = True
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is condemned to die soon!", attack_color)
+                    else:
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} death is not predestined now!", attack_color)
+                else:
+                    self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already condemned to die!", attack_color)
 
 
         else:
@@ -169,7 +189,7 @@ class Status(BaseComponent):
                 if not target.status.dict_condition_afflicted["flag_stun"]:
                     if not target.status.check_stun_immunity:
                         target.status.dict_condition_afflicted["flag_stun"] = True
-                        target.status.turns_passed = 0
+                        target.status.dict_turns_passed["stun"] = 0
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is stunned!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to stun!", attack_color)
@@ -179,7 +199,7 @@ class Status(BaseComponent):
                 if not target.status.dict_condition_afflicted["flag_confusion"]:
                     if not target.status.check_confusion_immunity:
                         target.status.dict_condition_afflicted["flag_confusion"] = True
-                        target.status.turns_passed = 0
+                        target.status.dict_turns_passed["confusion"] = 0
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is confused!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to confusion!", attack_color)
@@ -189,7 +209,6 @@ class Status(BaseComponent):
                 if not target.status.check_grabbed_condition:
                     if not target.status.check_grab_immunity:
                         target.status.dict_condition_afflicted["flag_grab"] = True
-                        target.status.turns_passed = 0
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is grabbed by the {self.entity.name}!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too agile to be grabbed!", attack_color)

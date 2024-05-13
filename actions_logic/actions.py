@@ -249,12 +249,12 @@ class BumpAction(ActionWithDirection):
         # Check for the bleed turns
         if self.entity.status.check_turns_bleed:
             self.entity.status.effect_hp_damage()
-            self.entity.status.turns_passed = 0
+            self.entity.status.dict_turns_passed["bleed"] = 0
         
         # Check for the poison turns
         elif self.entity.status.check_turns_poison:
             self.entity.status.effect_hp_damage()
-            self.entity.status.turns_passed = 0
+            self.entity.status.dict_turns_passed["poison"] = 0
 
         # Check if the player is afflicted by confusion
         elif self.entity.status.dict_condition_afflicted["flag_confusion"]:
@@ -262,14 +262,13 @@ class BumpAction(ActionWithDirection):
             # If the number of turns is over the number of turns required for the confusion, end the confusion effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_confusion:
                 self.entity.status.dict_condition_afflicted["flag_confusion"] = False
-                self.entity.status.turns_passed = 0
                 if self.entity == self.engine.player:
                     self.engine.message_log.add_message(f"You are no longer confused!")
                 else:
                     self.engine.message_log.add_message(f"The {self.entity.name} is no longer confused.")
             # Else, it creates a random direction and return the action for the random direction
             else:
-                self.entity.status.turns_passed += 1
+                self.entity.status.dict_turns_passed["confusion"] += 1
                 direction_x, direction_y = random.choice(
                     [
                         (-1, -1),  # Northwest
@@ -295,19 +294,34 @@ class BumpAction(ActionWithDirection):
             # If the number of turns is over the number of turns required for the stun, end the stun effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_stun:
                 self.entity.status.dict_condition_afflicted["flag_stun"] = False
-                self.entity.status.turns_passed = 0
                 if self.entity == self.engine.player:
                     self.engine.message_log.add_message(f"You are no longer stunned!")
                 else:
                     self.engine.message_log.add_message(f"The {self.entity.name} are no longer stunned!")
             # Else, it does the wait action for a turn
             else:
-                self.entity.status.turns_passed += 1
+                self.entity.status.dict_turns_passed["stun"] += 1
                 if self.entity == self.engine.player:
                     self.engine.message_log.add_message(f"You are stunned!")
                 else:
                     self.engine.message_log.add_message(f"The {self.entity.name} is stunned and can't move!")
                 return WaitAction(self.entity)
+        
+        # Check if the player is afflicted by condemnation
+        elif self.entity.status.dict_condition_afflicted["flag_condemnation"]:
+
+            # If the number of turns is over the number of turns required for the confusion, end the confusion effect, reset the turns counter and let the player do his action
+            if self.entity.status.check_turns_condemnation:
+                if self.entity == self.engine.player:
+                    self.engine.message_log.add_message(f"The weight of your condemnation reaches you!")
+                else:
+                    self.engine.message_log.add_message(f"The weight of your condemnation reaches the {self.entity.name}!")
+                self.entity.fighter.hp = 0
+            # Else, it creates a random direction and return the action for the random direction
+            else:
+                self.entity.status.dict_turns_passed["condemnation"] += 1
+                self.engine.message_log.add_message(f"Death is soon approaching!")
+
         else:
             self.entity.status.turns_passed += 1
 
