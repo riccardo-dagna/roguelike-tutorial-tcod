@@ -7,6 +7,10 @@ And then, move into "roguelike-tutorial-tcod" and then execute "python main.py".
 
 Or, if you want a .exe file, use the command: "pyinstaller main.py --onefile --add-data "data/menu_background.png;data/" --add-data "data/dejavu10x10_gs_tc.png;data/" "
 
+Now the value of the player HP/Defense is insanely high, to be used for testing.
+If you want to change it, go in the file "entity/entity_factories.py" and change the line 17(fighter=Fighter(hp=99, base_defense=10, base_power=2),) in the class player to this one:
+fighter=Fighter(hp=20, base_defense=1, base_power=2),
+
 The list of commands is below:
 - "movement arrow" to move and attack
 - "numpad arrow" (excluded 5) to move and attack in the direction
@@ -29,7 +33,7 @@ Mechanics added in the game, already tested:
 - Targeting ability with scrolls (single-target and area)
 - Equipment (weapon, armor and accessory)
 - Chests containing equipment
-- Condition (bleeding, poison, stun and confusion and item that cause status, grab (only for the enemy))
+- Condition (bleeding, poison, stun and confusion and item that cause status, grab (only for the enemy), condemnation)
 - Elemental damage (fire, ice, and electric) - only damage
 
 Mechanics added in the game, to test:
@@ -37,11 +41,10 @@ Mechanics added in the game, to test:
 - Chests (to correct random item generation by floor, and to tests)
 
 Mechanics to add in the game:
-- Condition (blindness, grab, petrification, charm, fear, condemnation)
+- Condition (blindness, grab, petrification, charm, fear)
 - Extra effect of elemental damage
 - Elemental damage (acid)
 - Special attacks (stats drain, percentile damage, rot, steal, engulf/digest, dispel)
 - New monster and items
 - Shopkeeper (with random item)
 - Boss monster (with special attack)
-
