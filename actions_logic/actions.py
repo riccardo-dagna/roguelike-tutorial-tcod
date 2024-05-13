@@ -310,17 +310,32 @@ class BumpAction(ActionWithDirection):
         # Check if the player is afflicted by condemnation
         elif self.entity.status.dict_condition_afflicted["flag_condemnation"]:
 
-            # If the number of turns is over the number of turns required for the confusion, end the confusion effect, reset the turns counter and let the player do his action
+            # If the number of turns is over the number of turns required for the condemnation, if is the player, the game is over
             if self.entity.status.check_turns_condemnation:
                 if self.entity == self.engine.player:
                     self.engine.message_log.add_message(f"The weight of your condemnation reaches you!")
                 else:
                     self.engine.message_log.add_message(f"The weight of your condemnation reaches the {self.entity.name}!")
                 self.entity.fighter.hp = 0
-            # Else, it creates a random direction and return the action for the random direction
+            # Else, it adds a turns for the condemnation
             else:
                 self.entity.status.dict_turns_passed["condemnation"] += 1
                 self.engine.message_log.add_message(f"Death is soon approaching!")
+                
+        # Check if the player is afflicted by petrification
+        elif self.entity.status.dict_condition_afflicted["flag_petrification"]:
+
+            # If the number of turns is over the number of turns required for the petrification, if is the player, the game is over
+            if self.entity.status.check_turns_petrification:
+                if self.entity == self.engine.player:
+                    self.engine.message_log.add_message(f"All your body is now turned to stone!")
+                else:
+                    self.engine.message_log.add_message(f"All of {self.entity.name} body is now turned to stone!")
+                self.entity.fighter.hp = 0
+            # Else, it adds a turns for the petrification
+            else:
+                self.entity.status.dict_turns_passed["petrification"] += 1
+                self.engine.message_log.add_message(f"More of your body is turning to stone!")
 
         else:
             self.entity.status.turns_passed += 1

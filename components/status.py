@@ -18,25 +18,26 @@ class Status(BaseComponent):
     turns_stun: int = 1
     turns_confusion: int = 5
     turns_condemnation: int = 10
+    turns_petrification: int = 20
 
     def __init__(self, 
-                 flag_bleed: bool = False, flag_poison: bool = False, flag_stun: bool = False, flag_confusion: bool = False, flag_grab: bool = False, flag_condemnation: bool = False,
-                 immunity_bleed: bool = False, immunity_poison: bool = False, immunity_stun: bool = False, immunity_confusion: bool = False, immunity_grab: bool = False, immunity_condemnation: bool = False,
-                 attack_bleed: bool = False, attack_poison: bool = False, attack_stun: bool = False, attack_confusion: bool = False, attack_grab: bool = False, attack_condemnation: bool = False,
+                 flag_bleed: bool = False, flag_poison: bool = False, flag_stun: bool = False, flag_confusion: bool = False, flag_grab: bool = False, flag_condemnation: bool = False, flag_petrification: bool = False,
+                 immunity_bleed: bool = False, immunity_poison: bool = False, immunity_stun: bool = False, immunity_confusion: bool = False, immunity_grab: bool = False, immunity_condemnation: bool = False, immunity_petrification: bool = False,
+                 attack_bleed: bool = False, attack_poison: bool = False, attack_stun: bool = False, attack_confusion: bool = False, attack_grab: bool = False, attack_condemnation: bool = False, attack_petrification: bool = False,
     ):
         self.dict_condition_afflicted = dict(flag_bleed = flag_bleed, flag_poison = flag_poison, flag_stun = flag_stun, flag_confusion = flag_confusion, 
-                                             flag_grab = flag_grab, flag_condemnation = flag_condemnation
+                                             flag_grab = flag_grab, flag_condemnation = flag_condemnation, flag_petrification = flag_petrification,
                                              )
 
         self.dict_condition_immunity = dict(immunity_bleed = immunity_bleed, immunity_poison = immunity_poison, immunity_stun = immunity_stun, immunity_confusion = immunity_confusion, 
-                                            immunity_grab = immunity_grab, immunity_condemnation = immunity_condemnation
+                                            immunity_grab = immunity_grab, immunity_condemnation = immunity_condemnation, immunity_petrification = immunity_petrification, 
                                             )
 
         self.dict_condition_attack = dict(attack_bleed = attack_bleed, attack_poison = attack_poison, attack_stun = attack_stun, attack_confusion = attack_confusion, 
-                                          attack_grab = attack_grab, attack_condemnation = attack_condemnation
+                                          attack_grab = attack_grab, attack_condemnation = attack_condemnation, attack_petrification = attack_petrification,
                                           )
         
-        self.dict_turns_passed = dict(poison = 0, burn = 0, stun = 0, confusion = 0, condemnation = 0)
+        self.dict_turns_passed = dict(poison = 0, burn = 0, stun = 0, confusion = 0, condemnation = 0, petrification = 0)
 
         self.turns_passed = 0
     
@@ -59,6 +60,10 @@ class Status(BaseComponent):
     @property
     def check_turns_condemnation(self) -> bool:
         return self.dict_condition_afflicted["flag_condemnation"] and self.dict_turns_passed["condemnation"] > self.turns_condemnation
+
+    @property
+    def check_turns_petrification(self) -> bool:
+        return self.dict_condition_afflicted["flag_petrification"] and self.dict_turns_passed["petrification"] > self.turns_petrification
         
     
     @property
@@ -88,6 +93,10 @@ class Status(BaseComponent):
     @property
     def check_condemnation_immunity(self) -> bool:
         return self.dict_condition_immunity["immunity_condemnation"]
+    
+    @property
+    def check_petrification_immunity(self) -> bool:
+        return self.dict_condition_immunity["immunity_petrificationn"]
         
     def effect_hp_damage(self) -> None:
         if self.dict_condition_afflicted["flag_bleed"]:
@@ -110,6 +119,7 @@ class Status(BaseComponent):
                 if not target.status.dict_condition_afflicted["flag_bleed"]:
                     if not target.status.check_bleed_immunity:
                         target.status.dict_condition_afflicted["flag_bleed"] = True
+                        target.status.dict_turns_passed["bleed"] = 0
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is bleeding!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to bleeding!", attack_color)
@@ -119,6 +129,7 @@ class Status(BaseComponent):
                 if not target.status.dict_condition_afflicted["flag_poison"]:
                     if not target.status.check_poison_immunity:
                         target.status.dict_condition_afflicted["flag_poison"] = True
+                        target.status.dict_turns_passed["poison"] = 0
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is poisoned!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to poison!", attack_color)
@@ -157,11 +168,23 @@ class Status(BaseComponent):
                 if not target.status.dict_condition_afflicted["flag_condemnation"]:
                     if not target.status.check_condemnation_immunity:
                         target.status.dict_condition_afflicted["flag_condemnation"] = True
+                        target.status.dict_turns_passed["condemnation"] = 0
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is condemned to die soon!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} death is not predestined now!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already condemned to die!", attack_color)
+            if self.parent.status.dict_condition_attack["attack_petrification"]:
+                if not target.status.dict_condition_afflicted["flag_petrification"]:
+                    if not target.status.check_petrification_immunity:
+                        target.status.dict_condition_afflicted["flag_petrification"] = True
+                        target.status.dict_turns_passed["petrification"] = 0
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is slowly turning to stone!", attack_color)
+                    else:
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too strong to be affected!", attack_color)
+                else:
+                    self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already turning to stone!", attack_color)
+
 
 
         else:
