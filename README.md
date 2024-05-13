@@ -34,7 +34,7 @@ Mechanics added in the game, already tested:
 - Equipment (weapon, armor and accessory)
 - Chests containing equipment (depending on the floor the player is)
 - Condition (bleeding, poison, stun and confusion and item that cause status, grab (only for the enemy), condemnation)
-- Elemental damage (fire, ice, and electric) - only damage
+- Elemental damage (fire, ice, electric, acid) - only damage
 
 Mechanics added in the game, to test:
 - Condition (grab (added for the enemy, but needs to be checked))
@@ -43,7 +43,6 @@ Mechanics added in the game, to test:
 Mechanics to add in the game:
 - Condition (blindness, grab, petrification, charm, fear)
 - Extra effect of elemental damage
-- Elemental damage (acid)
 - Special attacks (stats drain, percentile damage, rot, steal, engulf/digest, dispel)
 - New monster and items
 - Shopkeeper (with random item)

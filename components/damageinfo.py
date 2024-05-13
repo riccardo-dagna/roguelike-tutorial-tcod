@@ -12,16 +12,16 @@ class DamageInfo(BaseComponent):
     parent: Actor
 
     def __init__(self, 
-                 fire_resistance: bool = False, ice_resistance: bool = False, electric_resistance: bool = False,
-                 fire_immunity: bool = False, ice_immunity: bool = False, electric_immunity: bool = False,
-                 fire_vulnerability: bool = False, ice_vulnerability: bool = False, electric_vulnerability: bool = False,
-                 fire_attack: bool = False, ice_attack: bool = False, electric_attack: bool = False
+                 fire_resistance: bool = False, ice_resistance: bool = False, electric_resistance: bool = False, acid_resistance: bool = False,
+                 fire_immunity: bool = False, ice_immunity: bool = False, electric_immunity: bool = False, acid_immunity: bool = False,
+                 fire_vulnerability: bool = False, ice_vulnerability: bool = False, electric_vulnerability: bool = False, acid_vulnerability: bool = False,
+                 fire_attack: bool = False, ice_attack: bool = False, electric_attack: bool = False, acid_attack: bool = False,
     ):
         
-        self.dict_damage_resistance = dict(fire = fire_resistance, ice = ice_resistance, electric = electric_resistance)
-        self.dict_damage_immunity = dict(fire = fire_immunity, ice = ice_immunity, electric = electric_immunity)
-        self.dict_damage_vulnerabiliy = dict(fire = fire_vulnerability, ice = ice_vulnerability, electric = electric_vulnerability)
-        self.dict_damage_attack = dict(fire = fire_attack, ice = ice_attack, electric = electric_attack)
+        self.dict_damage_resistance = dict(fire = fire_resistance, ice = ice_resistance, electric = electric_resistance, acid = acid_resistance)
+        self.dict_damage_immunity = dict(fire = fire_immunity, ice = ice_immunity, electric = electric_immunity, acid = acid_immunity)
+        self.dict_damage_vulnerabiliy = dict(fire = fire_vulnerability, ice = ice_vulnerability, electric = electric_vulnerability, acidy = acid_vulnerability)
+        self.dict_damage_attack = dict(fire = fire_attack, ice = ice_attack, electric = electric_attack, acid = acid_attack)
 
     def attack_type_return(self) -> str:
         if self.dict_damage_attack["fire"]:
@@ -30,6 +30,8 @@ class DamageInfo(BaseComponent):
             return "ice"
         elif self.dict_damage_attack["electric"]:
             return "electric"
+        elif self.dict_damage_attack["acid"]:
+            return "acid"
         else:
             return ""
     
@@ -57,6 +59,14 @@ class DamageInfo(BaseComponent):
                 elif self.dict_damage_immunity["electric"]:
                     return 0
                 elif self.dict_damage_vulnerabiliy["electric"]:
+                    return 2
+                return 1
+            case "acid":
+                if self.dict_damage_resistance["acid"]:
+                    return 0.5
+                elif self.dict_damage_immunity["acid"]:
+                    return 0
+                elif self.dict_damage_vulnerabiliy["acid"]:
                     return 2
                 return 1
             case _:
