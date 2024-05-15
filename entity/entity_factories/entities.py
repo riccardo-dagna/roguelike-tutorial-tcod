@@ -20,6 +20,8 @@ player = Actor(
     damage_info=DamageInfo(),
 )
 
+
+#This sections contains the enemies
 orc = Actor(
     char="o",
     color=(63, 127, 63),
@@ -45,4 +47,6 @@ troll = Actor(
     damage_info=DamageInfo(),
 )
 
+
+#This sections contains the neutral entities
 chest = Chest(char="(", color=(139, 69, 19), name="Chest")
