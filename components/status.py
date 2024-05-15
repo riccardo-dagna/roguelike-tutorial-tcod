@@ -19,27 +19,27 @@ class Status(BaseComponent):
     turns_confusion: int = 5
     turns_condemnation: int = 10
     turns_petrification: int = 20
+    turns_fear: int = 10
 
     def __init__(self, 
-                 flag_bleed: bool = False, flag_poison: bool = False, flag_stun: bool = False, flag_confusion: bool = False, flag_grab: bool = False, flag_condemnation: bool = False, flag_petrification: bool = False,
-                 immunity_bleed: bool = False, immunity_poison: bool = False, immunity_stun: bool = False, immunity_confusion: bool = False, immunity_grab: bool = False, immunity_condemnation: bool = False, immunity_petrification: bool = False,
-                 attack_bleed: bool = False, attack_poison: bool = False, attack_stun: bool = False, attack_confusion: bool = False, attack_grab: bool = False, attack_condemnation: bool = False, attack_petrification: bool = False,
+                 flag_bleed: bool = False, flag_poison: bool = False, flag_stun: bool = False, flag_confusion: bool = False, flag_grab: bool = False, flag_condemnation: bool = False, flag_petrification: bool = False, flag_fear: bool = False,
+                 immunity_bleed: bool = False, immunity_poison: bool = False, immunity_stun: bool = False, immunity_confusion: bool = False, immunity_grab: bool = False, immunity_condemnation: bool = False, immunity_petrification: bool = False, immunity_fear: bool = False,
+                 attack_bleed: bool = False, attack_poison: bool = False, attack_stun: bool = False, attack_confusion: bool = False, attack_grab: bool = False, attack_condemnation: bool = False, attack_petrification: bool = False, attack_fear: bool = False,
     ):
-        self.dict_condition_afflicted = dict(flag_bleed = flag_bleed, flag_poison = flag_poison, flag_stun = flag_stun, flag_confusion = flag_confusion, 
-                                             flag_grab = flag_grab, flag_condemnation = flag_condemnation, flag_petrification = flag_petrification,
+        self.dict_condition_afflicted = dict(flag_bleed = flag_bleed, flag_poison = flag_poison, flag_stun = flag_stun, flag_confusion = flag_confusion, flag_grab = flag_grab, 
+                                             flag_condemnation = flag_condemnation, flag_petrification = flag_petrification, flag_fear = flag_fear,
                                              )
 
         self.dict_condition_immunity = dict(immunity_bleed = immunity_bleed, immunity_poison = immunity_poison, immunity_stun = immunity_stun, immunity_confusion = immunity_confusion, 
                                             immunity_grab = immunity_grab, immunity_condemnation = immunity_condemnation, immunity_petrification = immunity_petrification, 
+                                            immunity_fear = immunity_fear,
                                             )
 
-        self.dict_condition_attack = dict(attack_bleed = attack_bleed, attack_poison = attack_poison, attack_stun = attack_stun, attack_confusion = attack_confusion, 
-                                          attack_grab = attack_grab, attack_condemnation = attack_condemnation, attack_petrification = attack_petrification,
+        self.dict_condition_attack = dict(attack_bleed = attack_bleed, attack_poison = attack_poison, attack_stun = attack_stun, attack_confusion = attack_confusion, attack_grab = attack_grab,
+                                          attack_condemnation = attack_condemnation, attack_petrification = attack_petrification, attack_fear = attack_fear,
                                           )
         
-        self.dict_turns_passed = dict(poison = 0, burn = 0, stun = 0, confusion = 0, condemnation = 0, petrification = 0)
-
-        self.turns_passed = 0
+        self.dict_turns_passed = dict(poison = 0, burn = 0, stun = 0, confusion = 0, condemnation = 0, petrification = 0, fear = 0,)
     
     @property
     def check_turns_poison(self) -> bool:
@@ -64,6 +64,10 @@ class Status(BaseComponent):
     @property
     def check_turns_petrification(self) -> bool:
         return self.dict_condition_afflicted["flag_petrification"] and self.dict_turns_passed["petrification"] > self.turns_petrification
+    
+    @property
+    def check_turns_petrification(self) -> bool:
+        return self.dict_condition_afflicted["flag_fear"] and self.dict_turns_passed["fear"] > self.turns_fear
         
     
     @property
@@ -96,8 +100,13 @@ class Status(BaseComponent):
     
     @property
     def check_petrification_immunity(self) -> bool:
-        return self.dict_condition_immunity["immunity_petrificationn"]
-        
+        return self.dict_condition_immunity["immunity_petrification"]
+    
+    @property
+    def check_fear_immunity(self) -> bool:
+        return self.dict_condition_immunity["immunity_fear"]
+    
+
     def effect_hp_damage(self) -> None:
         if self.dict_condition_afflicted["flag_bleed"]:
             self.parent.fighter.hp -= self.damage_bleed
@@ -184,6 +193,16 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too strong to be affected!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already turning to stone!", attack_color)
+            if self.parent.status.dict_condition_attack["attack_fear"]:
+                if not target.status.dict_condition_afflicted["flag_fear"]:
+                    if not target.status.check_fear_immunity:
+                        target.status.dict_condition_afflicted["fear"] = True
+                        target.status.dict_turns_passed["fear"] = 0
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is afraid of his enemy!", attack_color)
+                    else:
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too strong willed to be afraid!", attack_color)
+                else:
+                    self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already afraid of his enemy!", attack_color)
 
 
 
@@ -237,6 +256,16 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too agile to be grabbed!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already grabbed by the {self.entity.name}!", attack_color)
+            if (self.parent.equipment.weapon.equippable.status_effect == "fear" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "fear")):
+                if not target.status.dict_condition_afflicted["flag_fear"]:
+                    if not target.status.check_fear_immunity:
+                        target.status.dict_condition_afflicted["fear"] = True
+                        target.status.dict_turns_passed["fear"] = 0
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is afraid of his enemy!", attack_color)
+                    else:
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too strong willed to be afraid!", attack_color)
+                else:
+                    self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already afraid of his enemy!", attack_color)
 
 
 
@@ -256,3 +285,4 @@ def confusion_direction() -> Tuple[int, int]:
     )
 
     return direction_x, direction_y
+

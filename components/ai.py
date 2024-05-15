@@ -58,7 +58,7 @@ class HostileEnemy(BaseAI):
         dx = target.x - self.entity.x
         dy = target.y - self.entity.y
 
-        if not self.entity.status.dict_condition_afflicted["flag_confusion"]:
+        if not self.entity.status.dict_condition_afflicted["flag_confusion"] or self.entity.status.dict_condition_afflicted["flag_fear"]:
             distance = max(abs(dx), abs(dy))  # Chebyshev distance.
 
             if self.engine.game_map.visible[self.entity.x, self.entity.y]:
@@ -75,6 +75,9 @@ class HostileEnemy(BaseAI):
                     dest_y - self.entity.y,
                 ).perform()
         else:
-            return BumpAction(self.entity, dx, dy).perform()
+            if self.entity.status.dict_condition_afflicted["flag_confusion"]:
+                return BumpAction(self.entity, dx, dy).perform()
+            elif self.entity.status.dict_condition_afflicted["flag_fear"]:
+                return WaitAction().perform()
 
         return WaitAction(self.entity).perform()
