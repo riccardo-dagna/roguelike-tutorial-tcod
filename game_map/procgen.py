@@ -7,54 +7,15 @@ import copy
 import tcod
 
 from game_map.game_map import GameMap
-import entity.entity_factories as entity_factories
+from entity.entity_factories import entities
+from entity.entity_factories import equipment
+from entity.entity_factories import consumable
 import game_map.tile_types as tile_types
 import game_map.floor_values as floor_values
 
 if TYPE_CHECKING:
     from game_logic.engine import Engine
     from entity.entity import Entity, Item
-
-"""
-# This is the list of the max enemy, item in floor and item in chests per floor
-max_chest_by_floor = 2
-
-max_items_by_floor = [
-    (1, 1),
-    (4, 2),
-]
-
-max_monsters_by_floor = [
-    (1, 2),
-    (4, 3),
-    (6, 5),
-]
-
-# This is the dictionary that contain the spawning items on the floor and weight
-item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.health_potion, 35)],
-    0: [(entity_factories.status_potion, 35)],
-    2: [(entity_factories.stun_scroll, 80)],
-    2: [(entity_factories.confusion_scroll, 80)],
-    4: [(entity_factories.lightning_scroll, 25)],
-    6: [(entity_factories.fireball_scroll, 25)],
-}
-
-# This is the dictionary that contain the spawning enemy and weight
-enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.orc, 80)],
-    3: [(entity_factories.troll, 15)],
-    5: [(entity_factories.troll, 30)],
-    7: [(entity_factories.troll, 60)],
-}
-
-# This is the dictionary that contain the spawning items in chances and weight
-chest_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.sword, 80), (entity_factories.chain_mail, 80)],
-    2: [(entity_factories.sword, 0), (entity_factories.chain_mail, 0), (entity_factories.attack_ring, 80), (entity_factories.defense_ring, 80)],
-    4: [(entity_factories.sword, 0), (entity_factories.chain_mail, 0), (entity_factories.attack_ring, 15), (entity_factories.defense_ring, 15), (entity_factories.vorpal_sword, 60)],
-}
-"""
 
 
 def get_max_value_for_floor(max_value_by_floor: List[Tuple[int, int]], floor: int) -> int:
@@ -219,7 +180,7 @@ def generate_dungeon(
                     pass
                 else:
                     dungeon.tiles[x, y] = tile_types.chest
-                    entity_factories.chest.spawn(gamemap=dungeon, x=x, y=y, item=get_chest_item_at_random(floor_values.chest_chances, floor=engine.game_world.current_floor))
+                    entities.chest.spawn(gamemap=dungeon, x=x, y=y, item=get_chest_item_at_random(floor_values.chest_chances, floor=engine.game_world.current_floor))
                     total_chest += 1
 
         if len(rooms) == 0:

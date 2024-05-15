@@ -8,7 +8,7 @@ And then, move into "roguelike-tutorial-tcod" and then execute "python main.py".
 Or, if you want a .exe file, use the command: "pyinstaller main.py --onefile --add-data "data/menu_background.png;data/" --add-data "data/dejavu10x10_gs_tc.png;data/" "
 
 Now the value of the player HP/Defense is insanely high, to be used for testing.
-If you want to change it, go in the file "entity/entity_factories.py" and change the line 17(fighter=Fighter(hp=99, base_defense=10, base_power=2),) in the class player to this one:
+If you want to change it, go in the file "entity/entity_factories/entities.py" and change the line 17(fighter=Fighter(hp=99, base_defense=10, base_power=2),) in the class player to this one:
 fighter=Fighter(hp=20, base_defense=1, base_power=2),
 
 The list of commands is below:

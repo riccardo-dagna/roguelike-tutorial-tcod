@@ -14,7 +14,9 @@ import libtcodpy
 from game_logic.engine import Engine
 from game_map.game_map import GameWorld
 import game_map.color as color
-import entity.entity_factories as entity_factories
+from entity.entity_factories import entities
+from entity.entity_factories import equipment
+from entity.entity_factories import consumable
 import actions_logic.input_handlers as input_handlers
 from utility_files.utility import resource_path
 
@@ -31,7 +33,7 @@ def new_game() -> Engine:
     room_min_size = 6
     max_rooms = 30
 
-    player = copy.deepcopy(entity_factories.player)
+    player = copy.deepcopy(entities.player)
 
     engine = Engine(player=player)
 
@@ -49,8 +51,8 @@ def new_game() -> Engine:
 
     engine.message_log.add_message("Welcome to the dungeon, adventurer!", color.welcome_text)
 
-    dagger = copy.deepcopy(entity_factories.dagger)
-    leather_armor = copy.deepcopy(entity_factories.leather_armor)
+    dagger = copy.deepcopy(equipment.dagger)
+    leather_armor = copy.deepcopy(equipment.leather_armor)
 
     dagger.parent = player.inventory
     leather_armor.parent = player.inventory
