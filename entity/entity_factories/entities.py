@@ -22,29 +22,13 @@ player = Actor(
 
 
 #This sections contains the enemies
-orc = Actor(
-    char="o",
-    color=(63, 127, 63),
-    name="Orc",
-    ai_cls=HostileEnemy,
-    equipment=Equipment(),
-    fighter=Fighter(hp=10, base_defense=0, base_power=3),
-    inventory=Inventory(capacity=0),
-    level=Level(xp_given=35),
-    status=Status(),
-    damage_info=DamageInfo(),
+orc = Actor(char="o", color=(63, 127, 63), name="Orc",
+    ai_cls=HostileEnemy, equipment=Equipment(), fighter=Fighter(hp=10, base_defense=0, base_power=3),
+    inventory=Inventory(capacity=0), level=Level(xp_given=35), status=Status(), damage_info=DamageInfo(),
 )
-troll = Actor(
-    char="T",
-    color=(0, 127, 0),
-    name="Troll",
-    ai_cls=HostileEnemy,
-    equipment=Equipment(),
-    fighter=Fighter(hp=16, base_defense=1, base_power=4),
-    inventory=Inventory(capacity=0),
-    level=Level(xp_given=100),
-    status=Status(),
-    damage_info=DamageInfo(),
+troll = Actor(char="T", color=(0, 127, 0), name="Troll", 
+    ai_cls=HostileEnemy, equipment=Equipment(), fighter=Fighter(hp=16, base_defense=1, base_power=4),
+    inventory=Inventory(capacity=0), level=Level(xp_given=100), status=Status(), damage_info=DamageInfo(),
 )
 
 
