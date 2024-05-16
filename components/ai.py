@@ -58,26 +58,31 @@ class HostileEnemy(BaseAI):
         dx = target.x - self.entity.x
         dy = target.y - self.entity.y
 
-        if not self.entity.status.dict_condition_afflicted["flag_confusion"] or self.entity.status.dict_condition_afflicted["flag_fear"]:
+        if not self.entity.status.dict_condition_afflicted["flag_confusion"]:
             distance = max(abs(dx), abs(dy))  # Chebyshev distance.
-
             if self.engine.game_map.visible[self.entity.x, self.entity.y]:
                 if distance <= 1:
                     return MeleeAction(self.entity, dx, dy).perform()
 
                 self.path = self.get_path_to(target.x, target.y)
-
-            if self.path:
-                dest_x, dest_y = self.path.pop(0)
-                return MovementAction(
-                    self.entity,
-                    dest_x - self.entity.x,
-                    dest_y - self.entity.y,
-                ).perform()
+            
+            if not self.entity.status.dict_condition_afflicted["flag_fear"]:
+                if self.path:
+                    dest_x, dest_y = self.path.pop(0)
+                    return MovementAction(
+                        self.entity,
+                        dest_x - self.entity.x,
+                        dest_y - self.entity.y,
+                    ).perform()
+            else:
+                if self.path:
+                    dest_x, dest_y = self.path.pop(0)
+                    return MovementAction(
+                        self.entity,
+                        -(dest_x - self.entity.x),
+                        -(dest_y - self.entity.y),
+                    ).perform()
         else:
-            if self.entity.status.dict_condition_afflicted["flag_confusion"]:
-                return BumpAction(self.entity, dx, dy).perform()
-            elif self.entity.status.dict_condition_afflicted["flag_fear"]:
-                return WaitAction().perform()
+            return BumpAction(self.entity, dx, dy).perform()
 
         return WaitAction(self.entity).perform()

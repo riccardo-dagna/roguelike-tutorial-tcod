@@ -153,7 +153,7 @@ class MeleeAction(ActionWithDirection):
             raise exceptions.Impossible("Nothing to attack.")
 
         damage = self.entity.fighter.power - target.fighter.defense
-
+        
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
         if self.entity is self.engine.player:
             attack_color = color.player_atk
@@ -166,8 +166,13 @@ class MeleeAction(ActionWithDirection):
         else:
             damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
 
+        if self.entity.status.dict_condition_afflicted["flag_fear"]:
+            chance_to_hit = random.randint(1, 100)
+        else:
+            chance_to_hit = 100
+
         # Calculate the damage to inflict to the target and elemental resistance/vulnerability
-        if damage > 0 and damage_modificator > 0:
+        if damage > 0 and damage_modificator > 0 and chance_to_hit > 50:
             self.engine.message_log.add_message(f"{attack_desc} for {damage * damage_modificator} hit points.", attack_color)
             if damage_modificator == 2:
                 self.engine.message_log.add_message(f"The damage is critical!", attack_color)
@@ -175,19 +180,23 @@ class MeleeAction(ActionWithDirection):
                 self.engine.message_log.add_message(f"The damage is resisted!", attack_color)
             target.fighter.hp -= damage * damage_modificator
         else:
-            self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)
-            if damage_modificator == 0:
-                self.engine.message_log.add_message(f"The {target.name} is immune.", attack_color)
+            if chance_to_hit < 50:
+                self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)
+                if damage_modificator == 0:
+                    self.engine.message_log.add_message(f"The {target.name} is immune.", attack_color)
+            else:
+                self.engine.message_log.add_message(f"The {self.entity.name} missed as the fear blocked him to attack.", attack_color)
+
         
         # This checks if the player is grabbed and the enemy is dead, and then release the player from the grabbed grabbed condition
-        if self.entity == self.engine.player and self.entity.status.check_grabbed_condition:
+        if self.entity == self.engine.player and self.entity.status.check_grabbed_condition and (damage > 0 and damage_modificator > 0):
             if (target.fighter.hp <= 0 or not target.is_alive) and target.status.dict_condition_attack["attack_grab"]:
                 self.entity.status.dict_condition_afflicted["flag_grab"] = False
                 self.engine.message_log.add_message(f"You are free from the grab.", attack_color)
 
-        # After the damage, there is the check for the conditions effect.
-        # This checks if the entity is an enemy or the player.
-        self.entity.status.affect_new_status(self, target, attack_color)
+            # After the damage, there is the check for the conditions effect.
+            # This checks if the entity is an enemy or the player.
+            self.entity.status.affect_new_status(self, target, attack_color)
 
 
 class ChestAction(ActionWithDirection):
@@ -335,12 +344,7 @@ class BumpAction(ActionWithDirection):
             # Else, it adds a turns for the petrification
             else:
                 self.entity.status.dict_turns_passed["petrification"] += 1
-                self.engine.message_log.add_message(f"More of your body is turning to stone!")
-
-        else:
-            self.entity.status.turns_passed += 1
-
-        
+                self.engine.message_log.add_message(f"More of your body is turning to stone!")        
 
         # After all the status, checks for the target actors or chests
         if self.target_actor:
