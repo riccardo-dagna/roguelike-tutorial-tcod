@@ -33,11 +33,11 @@ Mechanics added in the game, already tested:
 - Targeting ability with scrolls (single-target and area)
 - Equipment (weapon, armor and accessory)
 - Chests containing equipment (depending on the floor the player is)
-- Condition (bleeding, poison, stun and confusion, grab (only for the enemy), condemnation, petrification)
+- Condition (bleeding, poison, stun and confusion, grab (only for the enemy), condemnation, petrification, fear(only for the enemy))
 - Elemental damage (fire, ice, electric, acid) - only damage
 
 Mechanics added in the game, to test:
-- Condition (grab (added for the enemy, but needs to be checked), fear(only for the enemy))
+- Condition (grab (added for the enemy, but needs to be checked))
 - Chests (to correct random item generation by floor, and to tests)
 
 Mechanics to add in the game:
