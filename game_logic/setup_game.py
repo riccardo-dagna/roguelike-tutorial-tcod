@@ -47,7 +47,7 @@ def new_game() -> Engine:
     )
 
     engine.game_world.generate_floor()
-    engine.update_fov()
+    engine.update_fov(radius=8)
 
     engine.message_log.add_message("Welcome to the dungeon, adventurer!", color.welcome_text)
 
