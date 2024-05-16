@@ -37,11 +37,11 @@ Mechanics added in the game, already tested:
 - Elemental damage (fire, ice, electric, acid) - only damage
 
 Mechanics added in the game, to test:
-- Condition (grab (added for the enemy, but needs to be checked))
+- Condition (grab (added for the enemy, but needs to be checked), fear(only for the enemy))
 - Chests (to correct random item generation by floor, and to tests)
 
 Mechanics to add in the game:
-- Condition (blindness, grab, charm, fear (added a beta, to be modified))
+- Condition (blindness, grab, charm)
 - Extra effect of elemental damage
 - Special attacks (stats drain, percentile damage, rot, steal, engulf/digest, dispel)
 - New monster and items
