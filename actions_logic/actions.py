@@ -166,6 +166,7 @@ class MeleeAction(ActionWithDirection):
         else:
             damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
 
+        #if the entity has fear status, it calculate a random chance to hit the opponent
         if self.entity.status.dict_condition_afflicted["flag_fear"]:
             chance_to_hit = random.randint(1, 100)
         else:
@@ -180,12 +181,12 @@ class MeleeAction(ActionWithDirection):
                 self.engine.message_log.add_message(f"The damage is resisted!", attack_color)
             target.fighter.hp -= damage * damage_modificator
         else:
-            if chance_to_hit < 50:
+            if chance_to_hit > 50:
                 self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)
                 if damage_modificator == 0:
                     self.engine.message_log.add_message(f"The {target.name} is immune.", attack_color)
             else:
-                self.engine.message_log.add_message(f"The {self.entity.name} missed as the fear blocked him to attack.", attack_color)
+                self.engine.message_log.add_message(f"The {self.entity.name} missed as the fear blocked his attack.", attack_color)
 
         
         # This checks if the player is grabbed and the enemy is dead, and then release the player from the grabbed grabbed condition
