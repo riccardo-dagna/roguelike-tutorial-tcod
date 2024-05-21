@@ -25,6 +25,8 @@ The list of commands is below:
 
 ## List of mechanics
 
+(If it's "for the enemy", it's a mechanic only usable by the enemies, if it's "on the enemy", it's a mechanic only usable by the player, otherwise it's for both)
+
 Mechanics added in the game, already tested:
 - Movement and basic attacks
 - Random map generation and floor difficulty
@@ -33,15 +35,15 @@ Mechanics added in the game, already tested:
 - Targeting ability with scrolls (single-target and area)
 - Equipment (weapon, armor and accessory)
 - Chests containing equipment (depending on the floor the player is)
-- Condition (bleeding, poison, stun and confusion, grab (only for the enemy), condemnation, petrification, fear(only for the enemy))
+- Condition (bleeding, poison, stun and confusion, condemnation, petrification, fear (on the enemy), blindness)
 - Elemental damage (fire, ice, electric, acid) - only damage
 
 Mechanics added in the game, to test:
-- Condition (grab (added for the enemy, but needs to be checked))
+- Condition (grab (for the enemy, but needs to be checked))
 - Chests (to correct random item generation by floor, and to tests)
 
 Mechanics to add in the game:
-- Condition (blindness, grab, charm)
+- Condition (grab (on the enemy), charm)
 - Extra effect of elemental damage
 - Special attacks (stats drain, percentile damage, rot, steal, engulf/digest, dispel)
 - New monster and items
