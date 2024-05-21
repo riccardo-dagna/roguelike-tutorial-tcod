@@ -144,7 +144,10 @@ class EventHandler(BaseEventHandler):
 
         self.engine.handle_enemy_turns()
 
-        self.engine.update_fov(radius=8)
+        if self.engine.player.status.dict_condition_afflicted["blindness"]:
+            self.engine.update_fov(radius=1)
+        else:
+            self.engine.update_fov(radius=8)
         return True
 
     def ev_mousemotion(self, event: tcod.event.MouseMotion) -> None:
@@ -222,16 +225,22 @@ class CharacterScreenEventHandler(AskUserEventHandler):
 
         console.print(x=x + 1, y=y + 4, string=f"Attack: {self.engine.player.fighter.power}")
         console.print(x=x + 1, y=y + 5, string=f"Defense: {self.engine.player.fighter.defense}")
-        if self.engine.player.status.dict_condition_afflicted["flag_bleed"]:
+        if self.engine.player.status.dict_condition_afflicted["bleed"]:
             console.print(x=x + 1, y=y + 6, string=f"Status: bleeding")
-        elif self.engine.player.status.dict_condition_afflicted["flag_poison"]:
+        elif self.engine.player.status.dict_condition_afflicted["poison"]:
             console.print(x=x + 1, y=y + 6, string=f"Status: poisoned")
-        elif self.engine.player.status.dict_condition_afflicted["flag_stun"]:
+        elif self.engine.player.status.dict_condition_afflicted["stun"]:
             console.print(x=x + 1, y=y + 6, string=f"Status: stunned")
-        elif self.engine.player.status.dict_condition_afflicted["flag_confusion"]:
+        elif self.engine.player.status.dict_condition_afflicted["confusion"]:
             console.print(x=x + 1, y=y + 6, string=f"Status: confused")
-        elif self.engine.player.status.dict_condition_afflicted["flag_grab"]:
+        elif self.engine.player.status.dict_condition_afflicted["grab"]:
             console.print(x=x + 1, y=y + 6, string=f"Status: grabbed")
+        elif self.engine.player.status.dict_condition_afflicted["condemnation"]:
+            console.print(x=x + 1, y=y + 6, string=f"Status: condemned")
+        elif self.engine.player.status.dict_condition_afflicted["petrification"]:
+            console.print(x=x + 1, y=y + 6, string=f"Status: petrifying")
+        elif self.engine.player.status.dict_condition_afflicted["blindness"]:
+            console.print(x=x + 1, y=y + 6, string=f"Status: blindness")
         else:
             console.print(x=x + 1, y=y + 6, string=f"Status: healthy")
 

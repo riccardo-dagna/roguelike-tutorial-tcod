@@ -58,7 +58,7 @@ class HostileEnemy(BaseAI):
         dx = target.x - self.entity.x
         dy = target.y - self.entity.y
 
-        if not self.entity.status.dict_condition_afflicted["flag_confusion"]:
+        if not self.entity.status.dict_condition_afflicted["confusion"]:
             distance = max(abs(dx), abs(dy))  # Chebyshev distance.
             if self.engine.game_map.visible[self.entity.x, self.entity.y]:
                 if distance <= 1:
@@ -66,14 +66,21 @@ class HostileEnemy(BaseAI):
 
                 self.path = self.get_path_to(target.x, target.y)
             
-            if not self.entity.status.dict_condition_afflicted["flag_fear"]:
-                if self.path:
-                    dest_x, dest_y = self.path.pop(0)
-                    return MovementAction(
-                        self.entity,
-                        dest_x - self.entity.x,
-                        dest_y - self.entity.y,
-                    ).perform()
+            #If the entity is not afraid, it moves in the direction of the player
+            if not self.entity.status.dict_condition_afflicted["fear"]:
+                #If the entity is not blind, it moves in the direction of the player
+                if not self.entity.status.dict_condition_afflicted["blindness"]:
+                    if self.path:
+                        dest_x, dest_y = self.path.pop(0)
+                        return MovementAction(
+                            self.entity,
+                            dest_x - self.entity.x,
+                            dest_y - self.entity.y,
+                        ).perform()
+                else:
+                    return BumpAction(self.entity, dx, dy).perform()
+
+            #If the entity is afraid, it moves in the direction contrary of the player
             else:
                 if self.path:
                     dest_x, dest_y = self.path.pop(0)
@@ -82,7 +89,9 @@ class HostileEnemy(BaseAI):
                         -(dest_x - self.entity.x),
                         -(dest_y - self.entity.y),
                     ).perform()
+        #If the entity is confused, it does a BumpAction with a random direction
         else:
             return BumpAction(self.entity, dx, dy).perform()
+
 
         return WaitAction(self.entity).perform()

@@ -167,13 +167,13 @@ class MeleeAction(ActionWithDirection):
             damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
 
         #if the entity has fear status, it calculate a random chance to hit the opponent
-        if self.entity.status.dict_condition_afflicted["flag_fear"]:
+        if self.entity.status.dict_condition_afflicted["fear"] or self.entity.status.dict_condition_afflicted["blindness"]:
             chance_to_hit = random.randint(1, 100)
         else:
             chance_to_hit = 100
 
         # Calculate the damage to inflict to the target and elemental resistance/vulnerability
-        if damage > 0 and damage_modificator > 0 and chance_to_hit > 50:
+        if damage > 0 and damage_modificator > 0 and chance_to_hit > 70:
             self.engine.message_log.add_message(f"{attack_desc} for {damage * damage_modificator} hit points.", attack_color)
             if damage_modificator == 2:
                 self.engine.message_log.add_message(f"The damage is critical!", attack_color)
@@ -181,23 +181,25 @@ class MeleeAction(ActionWithDirection):
                 self.engine.message_log.add_message(f"The damage is resisted!", attack_color)
             target.fighter.hp -= damage * damage_modificator
         else:
-            if chance_to_hit > 50:
+            if chance_to_hit > 70:
                 self.engine.message_log.add_message(f"{attack_desc} but does no damage.", attack_color)
                 if damage_modificator == 0:
                     self.engine.message_log.add_message(f"The {target.name} is immune.", attack_color)
-            else:
+            elif self.entity.status.dict_condition_afflicted["fear"]:
                 self.engine.message_log.add_message(f"The {self.entity.name} missed as the fear blocked his attack.", attack_color)
+            elif self.entity.status.dict_condition_afflicted["blindness"]:
+                self.engine.message_log.add_message(f"The {self.entity.name} missed as it's unable to see.", attack_color)
 
         
         # This checks if the player is grabbed and the enemy is dead, and then release the player from the grabbed grabbed condition
         if self.entity == self.engine.player and self.entity.status.check_grabbed_condition and (damage > 0 and damage_modificator > 0):
-            if (target.fighter.hp <= 0 or not target.is_alive) and target.status.dict_condition_attack["attack_grab"]:
-                self.entity.status.dict_condition_afflicted["flag_grab"] = False
+            if (target.fighter.hp <= 0 or not target.is_alive) and target.status.dict_condition_attack["grab"]:
+                self.entity.status.dict_condition_afflicted["grab"] = False
                 self.engine.message_log.add_message(f"You are free from the grab.", attack_color)
 
             # After the damage, there is the check for the conditions effect.
             # This checks if the entity is an enemy or the player.
-            self.entity.status.affect_new_status(self, target, attack_color)
+        self.entity.status.affect_new_status(self, target, attack_color)
 
 
 class ChestAction(ActionWithDirection):
@@ -267,11 +269,11 @@ class BumpAction(ActionWithDirection):
             self.entity.status.dict_turns_passed["poison"] = 0
 
         # Check if the player is afflicted by confusion
-        elif self.entity.status.dict_condition_afflicted["flag_confusion"]:
+        elif self.entity.status.dict_condition_afflicted["confusion"]:
 
             # If the number of turns is over the number of turns required for the confusion, end the confusion effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_confusion:
-                self.entity.status.dict_condition_afflicted["flag_confusion"] = False
+                self.entity.status.dict_condition_afflicted["confusion"] = False
                 if self.entity == self.engine.player:
                     self.engine.message_log.add_message(f"You are no longer confused!")
                 else:
@@ -300,10 +302,10 @@ class BumpAction(ActionWithDirection):
                     return MovementAction(self.entity, direction_x, direction_y).perform()
 
         # Check if the player is afflicted by stun
-        elif self.entity.status.dict_condition_afflicted["flag_stun"]:
+        elif self.entity.status.dict_condition_afflicted["stun"]:
             # If the number of turns is over the number of turns required for the stun, end the stun effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_stun:
-                self.entity.status.dict_condition_afflicted["flag_stun"] = False
+                self.entity.status.dict_condition_afflicted["stun"] = False
                 if self.entity == self.engine.player:
                     self.engine.message_log.add_message(f"You are no longer stunned!")
                 else:
@@ -318,7 +320,7 @@ class BumpAction(ActionWithDirection):
                 return WaitAction(self.entity)
         
         # Check if the player is afflicted by condemnation
-        elif self.entity.status.dict_condition_afflicted["flag_condemnation"]:
+        elif self.entity.status.dict_condition_afflicted["condemnation"]:
 
             # If the number of turns is over the number of turns required for the condemnation, if is the player, the game is over
             if self.entity.status.check_turns_condemnation:
@@ -333,7 +335,7 @@ class BumpAction(ActionWithDirection):
                 self.engine.message_log.add_message(f"Death is soon approaching!")
                 
         # Check if the player is afflicted by petrification
-        elif self.entity.status.dict_condition_afflicted["flag_petrification"]:
+        elif self.entity.status.dict_condition_afflicted["petrification"]:
 
             # If the number of turns is over the number of turns required for the petrification, if is the player, the game is over
             if self.entity.status.check_turns_petrification:
@@ -345,7 +347,30 @@ class BumpAction(ActionWithDirection):
             # Else, it adds a turns for the petrification
             else:
                 self.entity.status.dict_turns_passed["petrification"] += 1
-                self.engine.message_log.add_message(f"More of your body is turning to stone!")        
+                self.engine.message_log.add_message(f"More of your body is turning to stone!")
+        
+        # Check if the player is afflicted by blindness
+        elif self.entity.status.dict_condition_afflicted["blindness"]:
+            direction_x, direction_y = random.choice(
+                [
+                    (-1, -1),  # Northwest
+                    (0, -1),  # North
+                    (1, -1),  # Northeast
+                    (-1, 0),  # West
+                    (1, 0),  # East
+                    (-1, 1),  # Southwest
+                    (0, 1),  # South
+                    (1, 1),  # Southeast
+                ]
+            )
+            # Then check if there are actors or chests at the random direction
+            if self.engine.game_map.get_actor_at_location(self.dx + direction_x, self.dy + direction_y):
+                return MeleeAction(self.entity, direction_x, direction_y).perform()
+            elif self.engine.game_map.get_chest_at_location(self.dx + direction_x, self.dy + direction_y) and self.entity == self.engine.player:
+                return ChestAction(self.entity, direction_x, direction_y).perform()
+            else:
+                return MovementAction(self.entity, direction_x, direction_y).perform()
+
 
         # After all the status, checks for the target actors or chests
         if self.target_actor:
