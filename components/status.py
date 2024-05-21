@@ -265,11 +265,11 @@ class Status(BaseComponent):
                 if not target.status.check_grabbed_condition:
                     if not target.status.check_grab_immunity:
                         target.status.dict_condition_afflicted["grab"] = True
-                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is grabbed by the {self.entity.name}!", attack_color)
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is grabbed by the {self.parent.name}!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too agile to be grabbed!", attack_color)
                 else:
-                    self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already grabbed by the {self.entity.name}!", attack_color)
+                    self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already grabbed by the {self.parent.name}!", attack_color)
             if (self.parent.equipment.weapon.equippable.status_effect == "fear" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "fear")):
                 if not target.status.dict_condition_afflicted["fear"]:
                     if not target.status.check_fear_immunity:
