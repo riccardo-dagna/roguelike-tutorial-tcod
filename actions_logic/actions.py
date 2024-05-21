@@ -350,7 +350,7 @@ class BumpAction(ActionWithDirection):
                 self.engine.message_log.add_message(f"More of your body is turning to stone!")
         
         # Check if the player is afflicted by blindness
-        elif self.entity.status.dict_condition_afflicted["blindness"]:
+        elif self.entity.status.dict_condition_afflicted["blindness"] and self.entity is not self.engine.player:
             direction_x, direction_y = random.choice(
                 [
                     (-1, -1),  # Northwest

@@ -60,7 +60,7 @@ class ConfusionConsumable(Consumable):
             f"The eyes of the {target.name} look vacant, as it starts to stumble around!",
             color.status_effect_applied,
         )
-        target.status.dict_condition_afflicted["flag_confusion"] = True
+        target.status.dict_condition_afflicted["confusion"] = True
         target.status.dict_turns_passed["confusion"] = 0
         self.consume()
 
@@ -87,7 +87,7 @@ class FearConsumable(Consumable):
             f"The face of the {target.name} look scared, as it starts to run away from you!",
             color.status_effect_applied,
         )
-        target.status.dict_condition_afflicted["flag_fear"] = True
+        target.status.dict_condition_afflicted["fear"] = True
         target.status.dict_turns_passed["fear"] = 0
         self.consume()
 
@@ -150,13 +150,13 @@ class HealingStatusConsumable(Consumable):
     def activate(self, action: actions.ItemAction) -> None:
         consumer = action.entity
         amount_recovered = consumer.fighter.heal(self.amount)
-        flag_status = consumer.status.dict_condition_afflicted["flag_bleed"] or consumer.status.dict_condition_afflicted["flag_poison"] or consumer.status.dict_condition_afflicted["flag_condemnation"] or consumer.status.dict_condition_afflicted["flag_petrification"]
+        flag_status = consumer.status.dict_condition_afflicted["bleed"] or consumer.status.dict_condition_afflicted["poison"] or consumer.status.dict_condition_afflicted["condemnation"] or consumer.status.dict_condition_afflicted["petrification"]
         
         if amount_recovered > 0 or flag_status:
-            consumer.status.dict_condition_afflicted["flag_bleed"] = False
-            consumer.status.dict_condition_afflicted["flag_poison"] = False
-            consumer.status.dict_condition_afflicted["flag_condemnation"] = False
-            consumer.status.dict_condition_afflicted["flag_petrification"] = False
+            consumer.status.dict_condition_afflicted["bleed"] = False
+            consumer.status.dict_condition_afflicted["poison"] = False
+            consumer.status.dict_condition_afflicted["condemnation"] = False
+            consumer.status.dict_condition_afflicted["petrification"] = False
             self.engine.message_log.add_message(
                 f"You are healed from your affliction!",
                 color.health_recovered,
@@ -216,6 +216,6 @@ class StunConsumable(Consumable):
             f"The {target.name} is trying to focus, but it can't!",
             color.status_effect_applied,
         )
-        target.status.dict_condition_afflicted["flag_stun"] = True
+        target.status.dict_condition_afflicted["stun"] = True
         target.status.dict_turns_passed["stun"] = 0
         self.consume()
