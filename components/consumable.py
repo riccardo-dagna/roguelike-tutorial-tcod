@@ -150,13 +150,14 @@ class HealingStatusConsumable(Consumable):
     def activate(self, action: actions.ItemAction) -> None:
         consumer = action.entity
         amount_recovered = consumer.fighter.heal(self.amount)
-        flag_status = consumer.status.dict_condition_afflicted["bleed"] or consumer.status.dict_condition_afflicted["poison"] or consumer.status.dict_condition_afflicted["condemnation"] or consumer.status.dict_condition_afflicted["petrification"]
+        flag_status = consumer.status.dict_condition_afflicted["bleed"] or consumer.status.dict_condition_afflicted["poison"] or consumer.status.dict_condition_afflicted["condemnation"] or consumer.status.dict_condition_afflicted["petrification"] or consumer.status.dict_condition_afflicted["blindness"]
         
         if amount_recovered > 0 or flag_status:
             consumer.status.dict_condition_afflicted["bleed"] = False
             consumer.status.dict_condition_afflicted["poison"] = False
             consumer.status.dict_condition_afflicted["condemnation"] = False
             consumer.status.dict_condition_afflicted["petrification"] = False
+            consumer.status.dict_condition_afflicted["blindness"] = False
             self.engine.message_log.add_message(
                 f"You are healed from your affliction!",
                 color.health_recovered,
