@@ -46,6 +46,13 @@ MOVE_KEYS = {
     tcod.event.KeySym.n: (1, 1),
 }
 
+RANGED_KEYS = {
+    tcod.event.KeySym.UP: (0, -1),
+    tcod.event.KeySym.DOWN: (0, 1),
+    tcod.event.KeySym.LEFT: (-1, 0),
+    tcod.event.KeySym.RIGHT: (1, 0),
+}
+
 WAIT_KEYS = {
     tcod.event.KeySym.PERIOD,
     tcod.event.KeySym.KP_5,
@@ -473,6 +480,36 @@ class LookHandler(SelectIndexHandler):
         return MainGameEventHandler(self.engine)
 
 
+class NormalRangedAttackHandler(AskUserEventHandler):
+    """Handles using a normal ranged attack, like with a weapon"""
+    def __init__(self, engine: Engine):
+        super().__init__(engine)
+        self.engine.message_log.add_message("Select a valid direction.", color.needs_target)
+        
+    
+    def ev_keydown(self, event: tcod.event.KeySym):
+        player = self.engine.player
+        key = event.sym
+
+        if key == tcod.event.KeySym.UP or key == tcod.event.KeySym.DOWN or key == tcod.event.KeySym.LEFT or key == tcod.event.KeySym.RIGHT:
+            dx, dy = RANGED_KEYS[key]
+        else:
+            return self.on_exit()
+        
+        target_hit = False
+        for actor in self.engine.game_map.actors:
+            if actor.distance(player.x, player.y) <= 8 and actor is not player:
+                if (dx != 0 and actor.y == player.y) or (dy != 0 and actor.x == player.x):
+                    self.engine.message_log.add_message(f"You hit the {actor.name} with a ranged attack!")
+                    actor.fighter.hp -= 4
+                    target_hit = True
+
+        if not target_hit:
+            self.engine.message_log.add_message(f"You hear the arrow hit a wall!")
+        
+        
+
+
 class SingleRangedAttackHandler(SelectIndexHandler):
     """Handles targeting a single enemy. Only the enemy selected will be affected."""
 
@@ -541,6 +578,9 @@ class MainGameEventHandler(EventHandler):
             raise SystemExit()
         elif key == tcod.event.KeySym.v:
             return HistoryViewer(self.engine)
+        
+        elif key == tcod.event.KeySym.r:
+            return NormalRangedAttackHandler(self.engine)
 
         elif key == tcod.event.KeySym.g:
             action = PickupAction(player)
