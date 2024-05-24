@@ -12,9 +12,10 @@ if TYPE_CHECKING:
 class Equipment(BaseComponent):
     parent: Actor
 
-    def __init__(self, weapon: Optional[Item] = None, armor: Optional[Item] = None, 
+    def __init__(self, meelee: Optional[Item] = None, ranged: Optional[Item] = None, armor: Optional[Item] = None, 
                  accessory_1: Optional[Item] = None, accessory_2: Optional[Item] = None):
-        self.weapon = weapon
+        self.meelee = meelee
+        self.ranged = ranged
         self.armor = armor
         self.accessory_1 = accessory_1
         self.accessory_2 = accessory_2
@@ -23,8 +24,8 @@ class Equipment(BaseComponent):
     def defense_bonus(self) -> int:
         bonus = 0
 
-        if self.weapon is not None and self.weapon.equippable is not None:
-            bonus += self.weapon.equippable.defense_bonus
+        if self.meelee is not None and self.meelee.equippable is not None:
+            bonus += self.meelee.equippable.defense_bonus
 
         if self.armor is not None and self.armor.equippable is not None:
             bonus += self.armor.equippable.defense_bonus
@@ -38,11 +39,29 @@ class Equipment(BaseComponent):
         return bonus
 
     @property
-    def power_bonus(self) -> int:
+    def power_meelee_bonus(self) -> int:
         bonus = 0
 
-        if self.weapon is not None and self.weapon.equippable is not None:
-            bonus += self.weapon.equippable.power_bonus
+        if self.meelee is not None and self.meelee.equippable is not None:
+            bonus += self.meelee.equippable.power_bonus
+
+        if self.armor is not None and self.armor.equippable is not None:
+            bonus += self.armor.equippable.power_bonus
+        
+        if self.accessory_1 is not None and self.accessory_1.equippable is not None:
+            bonus += self.accessory_1.equippable.power_bonus
+        
+        if self.accessory_2 is not None and self.accessory_2.equippable is not None:
+            bonus += self.accessory_2.equippable.power_bonus
+
+        return bonus
+    
+    @property
+    def power_ranged_bonus(self) -> int:
+        bonus = 0
+
+        if self.ranged is not None and self.ranged.equippable is not None:
+            bonus += self.ranged.equippable.power_bonus
 
         if self.armor is not None and self.armor.equippable is not None:
             bonus += self.armor.equippable.power_bonus
@@ -56,7 +75,7 @@ class Equipment(BaseComponent):
         return bonus
 
     def item_is_equipped(self, item: Item) -> bool:
-        return self.weapon == item or self.armor == item
+        return self.meelee == item or self.ranged == item or self.armor == item
 
     def unequip_message(self, item_name: str) -> None:
         self.parent.gamemap.engine.message_log.add_message(f"You remove the {item_name}.")
@@ -84,8 +103,10 @@ class Equipment(BaseComponent):
         setattr(self, slot, None)
 
     def toggle_equip(self, equippable_item: Item, add_message: bool = True) -> None:
-        if equippable_item.equippable and equippable_item.equippable.equipment_type == EquipmentType.WEAPON:
-            slot = "weapon"
+        if equippable_item.equippable and equippable_item.equippable.equipment_type == EquipmentType.MEELEE:
+            slot = "meelee"
+        elif equippable_item.equippable and equippable_item.equippable.equipment_type == EquipmentType.RANGED:
+            slot = "ranged"
         elif equippable_item.equippable and equippable_item.equippable.equipment_type == EquipmentType.ARMOR:
             slot = "armor"
         else:

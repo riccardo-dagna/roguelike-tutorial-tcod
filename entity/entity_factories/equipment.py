@@ -7,6 +7,8 @@ dagger = Item(char="/", color=(0, 191, 255), name="Dagger", equippable=equippabl
 sword = Item(char="/", color=(0, 191, 255), name="Sword", equippable=equippable.Sword())
 vorpal_sword = Item(char="/", color=(0, 191, 255), name="Fire Sword", equippable=equippable.VorpalSword())
 
+bow = Item(char="/", color=(0, 191, 255), name="Bow", equippable=equippable.Bow())
+
 
 #This sections contains the armors
 leather_armor = Item(char="[", color=(139, 69, 19), name="Leather Armor", equippable=equippable.LeatherArmor())
