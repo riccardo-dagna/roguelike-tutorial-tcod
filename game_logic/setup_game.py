@@ -53,15 +53,21 @@ def new_game() -> Engine:
 
     dagger = copy.deepcopy(equipment.dagger)
     leather_armor = copy.deepcopy(equipment.leather_armor)
+    bow = copy.deepcopy(equipment.bow)
 
     dagger.parent = player.inventory
     leather_armor.parent = player.inventory
+    bow.parent = player.inventory
 
     player.inventory.items.append(dagger)
     player.equipment.toggle_equip(dagger, add_message=False)
 
     player.inventory.items.append(leather_armor)
     player.equipment.toggle_equip(leather_armor, add_message=False)
+
+    
+    player.inventory.items.append(bow)
+    player.equipment.toggle_equip(bow, add_message=False)
 
     return engine
 
