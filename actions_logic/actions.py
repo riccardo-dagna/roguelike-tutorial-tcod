@@ -146,6 +146,11 @@ class ActionWithDirection(Action):
         raise NotImplementedError()
 
 
+class RangedAction(ActionWithDirection):
+    def perform(self) -> None:
+        return super().perform()
+
+
 class MeleeAction(ActionWithDirection):
     def perform(self) -> None:
         target = self.target_actor
