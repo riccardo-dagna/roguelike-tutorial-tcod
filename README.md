@@ -14,7 +14,7 @@ fighter=Fighter(hp=20, base_defense=1, base_power=2),
 The list of commands is below:
 - "movement arrow" to move and attack
 - "numpad arrow" (excluded 5) to move and attack in the direction
-- "r" to attack ranged (now it needs some debugging)
+- "r" to attack ranged
 - "5", "Period" and "Clear" to wait
 - "Return" and "Enter" to confirm
 - "g" to pick up intems on the floor
@@ -40,11 +40,11 @@ Mechanics added in the game, already tested:
 - Elemental damage (fire, ice, electric, acid) - only damage
 
 Mechanics added in the game, to test:
+- Ranged combat (with bows, etc.)
 - Condition (grab (for the enemy, but needs to be checked))
 - Chests (to correct random item generation by floor, and to tests)
 
 Mechanics to add in the game:
-- Ranged combat (with bows, etc.)
 - Condition (grab (on the enemy), charm)
 - Extra effect of elemental damage
 - Special attacks (stats drain, percentile damage, rot, steal, engulf/digest, dispel)
