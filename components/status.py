@@ -126,7 +126,7 @@ class Status(BaseComponent):
         # After the damage, there is the check for the conditions effect.
         # This checks if the entity is an enemy or the player.
         # affect_new_status(self, target)
-        if self.parent.equipment.weapon is None and self.parent.equipment.accessory_1 is None and self.parent.equipment.accessory_2 is None:
+        if self.parent.equipment.meelee is None and self.parent.equipment.accessory_1 is None and self.parent.equipment.accessory_2 is None:
             """ If the enemy can affect the player with a condition from an attack, it will not check the other condition. 
                Then, it will check if the player is already afflicted by the condition or if it's immune to the condition."""
             if self.parent.status.dict_condition_attack["bleed"]:
@@ -223,7 +223,7 @@ class Status(BaseComponent):
         else:
             """Check if the equipment of the player can create the conditions specified. 
                Then, it will check if the monster is already afflicted by the condition or if it's immune to the condition."""
-            if (self.parent.equipment.weapon.equippable.status_effect == "bleed" or (self.parent.equipment.accessory_1 is not None and self.parent.equipment.accessory_1.equippable.status_effect == "bleed")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "bleed" or (self.parent.equipment.accessory_1 is not None and self.parent.equipment.accessory_1.equippable.status_effect == "bleed")):
                 if not target.status.dict_condition_afflicted["bleed"]:
                     if not target.status.check_bleed_immunity:
                         target.status.dict_condition_afflicted["bleed"] = True
@@ -232,7 +232,7 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to bleeding!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already bleeding!", attack_color)
-            if (self.parent.equipment.weapon.equippable.status_effect == "poison" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "poison")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "poison" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "poison")):
                 if not target.status.dict_condition_afflicted["poison"]:
                     if not target.status.check_poison_immunity:
                         target.status.dict_condition_afflicted["poison"] = True
@@ -241,7 +241,7 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to poison!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already poisoned!", attack_color)
-            if (self.parent.equipment.weapon.equippable.status_effect == "stun" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "stun")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "stun" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "stun")):
                 if not target.status.dict_condition_afflicted["stun"]:
                     if not target.status.check_stun_immunity:
                         target.status.dict_condition_afflicted["stun"] = True
@@ -251,7 +251,7 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to stun!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already stunned!", attack_color)
-            if (self.parent.equipment.weapon.equippable.status_effect == "confusion" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "confusion")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "confusion" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "confusion")):
                 if not target.status.dict_condition_afflicted["confusion"]:
                     if not target.status.check_confusion_immunity:
                         target.status.dict_condition_afflicted["confusion"] = True
@@ -261,7 +261,7 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to confusion!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already confusion!", attack_color)
-            if (self.parent.equipment.weapon.equippable.status_effect == "grab" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "grab")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "grab" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "grab")):
                 if not target.status.check_grabbed_condition:
                     if not target.status.check_grab_immunity:
                         target.status.dict_condition_afflicted["grab"] = True
@@ -270,7 +270,7 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too agile to be grabbed!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already grabbed by the {self.parent.name}!", attack_color)
-            if (self.parent.equipment.weapon.equippable.status_effect == "fear" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "fear")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "fear" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "fear")):
                 if not target.status.dict_condition_afflicted["fear"]:
                     if not target.status.check_fear_immunity:
                         target.status.dict_condition_afflicted["fear"] = True

@@ -34,8 +34,12 @@ class Fighter(BaseComponent):
         return self.base_defense + self.defense_bonus
 
     @property
-    def power(self) -> int:
-        return self.base_power + self.power_bonus
+    def power_meelee(self) -> int:
+        return self.base_power + self.power_meelee_bonus
+    
+    @property
+    def power_ranged(self) -> int:
+        return self.base_power + self.power_ranged_bonus
 
     @property
     def defense_bonus(self) -> int:
@@ -45,9 +49,16 @@ class Fighter(BaseComponent):
             return 0
 
     @property
-    def power_bonus(self) -> int:
-        if self.parent.equipment:
-            return self.parent.equipment.power_bonus
+    def power_meelee_bonus(self) -> int:
+        if self.parent.equipment.meelee:
+            return self.parent.equipment.power_meelee_bonus
+        else:
+            return 0
+               
+    @property
+    def power_ranged_bonus(self) -> int:
+        if self.parent.equipment.meelee:
+            return self.parent.equipment.power_ranged_bonus
         else:
             return 0
 
