@@ -6,7 +6,7 @@ import os
 import tcod
 from tcod import libtcodpy
 
-from actions_logic.actions import Action, BumpAction, PickupAction, WaitAction
+from actions_logic.actions import Action, BumpAction, PickupAction, WaitAction, RangedAction
 import actions_logic.actions as actions
 import game_map.color as color
 import utility_files.exceptions as exceptions
@@ -493,19 +493,21 @@ class NormalRangedAttackHandler(AskUserEventHandler):
 
         if key == tcod.event.KeySym.UP or key == tcod.event.KeySym.DOWN or key == tcod.event.KeySym.LEFT or key == tcod.event.KeySym.RIGHT:
             dx, dy = RANGED_KEYS[key]
+            target_hit = False
+            for actor in self.engine.game_map.actors:
+                if actor.distance(player.x, player.y) <= 8 and actor is not player and target_hit is False:
+                    if (dx != 0 and actor.y == player.y) or (dy != 0 and actor.x == player.x):
+                        target_hit = True
+                        break
+
+            if not target_hit:
+                self.engine.message_log.add_message("You hear the arrow hit a wall!")
+                self.on_exit()
+            else:
+                return RangedAction(player, actor.x - player.x, actor.y - player.y)
         else:
             return self.on_exit()
         
-        target_hit = False
-        for actor in self.engine.game_map.actors:
-            if actor.distance(player.x, player.y) <= 8 and actor is not player:
-                if (dx != 0 and actor.y == player.y) or (dy != 0 and actor.x == player.x):
-                    self.engine.message_log.add_message(f"You hit the {actor.name} with a ranged attack!")
-                    actor.fighter.hp -= 4
-                    target_hit = True
-
-        if not target_hit:
-            self.engine.message_log.add_message(f"You hear the arrow hit a wall!")
         
         
 

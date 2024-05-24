@@ -148,7 +148,10 @@ class ActionWithDirection(Action):
 
 class RangedAction(ActionWithDirection):
     def perform(self) -> None:
-        return super().perform()
+        target = self.target_actor
+        target.fighter.hp -= self.entity.fighter.power_ranged
+        self.engine.message_log.add_message(f"You hit the {target.name} with your {self.entity.equipment.ranged.equippable.projectile_name}!")
+        self.engine.message_log.add_message(f"You deal {self.entity.fighter.power_ranged} damage!")
 
 
 class MeleeAction(ActionWithDirection):
@@ -157,7 +160,7 @@ class MeleeAction(ActionWithDirection):
         if not target:
             raise exceptions.Impossible("Nothing to attack.")
 
-        damage = self.entity.fighter.power - target.fighter.defense
+        damage = self.entity.fighter.power_meelee - target.fighter.defense
         
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
         if self.entity is self.engine.player:
@@ -167,7 +170,7 @@ class MeleeAction(ActionWithDirection):
 
         # Check if the entity is the player or the enemy to calculate the type of damage        
         if self.entity == self.engine.player:
-            damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.weapon.equippable.damage_type)
+            damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.meelee.equippable.damage_type)
         else:
             damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
 
