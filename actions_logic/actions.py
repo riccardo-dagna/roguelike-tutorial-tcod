@@ -148,10 +148,14 @@ class ActionWithDirection(Action):
 
 class RangedAction(ActionWithDirection):
     def perform(self) -> None:
-        target = self.target_actor
-        target.fighter.hp -= self.entity.fighter.power_ranged
-        self.engine.message_log.add_message(f"You hit the {target.name} with your {self.entity.equipment.ranged.equippable.projectile_name}!")
-        self.engine.message_log.add_message(f"You deal {self.entity.fighter.power_ranged} damage!")
+        #If dx/dy is different than 0, it has a target
+        if self.dx == 0 and self.dy == 0:
+            self.engine.message_log.add_message(f"You hear the {self.entity.equipment.ranged.equippable.projectile_name} hit a wall in the distance.")
+        else:
+            target = self.target_actor
+            target.fighter.hp -= self.entity.fighter.power_ranged
+            self.engine.message_log.add_message(f"You hit the {target.name} with your {self.entity.equipment.ranged.equippable.projectile_name}!")
+            self.engine.message_log.add_message(f"You deal {self.entity.fighter.power_ranged} damage!")
 
 
 class MeleeAction(ActionWithDirection):

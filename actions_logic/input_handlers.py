@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
 import os
 
 import tcod
+import random
 from tcod import libtcodpy
 
 from actions_logic.actions import Action, BumpAction, PickupAction, WaitAction, RangedAction
@@ -485,7 +486,6 @@ class NormalRangedAttackHandler(AskUserEventHandler):
     def __init__(self, engine: Engine):
         super().__init__(engine)
         self.engine.message_log.add_message("Select a valid direction.", color.needs_target)
-        
     
     def ev_keydown(self, event: tcod.event.KeySym):
         player = self.engine.player
@@ -493,18 +493,26 @@ class NormalRangedAttackHandler(AskUserEventHandler):
 
         if key == tcod.event.KeySym.UP or key == tcod.event.KeySym.DOWN or key == tcod.event.KeySym.LEFT or key == tcod.event.KeySym.RIGHT:
             dx, dy = RANGED_KEYS[key]
-            target_hit = False
+            target = None
             for actor in self.engine.game_map.actors:
-                if actor.distance(player.x, player.y) <= 8 and actor is not player and target_hit is False:
+                #Check if the distance is minor than 8 and if the actor is not the player
+                if actor.distance(player.x, player.y) <= 8 and actor is not player:
+                    #Now check if the direction selected and the actor position is correct
                     if (dx != 0 and actor.y == player.y) or (dy != 0 and actor.x == player.x):
-                        target_hit = True
-                        break
+                        #If the direction is the same of the one selected, now check if the actor is the closest
+                        self.engine.message_log.add_message(f"Actor x = {actor.x}, actor y = {actor.y}, player x = {player.x}, player y = {player.y}")
+                        self.engine.message_log.add_message(f"Dx = {dx}, Dy = {dy}, distance x = {actor.x - player.x}, distance y = {actor.y - player.y}")
+                        if (dx > 0 and (actor.x-player.x) > 0) or (dx < 0 and (actor.x - player.x) < 0) or (dy > 0 and (actor.y-player.y) > 0) or (dy < 0 and (actor.y-player.y) < 0):
+                            if target is None:
+                                target = actor
+                            elif actor.distance(player.x, player.y) < target.distance(player.x, player.y):
+                                target = actor
 
-            if not target_hit:
-                self.engine.message_log.add_message("You hear the arrow hit a wall!")
-                self.on_exit()
+            #If the target exist, it deals damage, otherwise it invokes the action with 0 distance
+            if not target:
+                return RangedAction(player, 0, 0)
             else:
-                return RangedAction(player, actor.x - player.x, actor.y - player.y)
+                return RangedAction(player, target.x - player.x, target.y - player.y)
         else:
             return self.on_exit()
         
