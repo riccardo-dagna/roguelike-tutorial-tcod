@@ -29,7 +29,7 @@ The list of commands is below:
 (If it's "for the enemy", it's a mechanic only usable by the enemies, if it's "on the enemy", it's a mechanic only usable by the player, otherwise it's for both)
 
 Mechanics added in the game, already tested:
-- Movement and basic attacks
+- Movement and basic attacks (meelee and ranged)
 - Random map generation and floor difficulty
 - Item spawning in the map (depending on the floor the player is)
 - Inventory capability (and dropping capability)
@@ -40,7 +40,6 @@ Mechanics added in the game, already tested:
 - Elemental damage (fire, ice, electric, acid) - only damage
 
 Mechanics added in the game, to test:
-- Ranged combat (with bows, etc.)
 - Condition (grab (for the enemy, but needs to be checked))
 - Chests (to correct random item generation by floor, and to tests)
 
