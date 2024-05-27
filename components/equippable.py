@@ -64,6 +64,10 @@ class Bow(Equippable):
     def __init__(self) -> None:
         super().__init__(equipment_type=EquipmentType.RANGED, power_bonus=2, projectile_name="arrow")
 
+class Kunai(Equippable):
+    def __init__(self) -> None:
+        super().__init__(equipment_type=EquipmentType.RANGED, power_bonus=1, status_effect="bleed", projectile_name="kunai")
+
 
 class LeatherArmor(Equippable):
     def __init__(self) -> None:

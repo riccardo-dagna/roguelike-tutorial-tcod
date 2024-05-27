@@ -8,6 +8,7 @@ sword = Item(char="/", color=(0, 191, 255), name="Sword", equippable=equippable.
 vorpal_sword = Item(char="/", color=(0, 191, 255), name="Fire Sword", equippable=equippable.VorpalSword())
 
 bow = Item(char="/", color=(0, 191, 255), name="Bow", equippable=equippable.Bow())
+kunai = Item(char="/", color=(0, 191, 255), name="Kunai", equippable=equippable.Kunai())
 
 
 #This sections contains the armors
