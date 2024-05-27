@@ -223,7 +223,7 @@ class Status(BaseComponent):
         else:
             """Check if the equipment of the player can create the conditions specified. 
                Then, it will check if the monster is already afflicted by the condition or if it's immune to the condition."""
-            if (self.parent.equipment.meelee.equippable.status_effect == "bleed" or (self.parent.equipment.accessory_1 is not None and self.parent.equipment.accessory_1.equippable.status_effect == "bleed")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "bleed" or self.parent.equipment.ranged.equippable.status_effect == "bleed" or (self.parent.equipment.accessory_1 is not None and self.parent.equipment.accessory_1.equippable.status_effect == "bleed")):
                 if not target.status.dict_condition_afflicted["bleed"]:
                     if not target.status.check_bleed_immunity:
                         target.status.dict_condition_afflicted["bleed"] = True
@@ -232,7 +232,7 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to bleeding!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already bleeding!", attack_color)
-            if (self.parent.equipment.meelee.equippable.status_effect == "poison" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "poison")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "poison" or self.parent.equipment.ranged.equippable.status_effect == "poison" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "poison")):
                 if not target.status.dict_condition_afflicted["poison"]:
                     if not target.status.check_poison_immunity:
                         target.status.dict_condition_afflicted["poison"] = True
@@ -241,7 +241,7 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to poison!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already poisoned!", attack_color)
-            if (self.parent.equipment.meelee.equippable.status_effect == "stun" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "stun")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "stun" or self.parent.equipment.ranged.equippable.status_effect == "stun" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "stun")):
                 if not target.status.dict_condition_afflicted["stun"]:
                     if not target.status.check_stun_immunity:
                         target.status.dict_condition_afflicted["stun"] = True
@@ -251,7 +251,7 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to stun!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already stunned!", attack_color)
-            if (self.parent.equipment.meelee.equippable.status_effect == "confusion" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "confusion")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "confusion" or self.parent.equipment.ranged.equippable.status_effect == "confusion" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "confusion")):
                 if not target.status.dict_condition_afflicted["confusion"]:
                     if not target.status.check_confusion_immunity:
                         target.status.dict_condition_afflicted["confusion"] = True
