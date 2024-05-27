@@ -153,7 +153,10 @@ class RangedAction(ActionWithDirection):
             self.engine.message_log.add_message(f"You hear the {self.entity.equipment.ranged.equippable.projectile_name} hit a wall in the distance.")
         else:
             target = self.target_actor
-            target.fighter.hp -= self.entity.fighter.power_ranged
+
+            damage = self.entity.fighter.power_ranged - target.fighter.defense
+
+            target.fighter.hp -= damage
             self.engine.message_log.add_message(f"You hit the {target.name} with your {self.entity.equipment.ranged.equippable.projectile_name}!")
             self.engine.message_log.add_message(f"You deal {self.entity.fighter.power_ranged} damage!")
 

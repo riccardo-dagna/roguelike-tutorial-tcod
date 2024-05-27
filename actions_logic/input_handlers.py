@@ -500,9 +500,7 @@ class NormalRangedAttackHandler(AskUserEventHandler):
                     #Now check if the direction selected and the actor position is correct
                     if (dx != 0 and actor.y == player.y) or (dy != 0 and actor.x == player.x):
                         #If the direction is the same of the one selected, now check if the actor is the closest
-                        self.engine.message_log.add_message(f"Actor x = {actor.x}, actor y = {actor.y}, player x = {player.x}, player y = {player.y}")
-                        self.engine.message_log.add_message(f"Dx = {dx}, Dy = {dy}, distance x = {actor.x - player.x}, distance y = {actor.y - player.y}")
-                        if (dx > 0 and (actor.x-player.x) > 0) or (dx < 0 and (actor.x - player.x) < 0) or (dy > 0 and (actor.y-player.y) > 0) or (dy < 0 and (actor.y-player.y) < 0):
+                        if (dx > 0 and (actor.x-player.x) > 0) or (dx < 0 and (actor.x-player.x) < 0) or (dy > 0 and (actor.y-player.y) > 0) or (dy < 0 and (actor.y-player.y) < 0):
                             if target is None:
                                 target = actor
                             elif actor.distance(player.x, player.y) < target.distance(player.x, player.y):
