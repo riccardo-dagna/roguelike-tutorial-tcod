@@ -21,26 +21,27 @@ class Status(BaseComponent):
     turns_condemnation: int = 10
     turns_petrification: int = 20
     turns_fear: int = 10
+    turns_charm: int = 10
 
     def __init__(self, 
-                 flag_bleed: bool = False, flag_poison: bool = False, flag_stun: bool = False, flag_confusion: bool = False, flag_grab: bool = False, flag_condemnation: bool = False, flag_petrification: bool = False, flag_fear: bool = False, flag_blindness: bool = False, 
-                 immunity_bleed: bool = False, immunity_poison: bool = False, immunity_stun: bool = False, immunity_confusion: bool = False, immunity_grab: bool = False, immunity_condemnation: bool = False, immunity_petrification: bool = False, immunity_fear: bool = False, immunity_blindness: bool = False, 
-                 attack_bleed: bool = False, attack_poison: bool = False, attack_stun: bool = False, attack_confusion: bool = False, attack_grab: bool = False, attack_condemnation: bool = False, attack_petrification: bool = False, attack_fear: bool = False, attack_blindness: bool = False,
+                 flag_bleed: bool = False, flag_poison: bool = False, flag_stun: bool = False, flag_confusion: bool = False, flag_grab: bool = False, flag_condemnation: bool = False, flag_petrification: bool = False, flag_fear: bool = False, flag_blindness: bool = False, flag_charm: bool = False,
+                 immunity_bleed: bool = False, immunity_poison: bool = False, immunity_stun: bool = False, immunity_confusion: bool = False, immunity_grab: bool = False, immunity_condemnation: bool = False, immunity_petrification: bool = False, immunity_fear: bool = False, immunity_blindness: bool = False,  immunity_charm: bool = False,
+                 attack_bleed: bool = False, attack_poison: bool = False, attack_stun: bool = False, attack_confusion: bool = False, attack_grab: bool = False, attack_condemnation: bool = False, attack_petrification: bool = False, attack_fear: bool = False, attack_blindness: bool = False, attack_charm: bool = False,
     ):
         self.dict_condition_afflicted = dict(bleed = flag_bleed, poison = flag_poison, stun = flag_stun, confusion = flag_confusion, grab = flag_grab, 
                                              condemnation = flag_condemnation, petrification = flag_petrification, fear = flag_fear, blindness = flag_blindness,
-                                             )
+                                             charm = flag_charm,)
 
         self.dict_condition_immunity = dict(bleed = immunity_bleed, poison = immunity_poison, stun = immunity_stun, confusion = immunity_confusion, 
                                             grab = immunity_grab, condemnation = immunity_condemnation, petrification = immunity_petrification, 
-                                            fear = immunity_fear, blindness = immunity_blindness,
+                                            fear = immunity_fear, blindness = immunity_blindness, charm = immunity_charm,
                                             )
 
         self.dict_condition_attack = dict(bleed = attack_bleed, poison = attack_poison, stun = attack_stun, confusion = attack_confusion, grab = attack_grab,
-                                          condemnation = attack_condemnation, petrification = attack_petrification, fear = attack_fear, blindness = attack_blindness
-                                          )
+                                          condemnation = attack_condemnation, petrification = attack_petrification, fear = attack_fear, blindness = attack_blindness,
+                                          charm = attack_charm)
         
-        self.dict_turns_passed = dict(poison = 0, burn = 0, stun = 0, confusion = 0, condemnation = 0, petrification = 0, fear = 0,)
+        self.dict_turns_passed = dict(poison = 0, burn = 0, stun = 0, confusion = 0, condemnation = 0, petrification = 0, fear = 0, charm = 0)
     
     @property
     def check_turns_poison(self) -> bool:
@@ -69,6 +70,10 @@ class Status(BaseComponent):
     @property
     def check_turns_petrification(self) -> bool:
         return self.dict_condition_afflicted["fead"] and self.dict_turns_passed["fear"] > self.turns_fear
+    
+    @property
+    def check_turns_charm(self) -> bool:
+        return self.dict_turns_passed["charm"] > self.turns_charm
         
     
     @property
@@ -111,6 +116,10 @@ class Status(BaseComponent):
     @property
     def check_blindness_immunity(self) -> bool:
         return self.dict_condition_immunity["blindness"]
+    
+    @property
+    def check_charm_immunity(self) -> bool:
+        return self.dict_condition_immunity["charm"]
     
 
     def effect_hp_damage(self) -> None:
@@ -260,7 +269,7 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is resistant to confusion!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already confusion!", attack_color)
-            if (self.parent.equipment.meelee.equippable.status_effect == "grab" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "grab")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "grab" or self.parent.equipment.ranged.equippable.status_effect == "grab" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "grab")):
                 if not target.status.check_grabbed_condition:
                     if not target.status.check_grab_immunity:
                         target.status.dict_condition_afflicted["grab"] = True
@@ -269,7 +278,7 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too agile to be grabbed!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already grabbed by the {self.parent.name}!", attack_color)
-            if (self.parent.equipment.meelee.equippable.status_effect == "fear" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "fear")):
+            if (self.parent.equipment.meelee.equippable.status_effect == "fear" or self.parent.equipment.ranged.equippable.status_effect == "fear" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "fear")):
                 if not target.status.dict_condition_afflicted["fear"]:
                     if not target.status.check_fear_immunity:
                         target.status.dict_condition_afflicted["fear"] = True
@@ -279,6 +288,16 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too strong willed to be afraid!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already afraid of his enemy!", attack_color)
+            if (self.parent.equipment.meelee.equippable.status_effect == "charm" or self.parent.equipment.ranged.equippable.status_effect == "charm" or (self.parent.equipment.accessory_1 is not None and self.entity.equipment.accessory_1.equippable.status_effect == "charm")):
+                if not target.status.dict_condition_afflicted["charm"]:
+                    if not target.status.check_charm_immunity:
+                        target.status.dict_condition_afflicted["charm"] = True
+                        target.status.dict_turns_passed["charm"] = 0
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is charmed by his enemy!", attack_color)
+                    else:
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too strong willed to be charmed!", attack_color)
+                else:
+                    self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already charmed of his enemy!", attack_color)
 
     def status_check_in_turn(self, actor: Actor, engine: Engine) -> None:
         """This function check for the various conditions and if there is any effect that happens/ends in that moment.
