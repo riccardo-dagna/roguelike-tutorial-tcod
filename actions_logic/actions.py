@@ -148,17 +148,34 @@ class ActionWithDirection(Action):
 
 class RangedAction(ActionWithDirection):
     def perform(self) -> None:
-        #If dx/dy is different than 0, it has a target
+        # If dx/dy is different than 0, it has a target
         if self.dx == 0 and self.dy == 0:
             self.engine.message_log.add_message(f"You hear the {self.entity.equipment.ranged.equippable.projectile_name} hit a wall in the distance.")
         else:
             target = self.target_actor
 
-            damage = self.entity.fighter.power_ranged - target.fighter.defense
+            attack_desc = f"You hit the {target.name} with your {self.entity.equipment.ranged.equippable.projectile_name}"
 
-            target.fighter.hp -= damage
-            self.engine.message_log.add_message(f"You hit the {target.name} with your {self.entity.equipment.ranged.equippable.projectile_name}!")
-            self.engine.message_log.add_message(f"You deal {self.entity.fighter.power_ranged} damage!")
+            damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.meelee.equippable.damage_type)
+            damage = self.entity.fighter.power_ranged - target.fighter.defense
+            
+            # Calculate the damage to inflict to the target and elemental resistance/vulnerability
+            if damage > 0 and damage_modificator > 0:    
+                self.engine.message_log.add_message(f"{attack_desc} for {self.entity.fighter.power_ranged} damage!", color.player_atk)
+                target.fighter.hp -= damage * damage_modificator
+            else:
+                self.engine.message_log.add_message(f"{attack_desc} but does no damage.", color.player_atk)
+                if damage_modificator == 0:
+                    self.engine.message_log.add_message(f"The {target.name} is immune.", color.player_atk)
+
+            # This checks if the player is grabbed and the enemy is dead, and then release the player from the grabbed condition
+            if self.entity == self.engine.player and self.entity.status.check_grabbed_condition and (damage > 0 and damage_modificator > 0):
+                if (target.fighter.hp <= 0 or not target.is_alive) and target.status.dict_condition_attack["grab"]:
+                    self.entity.status.dict_condition_afflicted["grab"] = False
+                    self.engine.message_log.add_message(f"You are free from the grab.", color.player_atk)
+
+            # After the damage, there is the check for the conditions effect.
+            self.entity.status.affect_new_status(self, target, color.player_atk)
 
 
 class MeleeAction(ActionWithDirection):
@@ -206,14 +223,14 @@ class MeleeAction(ActionWithDirection):
                 self.engine.message_log.add_message(f"The {self.entity.name} missed as it's unable to see.", attack_color)
 
         
-        # This checks if the player is grabbed and the enemy is dead, and then release the player from the grabbed grabbed condition
+        # This checks if the player is grabbed and the enemy is dead, and then release the player from the grabbed condition
         if self.entity == self.engine.player and self.entity.status.check_grabbed_condition and (damage > 0 and damage_modificator > 0):
             if (target.fighter.hp <= 0 or not target.is_alive) and target.status.dict_condition_attack["grab"]:
                 self.entity.status.dict_condition_afflicted["grab"] = False
                 self.engine.message_log.add_message(f"You are free from the grab.", attack_color)
 
-            # After the damage, there is the check for the conditions effect.
-            # This checks if the entity is an enemy or the player.
+        # After the damage, there is the check for the conditions effect.
+        # This checks if the entity is an enemy or the player.
         self.entity.status.affect_new_status(self, target, attack_color)
 
 
