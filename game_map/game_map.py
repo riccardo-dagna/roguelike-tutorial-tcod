@@ -54,9 +54,23 @@ class GameMap:
         for actor in self.actors:
             if actor.x == x and actor.y == y:
                 return actor
-
+        
         return None
     
+    def get_closest_actor(self, primary_actor: Actor, distance: int = 1) -> Optional[Actor]:
+        """It checks for the closest actor that match the parameter."""
+        target = None
+
+        for actor in self.actors:
+            #Check if the distance is minor than 8 and if the actor is not the primary actor
+            if actor.distance(primary_actor.x, primary_actor.y) <= distance and actor is not primary_actor and actor is not self.engine.player:
+                if target is None:
+                    target = actor
+                elif actor.distance(primary_actor.x, primary_actor.y) < target.distance(primary_actor.x, primary_actor.y):
+                    target = actor
+
+        return target
+
     def get_chest_at_location(self, x: int, y: int) -> Optional[Chest]:
         for chest in self.chests:
             if chest.x == x and chest.y == y:
