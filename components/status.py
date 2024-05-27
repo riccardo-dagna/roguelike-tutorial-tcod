@@ -7,6 +7,7 @@ from components.base_component import BaseComponent
 
 if TYPE_CHECKING:
     from entity.entity import Actor
+    from game_logic.engine import Engine
 
 class Status(BaseComponent):
     parent: Actor
@@ -122,10 +123,10 @@ class Status(BaseComponent):
             self.engine.message_log.add_message(f"You receive {self.damage_poison} damage from the poison!")
             self.dict_turns_passed["poison"] = 0
 
+
     def affect_new_status(self, actor, target, attack_color) -> None:
-        # After the damage, there is the check for the conditions effect.
-        # This checks if the entity is an enemy or the player.
-        # affect_new_status(self, target)
+        """ After the damage, there is the check for the conditions effect.
+         This checks if the entity is an enemy or the player."""
         if self.parent.equipment.meelee is None and self.parent.equipment.accessory_1 is None and self.parent.equipment.accessory_2 is None:
             """ If the enemy can affect the player with a condition from an attack, it will not check the other condition. 
                Then, it will check if the player is already afflicted by the condition or if it's immune to the condition."""
@@ -218,8 +219,6 @@ class Status(BaseComponent):
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already blinded!", attack_color)
 
-
-
         else:
             """Check if the equipment of the player can create the conditions specified. 
                Then, it will check if the monster is already afflicted by the condition or if it's immune to the condition."""
@@ -281,10 +280,59 @@ class Status(BaseComponent):
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already afraid of his enemy!", attack_color)
 
+    def status_check_in_turn(self, actor: Actor, engine: Engine) -> None:
+        """This function check for the various conditions and if there is any effect that happens/ends in that moment.
+           Otherwise, it increments the turns.
+           It only check for conditions that doesn't override the action."""
+
+        # Check for the bleed turns
+        if actor.status.check_turns_bleed:
+            actor.status.effect_hp_damage()
+            actor.status.dict_turns_passed["bleed"] = 0
+        elif actor.status.dict_condition_afflicted["bleed"]:
+            actor.status.dict_turns_passed["bleed"] += 1
+        
+        # Check for the poison turns
+        if actor.status.check_turns_poison:
+            actor.status.effect_hp_damage()
+            actor.status.dict_turns_passed["poison"] = 0
+        elif actor.status.dict_condition_afflicted["bleed"]:
+            actor.status.dict_turns_passed["poison"] += 1
+
+        # Check if the player is afflicted by condemnation
+        if actor.status.dict_condition_afflicted["condemnation"]:
+
+            # If the number of turns is over the number of turns required for the condemnation, if is the player, the game is over
+            if actor.status.check_turns_condemnation:
+                if actor == engine.player:
+                    self.engine.message_log.add_message(f"The weight of your condemnation reaches you!")
+                else:
+                    self.engine.message_log.add_message(f"The weight of your condemnation reaches the {self.entity.name}!")
+                actor.fighter.hp = 0
+            # Else, it adds a turns for the condemnation
+            else:
+                actor.status.dict_turns_passed["condemnation"] += 1
+                self.engine.message_log.add_message(f"Death is soon approaching!")
+                
+        # Check if the player is afflicted by petrification
+        if actor.status.dict_condition_afflicted["petrification"]:
+
+            # If the number of turns is over the number of turns required for the petrification, if is the player, the game is over
+            if actor.status.check_turns_petrification:
+                if actor == engine.player:
+                    self.engine.message_log.add_message(f"All your body is now turned to stone!")
+                else:
+                    self.engine.message_log.add_message(f"All of {self.entity.name} body is now turned to stone!")
+                actor.fighter.hp = 0
+            # Else, it adds a turns for the petrification
+            else:
+                actor.status.dict_turns_passed["petrification"] += 1
+                self.engine.message_log.add_message(f"More of your body is turning to stone!")
+        
 
 
 def confusion_direction() -> Tuple[int, int]:
-    # Return a random direction to the player.
+    """ Return a random direction to the player. """
     direction_x, direction_y = random.choice(
         [
             (-1, -1),  # Northwest

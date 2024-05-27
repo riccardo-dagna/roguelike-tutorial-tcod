@@ -148,6 +148,9 @@ class ActionWithDirection(Action):
 
 class RangedAction(ActionWithDirection):
     def perform(self) -> None:
+        #Checks for the various condition before attacking
+        self.entity.status.status_check_in_turn(self.entity, self.engine)
+
         # If dx/dy is different than 0, it has a target
         if self.dx == 0 and self.dy == 0:
             self.engine.message_log.add_message(f"You hear the {self.entity.equipment.ranged.equippable.projectile_name} hit a wall in the distance.")
@@ -289,19 +292,10 @@ class MovementAction(ActionWithDirection):
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         # Before any action is performed, check for all the different condition flags
-
-        # Check for the bleed turns
-        if self.entity.status.check_turns_bleed:
-            self.entity.status.effect_hp_damage()
-            self.entity.status.dict_turns_passed["bleed"] = 0
-        
-        # Check for the poison turns
-        elif self.entity.status.check_turns_poison:
-            self.entity.status.effect_hp_damage()
-            self.entity.status.dict_turns_passed["poison"] = 0
+        self.entity.status.status_check_in_turn(self.entity, self.engine)
 
         # Check if the player is afflicted by confusion
-        elif self.entity.status.dict_condition_afflicted["confusion"]:
+        if self.entity.status.dict_condition_afflicted["confusion"]:
 
             # If the number of turns is over the number of turns required for the confusion, end the confusion effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_confusion:
@@ -334,7 +328,7 @@ class BumpAction(ActionWithDirection):
                     return MovementAction(self.entity, direction_x, direction_y).perform()
 
         # Check if the player is afflicted by stun
-        elif self.entity.status.dict_condition_afflicted["stun"]:
+        if self.entity.status.dict_condition_afflicted["stun"]:
             # If the number of turns is over the number of turns required for the stun, end the stun effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_stun:
                 self.entity.status.dict_condition_afflicted["stun"] = False
@@ -351,38 +345,8 @@ class BumpAction(ActionWithDirection):
                     self.engine.message_log.add_message(f"The {self.entity.name} is stunned and can't move!")
                 return WaitAction(self.entity)
         
-        # Check if the player is afflicted by condemnation
-        elif self.entity.status.dict_condition_afflicted["condemnation"]:
-
-            # If the number of turns is over the number of turns required for the condemnation, if is the player, the game is over
-            if self.entity.status.check_turns_condemnation:
-                if self.entity == self.engine.player:
-                    self.engine.message_log.add_message(f"The weight of your condemnation reaches you!")
-                else:
-                    self.engine.message_log.add_message(f"The weight of your condemnation reaches the {self.entity.name}!")
-                self.entity.fighter.hp = 0
-            # Else, it adds a turns for the condemnation
-            else:
-                self.entity.status.dict_turns_passed["condemnation"] += 1
-                self.engine.message_log.add_message(f"Death is soon approaching!")
-                
-        # Check if the player is afflicted by petrification
-        elif self.entity.status.dict_condition_afflicted["petrification"]:
-
-            # If the number of turns is over the number of turns required for the petrification, if is the player, the game is over
-            if self.entity.status.check_turns_petrification:
-                if self.entity == self.engine.player:
-                    self.engine.message_log.add_message(f"All your body is now turned to stone!")
-                else:
-                    self.engine.message_log.add_message(f"All of {self.entity.name} body is now turned to stone!")
-                self.entity.fighter.hp = 0
-            # Else, it adds a turns for the petrification
-            else:
-                self.entity.status.dict_turns_passed["petrification"] += 1
-                self.engine.message_log.add_message(f"More of your body is turning to stone!")
-        
         # Check if the player is afflicted by blindness
-        elif self.entity.status.dict_condition_afflicted["blindness"] and self.entity is not self.engine.player:
+        if self.entity.status.dict_condition_afflicted["blindness"] and self.entity is not self.engine.player:
             direction_x, direction_y = random.choice(
                 [
                     (-1, -1),  # Northwest
