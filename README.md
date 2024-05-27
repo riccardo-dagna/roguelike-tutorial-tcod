@@ -43,8 +43,11 @@ Mechanics added in the game, to test:
 - Condition (grab (for the enemy, but needs to be checked))
 - Chests (to correct random item generation by floor, and to tests)
 
+Mechanics added in the game, to correct:
+- Condition (charm (on the enemy, it charm and follow enemy target but doesn't attack them))
+
 Mechanics to add in the game:
-- Condition (grab (on the enemy), charm)
+- Condition (grab (on the enemy))
 - Extra effect of elemental damage
 - Special attacks (stats drain, percentile damage, rot, steal, engulf/digest, dispel)
 - New monster and items
