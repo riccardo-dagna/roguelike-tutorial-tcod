@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union, List
 import os
 
 import tcod
 import random
 from tcod import libtcodpy
+import numpy as np
 
-from actions_logic.actions import Action, BumpAction, PickupAction, WaitAction, RangedAction
+from actions_logic.actions import Action, BumpAction, PickupAction, WaitAction, RangedAction, MeleeAction, MovementAction
 import actions_logic.actions as actions
 import game_map.color as color
 import utility_files.exceptions as exceptions
@@ -574,35 +575,65 @@ class MainGameEventHandler(EventHandler):
         modifier = event.mod
 
         player = self.engine.player
-
-        if key == tcod.event.KeySym.PERIOD and modifier & (tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT):
-            return actions.TakeStairsAction(player)
-
-        if key in MOVE_KEYS:
-            dx, dy = MOVE_KEYS[key]
-            action = BumpAction(player, dx, dy)
-        elif key in WAIT_KEYS:
-            action = WaitAction(player)
-
-        elif key == tcod.event.KeySym.ESCAPE:
-            raise SystemExit()
-        elif key == tcod.event.KeySym.v:
-            return HistoryViewer(self.engine)
         
-        elif key == tcod.event.KeySym.r:
-            return NormalRangedAttackHandler(self.engine)
+        # If the player is enraged, it will search the closest enemy and attack him, ignoring every command
+        if player.status.dict_condition_afflicted["rage"]:
+            if not player.status.check_turns_rage:
+                player.status.dict_turns_passed["rage"] += 1
 
-        elif key == tcod.event.KeySym.g:
-            action = PickupAction(player)
+                target = self.engine.game_map.get_closest_actor(player, 200, False)
+                if target:
+                    dx = target.x - player.x
+                    dy = target.y - player.y
+                    distance = max(abs(dx), abs(dy)) # Chebyshev distance.
+                    if self.engine.game_map.visible[player.x, player.y]:
+                        if distance <= 1:
+                            return MeleeAction(player, dx, dy).perform()
+                        
+                        self.path = get_path_to_for_player(player, self.engine, target.x, target.y)
+                        if self.path:
+                            dest_x, dest_y = self.path.pop(0)
+                            return MovementAction(
+                                player,
+                                dest_x - player.x,
+                                dest_y - player.y,
+                            ).perform()
+                else:
+                    return WaitAction(player)
 
-        elif key == tcod.event.KeySym.i:
-            return InventoryActivateHandler(self.engine)
-        elif key == tcod.event.KeySym.d:
-            return InventoryDropHandler(self.engine)
-        elif key == tcod.event.KeySym.c:
-            return CharacterScreenEventHandler(self.engine)
-        elif key == tcod.event.KeySym.SLASH:
-            return LookHandler(self.engine)
+
+            else:
+                player.status.dict_condition_afflicted["rage"] = False
+                self.engine.message_log.add_message("Your mind clear itself from the fury.")
+                return MainGameEventHandler.ev_keydown(self, event)
+        else:
+            if key == tcod.event.KeySym.PERIOD and modifier & (tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT):
+                return actions.TakeStairsAction(player)
+
+            if key in MOVE_KEYS:
+                dx, dy = MOVE_KEYS[key]
+                action = BumpAction(player, dx, dy)
+            elif key in WAIT_KEYS:
+                action = WaitAction(player)
+            
+            elif key == tcod.event.KeySym.r:
+                return NormalRangedAttackHandler(self.engine)
+            elif key == tcod.event.KeySym.g:
+                action = PickupAction(player)
+            elif key == tcod.event.KeySym.i:
+                return InventoryActivateHandler(self.engine)
+            elif key == tcod.event.KeySym.d:
+                return InventoryDropHandler(self.engine)
+
+            elif key == tcod.event.KeySym.ESCAPE:
+                raise SystemExit()
+            elif key == tcod.event.KeySym.v:
+                return HistoryViewer(self.engine)
+            
+            elif key == tcod.event.KeySym.c:
+                return CharacterScreenEventHandler(self.engine)
+            elif key == tcod.event.KeySym.SLASH:
+                return LookHandler(self.engine)
 
         # No valid key was pressed
         return action
@@ -679,3 +710,33 @@ class HistoryViewer(EventHandler):
         else:  # Any other key moves back to the main game state.
             return MainGameEventHandler(self.engine)
         return None
+
+
+def get_path_to_for_player(self, engine: Engine, dest_x: int, dest_y: int):
+    """Compute and return a path to the target position.
+
+    If there is no valid path then returns an empty list.
+        """
+    # Copy the walkable array.
+    cost = np.array(engine.game_map.tiles["walkable"], dtype=np.int8)
+
+    for entity in engine.game_map.entities:
+        # Check that an enitiy blocks movement and the cost isn't zero (blocking.)
+        if entity.blocks_movement and cost[entity.x, entity.y]:
+            # Add to the cost of a blocked position.
+            # A lower number means more enemies will crowd behind each other in
+            # hallways.  A higher number means enemies will take longer paths in
+            # order to surround the player.
+            cost[entity.x, entity.y] += 10
+
+    # Create a graph from the cost array and pass that graph to a new pathfinder.
+    graph = tcod.path.SimpleGraph(cost=cost, cardinal=2, diagonal=3)
+    pathfinder = tcod.path.Pathfinder(graph)
+
+    pathfinder.add_root((self.x, self.y))  # Start position.
+
+    # Compute the path to the destination and remove the starting point.
+    path: List[List[int]] = pathfinder.path_to((dest_x, dest_y))[1:].tolist()
+
+    # Convert from List[List[int]] to List[Tuple[int, int]].
+    return [(index[0], index[1]) for index in path]
