@@ -36,7 +36,7 @@ Mechanics added in the game, already tested:
 - Targeting ability with scrolls (single-target and area)
 - Equipment (weapon, armor and accessory)
 - Chests containing equipment (depending on the floor the player is)
-- Condition (bleeding, poison, stun and confusion, condemnation, petrification, fear (on the enemy), blindness)
+- Condition (bleeding, poison, stun and confusion, condemnation, petrification, fear (on the enemy), blindness, charm (on the enemy))
 - Elemental damage (fire, ice, electric, acid) - only damage
 
 Mechanics added in the game, to test:
@@ -44,12 +44,12 @@ Mechanics added in the game, to test:
 - Chests (to correct random item generation by floor, and to tests)
 
 Mechanics added in the game, to correct:
-- Condition (charm (on the enemy, it charm and follow enemy target but doesn't attack them))
 
 Mechanics to add in the game:
-- Condition (grab (on the enemy))
+- Condition (grab (on the enemy), rage)
 - Extra effect of elemental damage
 - Special attacks (stats drain, percentile damage, rot, steal, engulf/digest, dispel)
+- Spells, spellbook and magic system
 - New monster and items
 - Shopkeeper (with random item)
 - Boss monster (with special attack)
