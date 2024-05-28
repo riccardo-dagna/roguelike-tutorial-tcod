@@ -196,7 +196,7 @@ class MeleeAction(ActionWithDirection):
             attack_color = color.enemy_atk
 
         # Check if the entity is the player or the enemy to calculate the type of damage        
-        if self.entity == self.engine.player:
+        if self.entity == self.engine.player and self.entity.equipment.meelee is not None:
             damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.meelee.equippable.damage_type)
         else:
             damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
