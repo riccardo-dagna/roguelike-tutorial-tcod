@@ -61,23 +61,24 @@ class HostileEnemy(BaseAI):
         elif self.entity.status.dict_condition_afflicted["charm"]:
             if not self.entity.status.check_turns_charm:
                 self.entity.status.dict_turns_passed["charm"] += 1
-                target = self.engine.game_map.get_closest_actor(self.entity, 8)
+                target = self.engine.game_map.get_closest_actor(self.entity, 200, False)
                 if target:
                     dx = target.x - self.entity.x
                     dy = target.y - self.entity.y
                     distance = max(abs(dx), abs(dy)) # Chebyshev distance.
-                    if distance <= 1:
-                        return MeleeAction(self.entity, dx, dy)
-                    
-                    self.path = self.get_path_to(target.x, target.y)
+                    if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+                        if distance <= 1:
+                            return MeleeAction(self.entity, dx, dy).perform()
+                        
+                        self.path = self.get_path_to(target.x, target.y)
 
-                    if self.path:
-                        dest_x, dest_y = self.path.pop(0)
-                        return MovementAction(
-                            self.entity,
-                            dest_x - self.entity.x,
-                            dest_y - self.entity.y,
-                        ).perform()
+                        if self.path:
+                            dest_x, dest_y = self.path.pop(0)
+                            return MovementAction(
+                                self.entity,
+                                dest_x - self.entity.x,
+                                dest_y - self.entity.y,
+                            ).perform()
                 else:
                     return WaitAction(self.entity).perform()
             else:
