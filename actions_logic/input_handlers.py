@@ -491,28 +491,30 @@ class NormalRangedAttackHandler(AskUserEventHandler):
         player = self.engine.player
         key = event.sym
 
-        if key == tcod.event.KeySym.UP or key == tcod.event.KeySym.DOWN or key == tcod.event.KeySym.LEFT or key == tcod.event.KeySym.RIGHT:
-            dx, dy = RANGED_KEYS[key]
-            target = None
-            for actor in self.engine.game_map.actors:
-                #Check if the distance is minor than 8 and if the actor is not the player
-                if actor.distance(player.x, player.y) <= 8 and actor is not player:
-                    #Now check if the direction selected and the actor position is correct
-                    if (dx != 0 and actor.y == player.y) or (dy != 0 and actor.x == player.x):
-                        #If the direction is the same of the one selected, now check if the actor is the closest
-                        if (dx > 0 and (actor.x-player.x) > 0) or (dx < 0 and (actor.x-player.x) < 0) or (dy > 0 and (actor.y-player.y) > 0) or (dy < 0 and (actor.y-player.y) < 0):
-                            if target is None:
-                                target = actor
-                            elif actor.distance(player.x, player.y) < target.distance(player.x, player.y):
-                                target = actor
+        if player.equipment.ranged is not None:
+            if key == tcod.event.KeySym.UP or key == tcod.event.KeySym.DOWN or key == tcod.event.KeySym.LEFT or key == tcod.event.KeySym.RIGHT:
+                dx, dy = RANGED_KEYS[key]
+                target = None
+                for actor in self.engine.game_map.actors:
+                    #Check if the distance is minor than 8 and if the actor is not the player
+                    if actor.distance(player.x, player.y) <= 8 and actor is not player:
+                        #Now check if the direction selected and the actor position is correct
+                        if (dx != 0 and actor.y == player.y) or (dy != 0 and actor.x == player.x):
+                            #If the direction is the same of the one selected, now check if the actor is the closest
+                            if (dx > 0 and (actor.x-player.x) > 0) or (dx < 0 and (actor.x-player.x) < 0) or (dy > 0 and (actor.y-player.y) > 0) or (dy < 0 and (actor.y-player.y) < 0):
+                                if target is None:
+                                    target = actor
+                                elif actor.distance(player.x, player.y) < target.distance(player.x, player.y):
+                                    target = actor
 
-            #If the target exist, it deals damage, otherwise it invokes the action with 0 distance
-            if not target:
-                return RangedAction(player, 0, 0)
-            else:
-                return RangedAction(player, target.x - player.x, target.y - player.y)
+                #If the target exist, it deals damage, otherwise it invokes the action with 0 distance
+                if not target:
+                    return RangedAction(player, 0, 0)
+                else:
+                    return RangedAction(player, target.x - player.x, target.y - player.y)
         else:
-            return self.on_exit()
+            self.engine.message_log.add_message(f"You don't have any ranged weapons.")
+        return self.on_exit()
         
         
         
