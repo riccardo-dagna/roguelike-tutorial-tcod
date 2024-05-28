@@ -32,21 +32,21 @@ Mechanics added in the game, already tested:
 - Movement and basic attacks (meelee and ranged)
 - Random map generation and floor difficulty
 - Item spawning in the map (depending on the floor the player is)
-- Inventory capability (and dropping capability)
-- Targeting ability with scrolls (single-target and area)
-- Equipment (weapon, armor and accessory)
+- Inventory capability (and dropping capability) (only for the player)
+- Targeting ability with scrolls (single-target and area) (only for the player)
+- Equipment (weapon, armor and accessory) (only for the player)
 - Chests containing equipment (depending on the floor the player is)
-- Condition (bleeding, poison, stun and confusion, condemnation, petrification, fear (on the enemy), blindness, charm (on the enemy))
+- Condition (bleeding, poison, stun and confusion, condemnation, petrification, fear, blindness, charm (on the enemy), rage)
 - Elemental damage (fire, ice, electric, acid) - only damage
 
 Mechanics added in the game, to test:
-- Condition (grab (for the enemy, but needs to be checked))
+- Condition (grab (needs to be checked))
 - Chests (to correct random item generation by floor, and to tests)
 
 Mechanics added in the game, to correct:
 
 Mechanics to add in the game:
-- Condition (grab (on the enemy), rage)
+- Condition (charm (for the enemy))
 - Extra effect of elemental damage
 - Special attacks (stats drain, percentile damage, rot, steal, engulf/digest, dispel)
 - Spells, spellbook and magic system
