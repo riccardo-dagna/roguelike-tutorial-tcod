@@ -66,10 +66,10 @@ class HostileEnemy(BaseAI):
                 #The target is chosen depending on the status
                 if self.entity.status.dict_condition_afflicted["charm"]:
                     self.entity.status.dict_turns_passed["charm"] += 1
-                    target = self.engine.game_map.get_closest_actor(self.entity, 200, False)
+                    target = self.engine.game_map.get_closest_actor(self.entity, 15, False)
                 elif self.entity.status.dict_condition_afflicted["rage"]:
                     self.entity.status.dict_turns_passed["rage"] += 1
-                    target = self.engine.game_map.get_closest_actor(self.entity, 200, True)
+                    target = self.engine.game_map.get_closest_actor(self.entity, 15, True)
                 else:
                     target = self.engine.player
                     
