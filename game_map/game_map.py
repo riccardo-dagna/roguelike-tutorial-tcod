@@ -57,17 +57,24 @@ class GameMap:
         
         return None
     
-    def get_closest_actor(self, primary_actor: Actor, distance: int = 1) -> Optional[Actor]:
-        """It checks for the closest actor that match the parameter."""
+    def get_closest_actor(self, primary_actor: Actor, distance: int = 1, flag_player: bool = False) -> Optional[Actor]:
+        """It checks for the closest actor that match the parameter.
+        Flag_player is to include the player in the search of the closest actor."""
         target = None
 
         for actor in self.actors:
             #Check if the distance is minor than 8 and if the actor is not the primary actor
-            if actor.distance(primary_actor.x, primary_actor.y) <= distance and actor is not primary_actor and actor is not self.engine.player:
-                if target is None:
-                    target = actor
-                elif actor.distance(primary_actor.x, primary_actor.y) < target.distance(primary_actor.x, primary_actor.y):
-                    target = actor
+            if actor.distance(primary_actor.x, primary_actor.y) <= distance and actor is not primary_actor:
+                if (flag_player):
+                    if target is None:
+                        target = actor
+                    elif actor.distance(primary_actor.x, primary_actor.y) < target.distance(primary_actor.x, primary_actor.y):
+                        target = actor
+                else:
+                    if target is None and actor is not self.engine.player:
+                        target = actor
+                    elif actor.distance(primary_actor.x, primary_actor.y) < target.distance(primary_actor.x, primary_actor.y) and actor is not self.engine.player:
+                        target = actor
 
         return target
 
