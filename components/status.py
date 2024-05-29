@@ -18,6 +18,7 @@ class Status(BaseComponent):
     turns_bleed: int = 4
     turns_stun: int = 1
     turns_confusion: int = 5
+    turns_grab: int = 5
     turns_condemnation: int = 10
     turns_petrification: int = 20
     turns_fear: int = 10
@@ -42,7 +43,7 @@ class Status(BaseComponent):
                                           condemnation = attack_condemnation, petrification = attack_petrification, fear = attack_fear, blindness = attack_blindness,
                                           charm = attack_charm, rage = attack_rage)
         
-        self.dict_turns_passed = dict(poison = 0, burn = 0, stun = 0, confusion = 0, condemnation = 0, petrification = 0, fear = 0, charm = 0, rage = 0,)
+        self.dict_turns_passed = dict(poison = 0, burn = 0, stun = 0, confusion = 0, grab = 0, condemnation = 0, petrification = 0, fear = 0, charm = 0, rage = 0,)
     
     @property
     def check_turns_poison(self) -> bool:
@@ -59,6 +60,10 @@ class Status(BaseComponent):
     @property
     def check_turns_confusion(self) -> bool:
         return self.dict_turns_passed["confusion"] > self.turns_confusion
+    
+    @property
+    def check_turns_grab(self) -> bool:
+        return self.dict_turns_passed["grab"] > self.turns_grab
     
     @property
     def check_turns_condemnation(self) -> bool:
@@ -192,11 +197,11 @@ class Status(BaseComponent):
                 if not target.status.check_grabbed_condition:
                     if not target.status.check_grab_immunity:
                         target.status.dict_condition_afflicted["grab"] = True
-                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is grabbed by the {self.entity.name}!", attack_color)
+                        self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is grabbed by the {self.parent.name}!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too agile to be grabbed!", attack_color)
                 else:
-                    self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already grabbed by {self.entity.name}!", attack_color)
+                    self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already grabbed by {self.parent.name}!", attack_color)
             if self.parent.status.dict_condition_attack["condemnation"]:
                 if not target.status.dict_condition_afflicted["condemnation"]:
                     if not target.status.check_condemnation_immunity:
@@ -217,6 +222,16 @@ class Status(BaseComponent):
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too strong to be affected!", attack_color)
                 else:
                     self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is already turning to stone!", attack_color)
+            if self.parent.status.dict_condition_attack["charm"]:
+                if not target.status.dict_condition_afflicted["charm"]:
+                    if not target.status.check_charm_immunity:
+                        target.status.dict_condition_afflicted["charm"] = True
+                        target.status.dict_turns_passed["charm"] = 0
+                        self.parent.gamemap.engine.message_log.add_message(f"You are charmed by your enemy!", attack_color)
+                    else:
+                        self.parent.gamemap.engine.message_log.add_message(f"You are too strong willed to be charmed!", attack_color)
+                else:
+                    self.parent.gamemap.engine.message_log.add_message(f"You are already charmed by your enemy!", attack_color)
             if self.parent.status.dict_condition_attack["fear"]:
                 if not target.status.dict_condition_afflicted["fear"]:
                     if not target.status.check_fear_immunity:
@@ -282,6 +297,7 @@ class Status(BaseComponent):
                 if not target.status.check_grabbed_condition:
                     if not target.status.check_grab_immunity:
                         target.status.dict_condition_afflicted["grab"] = True
+                        target.status.dict_turns_passed["grab"] = 0
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is grabbed by the {self.parent.name}!", attack_color)
                     else:
                         self.parent.gamemap.engine.message_log.add_message(f"The {target.name} is too agile to be grabbed!", attack_color)

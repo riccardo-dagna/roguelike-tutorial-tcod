@@ -284,7 +284,15 @@ class MovementAction(ActionWithDirection):
             raise exceptions.Impossible("That way is blocked.")
         if self.entity.status.check_grabbed_condition:
             # The entity is grabbed and can't move.
-            raise exceptions.Impossible("You are grabbed, you can't move.")
+            if self.entity is not self.engine.player:
+                if not self.entity.status.check_turns_grab:
+                    self.entity.status.dict_turns_passed["grab"] += 1
+                    raise exceptions.Impossible("You are grabbed, you can't move.")
+                else:
+                    self.entity.status.dict_condition_afflicted["grab"] = False
+                    self.engine.message_log.add_message(f"The {self.entity.name} is free from the grab!")
+            else:
+                raise exceptions.Impossible("You are grabbed, you can't move.")
 
         self.entity.move(self.dx, self.dy)
 
@@ -328,7 +336,7 @@ class BumpAction(ActionWithDirection):
                     return MovementAction(self.entity, direction_x, direction_y).perform()
 
         # Check if the player is afflicted by stun
-        if self.entity.status.dict_condition_afflicted["stun"]:
+        elif self.entity.status.dict_condition_afflicted["stun"]:
             # If the number of turns is over the number of turns required for the stun, end the stun effect, reset the turns counter and let the player do his action
             if self.entity.status.check_turns_stun:
                 self.entity.status.dict_condition_afflicted["stun"] = False
@@ -346,7 +354,7 @@ class BumpAction(ActionWithDirection):
                 return WaitAction(self.entity)
         
         # Check if the player is afflicted by blindness
-        if self.entity.status.dict_condition_afflicted["blindness"] and self.entity is not self.engine.player:
+        elif self.entity.status.dict_condition_afflicted["blindness"] and self.entity is not self.engine.player:
             direction_x, direction_y = random.choice(
                 [
                     (-1, -1),  # Northwest
@@ -366,10 +374,30 @@ class BumpAction(ActionWithDirection):
                 return ChestAction(self.entity, direction_x, direction_y).perform()
             else:
                 return MovementAction(self.entity, direction_x, direction_y).perform()
+            
+        elif self.entity.status.dict_condition_afflicted["charm"] and self.entity is self.engine.player:
+            if not self.entity.status.check_turns_charm:
+                self.entity.status.dict_turns_passed["charm"] += 1
+                if self.target_actor:
+                    self.engine.message_log.add_message(f"You can't attack your friend.")
+                    return WaitAction(self.entity).perform()
+                elif self.target_chest and self.entity == self.engine.player:
+                    return ChestAction(self.entity, self.dx, self.dy).perform()
+                else:
+                    return MovementAction(self.entity, self.dx, self.dy).perform()
+            else:
+                self.entity.status.dict_condition_afflicted["charm"] = False
+                self.engine.message_log.add_message(f"You are no longer charmed.")
+                if self.target_actor:
+                    return MeleeAction(self.entity, self.dx, self.dy).perform()
+                elif self.target_chest and self.entity == self.engine.player:
+                    return ChestAction(self.entity, self.dx, self.dy).perform()
+                else:
+                    return MovementAction(self.entity, self.dx, self.dy).perform()
 
 
         # After all the status, checks for the target actors or chests
-        if self.target_actor:
+        elif self.target_actor:
             return MeleeAction(self.entity, self.dx, self.dy).perform()
         elif self.target_chest and self.entity == self.engine.player:
             return ChestAction(self.entity, self.dx, self.dy).perform()
