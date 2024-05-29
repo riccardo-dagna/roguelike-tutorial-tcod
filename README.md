@@ -20,8 +20,8 @@ The list of commands is below:
 - "g" to pick up intems on the floor
 - "Period" with "Shift" to take the stairs
 - "c" to open the Character Sheet
-- "i" to open inventory to use an item: if the item is a equipment, when you use the item you equip it; if the item is a potion, it is used; if it's a scroll, it will target an enemy or an area on the floor
-- "d" to open inventory to drop an item (if the item is a equipment, when you drop the item you unequip it)
+- "i" to open inventory to use an item
+- "d" to open inventory to drop an item
 
 
 ## List of mechanics
