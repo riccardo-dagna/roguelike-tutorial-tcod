@@ -50,5 +50,35 @@ class SpecialAttacks(BaseComponent):
     def check_attack_dispel(self) -> bool:
         return self.dict_special_attacks_flag["dispel"]
 
+    @property
+    def check_turns_ingest(self) -> bool:
+        return self.dict_turns_recharge["ingest"] >= (self.turns_to_recharge - 1)
 
+    @property
+    def check_turns_percentile(self) -> bool:
+        return self.dict_turns_recharge["percentile"] >= (self.turns_to_recharge - 1)
+    
+    @property
+    def check_turns_stats_drain(self) -> bool:
+        return self.dict_turns_recharge["stats_drain"] >= (self.turns_to_recharge - 1)
+    
+    @property
+    def check_turns_rot(self) -> bool:
+        return self.dict_turns_recharge["rot"] >= (self.turns_to_recharge - 1)
+    
+    @property
+    def check_turns_steal(self) -> bool:
+        return self.dict_turns_recharge["steal"] >= (self.turns_to_recharge - 1)
+    
+    @property
+    def check_turns_dispel(self) -> bool:
+        return self.dict_turns_recharge["dispel"] >= (self.turns_to_recharge - 1)
+    
+    def drain_stats_target(self, target: Actor) -> None:
+        if target.fighter.base_power <= 0 and self.dict_special_attack_values["strenght_drain"]:
+            self.engine.message_log.add_message(f"The {self.parent.name} can't drain anymore of {target.name} strenght.")
+        if target.fighter.base_defense <= 0 and self.dict_special_attack_values["agility_drain"]:
+            self.engine.message_log.add_message(f"The {self.parent.name} can't drain anymore of {target.name} agility.")
+
+        
 
