@@ -6,7 +6,7 @@ import random
 import numpy as np
 import tcod
 
-from actions_logic.actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction, RangedAction
+from actions_logic.actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction, RangedAction, SpecialAttackAction
 from entity.entity import Actor
 
 if TYPE_CHECKING:
@@ -120,6 +120,7 @@ class HostileMeeleeEnemy(BaseAI):
         return WaitAction(self.entity).perform()
 
 
+# This AI is for enemy that attacks with a basic ranged attack
 class HostileRangedEnemy(BaseAI):
     def __init__(self, entity: Actor):
         super().__init__(entity)
@@ -205,8 +206,7 @@ class SpecialEnemy(BaseAI):
         distance = max(abs(dx), abs(dy))
         if self.engine.game_map.visible[self.entity.x, self.entity.y]:
             if distance <= 1:
-                self.engine.message_log.add_message(f"The {self.entity.name} was going to use a special attack, but it's tired.")
-                return WaitAction(self).perform()
+                return SpecialAttackAction(self, dx, dy).perform()
 
             self.path = self.get_path_to(target.x, target.y)
             
