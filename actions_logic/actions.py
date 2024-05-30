@@ -307,6 +307,11 @@ class MovementAction(ActionWithDirection):
         self.entity.move(self.dx, self.dy)
 
 
+class SpecialAttackAction(ActionWithDirection):
+    def perform(self) -> None:
+        self.engine.message_log.add_message(f"The {self.entity.name} was going to use a special attack, but it's tired.")
+
+
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         # Before any action is performed, check for all the different condition flags
