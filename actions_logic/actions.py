@@ -151,15 +151,25 @@ class RangedAction(ActionWithDirection):
         #Checks for the various condition before attacking
         self.entity.status.status_check_in_turn(self.entity, self.engine)
 
+        # This values if the entity is the player or an enemy
+        if self.entity is self.engine.player:
+            projectile_string = self.entity.equipment.ranged.equippable.projectile_name
+        else:
+            projectile_string = "arrow"
+        
         # If dx/dy is different than 0, it has a target
         if self.dx == 0 and self.dy == 0:
-            self.engine.message_log.add_message(f"You hear the {self.entity.equipment.ranged.equippable.projectile_name} hit a wall in the distance.")
+            self.engine.message_log.add_message(f"You hear the {projectile_string} hit a wall in the distance.")
         else:
             target = self.target_actor
 
-            attack_desc = f"You hit the {target.name} with your {self.entity.equipment.ranged.equippable.projectile_name}"
+            attack_desc = f"You hit the {target.name} with your {projectile_string}"
 
-            damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.meelee.equippable.damage_type)
+            # Check if the entity is the player or the enemy to calculate the type of damage        
+            if self.entity == self.engine.player and self.entity.equipment.meelee is not None:
+                damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.ranged.equippable.damage_type)
+            else:
+                damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
             damage = self.entity.fighter.power_ranged - target.fighter.defense
             
             # Calculate the damage to inflict to the target and elemental resistance/vulnerability
