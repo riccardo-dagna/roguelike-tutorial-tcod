@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from components.fighter import Fighter
     from components.inventory import Inventory
     from components.level import Level
+    from components.special_attacks import SpecialAttacks
     from components.status import Status
     from game_map import GameMap
 
@@ -102,7 +103,8 @@ class Actor(Entity):
         inventory: Inventory,
         level: Level,
         status: Status,
-        damage_info: DamageInfo
+        damage_info: DamageInfo,
+        special_attacks: SpecialAttacks,
     ):
         super().__init__(
             x=x,
@@ -133,6 +135,9 @@ class Actor(Entity):
 
         self.damage_info = damage_info
         self.damage_info.parent = self
+        
+        self.special_attacks = special_attacks
+        self.special_attacks.parent = self
 
     @property
     def is_alive(self) -> bool:
