@@ -48,7 +48,8 @@ class BaseAI(Action):
         return [(index[0], index[1]) for index in path]
 
 
-class HostileEnemy(BaseAI):
+#This AI is for normal enemy that attack meelee
+class HostileMeeleeEnemy(BaseAI):
     def __init__(self, entity: Actor):
         super().__init__(entity)
         self.path: List[Tuple[int, int]] = []
@@ -117,3 +118,13 @@ class HostileEnemy(BaseAI):
                     self.entity.status.dict_turns_passed["rage"] = 0
                     self.entity.status.dict_condition_afflicted["rage"] = False
         return WaitAction(self.entity).perform()
+
+
+# This AI is for enemy that uses special attacks
+class SpecialEnemy(BaseAI):
+    def __init__(self, entity: Actor):
+        super().__init__(entity)
+        self.path: List[Tuple[int, int]] = []
+
+    def perform(self) -> None:
+        pass
