@@ -6,7 +6,7 @@ import random
 import numpy as np
 import tcod
 
-from actions_logic.actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction
+from actions_logic.actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction, RangedAction
 from entity.entity import Actor
 
 if TYPE_CHECKING:
@@ -120,6 +120,77 @@ class HostileMeeleeEnemy(BaseAI):
         return WaitAction(self.entity).perform()
 
 
+class HostileRangedEnemy(BaseAI):
+    def __init__(self, entity: Actor):
+        super().__init__(entity)
+        self.path: List[Tuple[int, int]] = []
+
+    def perform(self) -> None:        
+        # If the entity is confused, it does a BumpAction with a random direction
+        if self.entity.status.dict_condition_afflicted["confusion"]:
+            return BumpAction(self.entity, 1, 1).perform()
+        # If the entity is charmed, it attacks the closest actor (not the player) or it moves close to it, otherwise it waits
+        # If the entity is enraged, it attacks the closest actor or it moves close to it, otherwise it waits 
+        # If it's not both, it attacks the player or it moves close to it, otherwise it waits
+        else:
+            if not ((self.entity.status.check_turns_charm and self.entity.status.dict_condition_afflicted["charm"]) or (self.entity.status.check_turns_rage and self.entity.status.dict_condition_afflicted["rage"])) or (not self.entity.status.dict_condition_afflicted["charm"] and self.entity.status.dict_condition_afflicted["rage"]):
+                
+                #The target is chosen depending on the status
+                if self.entity.status.dict_condition_afflicted["charm"]:
+                    self.entity.status.dict_turns_passed["charm"] += 1
+                    target = self.engine.game_map.get_closest_actor(self.entity, 15, False)
+                elif self.entity.status.dict_condition_afflicted["rage"]:
+                    self.entity.status.dict_turns_passed["rage"] += 1
+                    target = self.engine.game_map.get_closest_actor(self.entity, 15, True)
+                else:
+                    target = self.engine.player
+                    
+                if target:
+                    dx = target.x - self.entity.x
+                    dy = target.y - self.entity.y
+                    distance = max(abs(dx), abs(dy)) # Chebyshev distance.
+                    if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+                        if distance <= 3 and ((dx != 0 and self.entity.y == target.y) or (dy != 0 and self.entity.x == target.x)):
+                            return RangedAction(self.entity, dx, dy).perform()
+                        
+                        self.path = self.get_path_to(target.x, target.y)
+
+                         # If the entity is not afraid, it moves in the direction of the player
+                        if not self.entity.status.dict_condition_afflicted["fear"]:
+                            # If the entity is not blind, it moves in the direction of the player
+                            if not self.entity.status.dict_condition_afflicted["blindness"]:
+                                if self.path:
+                                    dest_x, dest_y = self.path.pop(0)
+                                    return MovementAction(
+                                        self.entity,
+                                        dest_x - self.entity.x,
+                                        dest_y - self.entity.y,
+                                    ).perform()
+                            #If the entity is blind, it moves in a random direction as the confusion status
+                            else:
+                                return BumpAction(self.entity, dx, dy).perform()
+                            
+                        # If the entity is afraid, it moves in the direction contrary of the player
+                        else:
+                            if self.path:
+                                dest_x, dest_y = self.path.pop(0)
+                                return MovementAction(
+                                    self.entity,
+                                    -(dest_x - self.entity.x),
+                                    -(dest_y - self.entity.y),
+                                ).perform()
+            else:
+                if self.entity.status.dict_condition_afflicted["charm"]:
+                    self.engine.message_log.add_message(f"The {self.entity.name} is no longer charmed.")
+                    self.entity.status.dict_turns_passed["charm"] = 0
+                    self.entity.status.dict_condition_afflicted["charm"] = False
+                elif self.entity.status.dict_condition_afflicted["rage"]:
+                    self.engine.message_log.add_message(f"The {self.entity.name} is no longer enraged.")
+                    self.entity.status.dict_turns_passed["rage"] = 0
+                    self.entity.status.dict_condition_afflicted["rage"] = False
+        return WaitAction(self.entity).perform()
+
+
 # This AI is for enemy that uses special attacks
 class SpecialEnemy(BaseAI):
     def __init__(self, entity: Actor):
@@ -127,4 +198,20 @@ class SpecialEnemy(BaseAI):
         self.path: List[Tuple[int, int]] = []
 
     def perform(self) -> None:
-        pass
+        target = self.engine.player
+
+        dx = target.x - self.entity.x
+        dy = target.y - self.entity.y
+        distance = max(abs(dx), abs(dy))
+        if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+            if distance <= 1:
+                self.engine.message_log.add_message(f"The {self.entity.name} was going to use a special attack, but it's tired.")
+                return WaitAction(self).perform()
+
+            self.path = self.get_path_to(target.x, target.y)
+            
+            if self.path:
+                dest_x, dest_y = self.path.pop(0)
+                return MovementAction(self.entity, dest_x - self.entity.x, dest_y - self.entity.y).perform()
+            
+        return WaitAction(self).perform()
