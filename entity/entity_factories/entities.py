@@ -1,4 +1,4 @@
-from components.ai import HostileMeeleeEnemy, SpecialEnemy
+from components.ai import HostileMeeleeEnemy, HostileRangedEnemy, SpecialEnemy
 from components.damageinfo import DamageInfo
 from components.equipment import Equipment
 from components.fighter import Fighter
@@ -24,8 +24,13 @@ player = Actor(
 
 
 #This sections contains the enemies
-orc = Actor(char="o", color=(63, 127, 63), name="Orc",
+meelee_orc = Actor(char="o", color=(63, 127, 63), name="Orc",
     ai_cls=HostileMeeleeEnemy, equipment=Equipment(), fighter=Fighter(hp=10, base_defense=0, base_power=3),
+    inventory=Inventory(capacity=0), level=Level(xp_given=35), status=Status(), damage_info=DamageInfo(),
+    special_attacks=SpecialAttacks(),
+)
+ranged_orc = Actor(char="o", color=(63, 127, 63), name="Orc",
+    ai_cls=HostileRangedEnemy, equipment=Equipment(), fighter=Fighter(hp=10, base_defense=0, base_power=3),
     inventory=Inventory(capacity=0), level=Level(xp_given=35), status=Status(), damage_info=DamageInfo(),
     special_attacks=SpecialAttacks(),
 )
