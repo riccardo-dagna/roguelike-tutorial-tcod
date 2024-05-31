@@ -56,7 +56,7 @@ class SpecialAttacks(BaseComponent):
 
     @property
     def check_turns_percentile(self) -> bool:
-        return self.dict_turns_recharge["percentile"] >= (self.turns_to_recharge - 1)
+        return self.dict_turns_recharge["percentile"] >= (self.turns_to_recharge - 1) or self.dict_turns_recharge["percentile"] == 0
     
     @property
     def check_turns_stats_drain(self) -> bool:
@@ -74,6 +74,10 @@ class SpecialAttacks(BaseComponent):
     def check_turns_dispel(self) -> bool:
         return self.dict_turns_recharge["dispel"] >= (self.turns_to_recharge - 1)
     
+    @property
+    def check_for_special_attack_ready(self) -> bool:
+        return (self.check_attack_ingest and self.check_turns_ingest) or (self.check_attack_percentile and self.check_turns_percentile) or (self.check_attack_stats and self.check_turns_stats_drain) or (self.check_attack_rot and self.check_turns_rot) or (self.check_attack_steal and self.check_turns_steal) or (self.check_attack_dispel and self.check_turns_dispel)
+    
 
     def drain_stats_target(self, target: Actor) -> None:
         if self.dict_special_attack_values["strenght_drain"] > 0:
@@ -84,6 +88,7 @@ class SpecialAttacks(BaseComponent):
                 target.fighter.base_power -= self.dict_special_attack_values["strenght_drain"]
                 if target.fighter.base_power < 0:
                     target.fighter.base_power = 0
+                target.fighter.hp -= self.dict_special_attack_damage["stats_drain"]
                 self.engine.message_log.add_message(f"The {target.name} feels less strong, as it's strength it's drained.")
         
         if self.dict_special_attack_values["agility_drain"] > 0:
@@ -94,9 +99,17 @@ class SpecialAttacks(BaseComponent):
                 target.fighter.base_defense -= self.dict_special_attack_values["agility_drain"]
                 if target.fighter.base_defense < 0:
                     target.fighter.base_defense = 0
+                target.fighter.hp -= self.dict_special_attack_damage["stats_drain"]
                 self.engine.message_log.add_message(f"The {target.name} feels less agile, as it's agility it's drained.")
 
-        
+    
+    def percentile_damage(self, target: Actor) -> None:
+        if self.dict_special_attack_values["percentile"] > 0:
+            damage = round((target.fighter.max_hp*self.dict_special_attack_values["percentile"])/100)
+            target.fighter.hp -= damage
+            self.engine.message_log.add_message(f"{target.name} feels a powerful force around him, dealing {damage}.")
+
+
         
 
         
