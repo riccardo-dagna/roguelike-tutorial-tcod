@@ -309,10 +309,18 @@ class MovementAction(ActionWithDirection):
 
 class SpecialAttackAction(ActionWithDirection):
     def perform(self) -> None:
+        # This part checks if it has this specific flag for the attack percentile
+        if self.entity.special_attacks.dict_special_attacks_flag["percentile"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["percentile"] += 1
+            self.entity.special_attacks.percentile_damage(target)
+        
+        # This part checks if it has this specific flag for the attack stats drain 
         if self.entity.special_attacks.dict_special_attacks_flag["stats_drain"]:
             target = self.target_actor
             self.entity.special_attacks.dict_turns_recharge["stats_drain"] += 1
             self.entity.special_attacks.drain_stats_target(target)
+        
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
