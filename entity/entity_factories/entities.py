@@ -40,9 +40,9 @@ troll = Actor(char="T", color=(0, 127, 0), name="Troll",
     special_attacks=SpecialAttacks(),
 )
 vampire = Actor(char="v", color=(63,127, 63), name="Vampire",
-    ai_cls=SpecialEnemy, equipment=Equipment(), fighter=Fighter(hp=15, base_defense=2, base_power=2),
+    ai_cls=SpecialEnemy, equipment=Equipment(), fighter=Fighter(hp=10, base_defense=1, base_power=2),
     inventory=Inventory(capacity=0), level=Level(xp_given=200), status=Status(), damage_info=DamageInfo(),
-    special_attacks=SpecialAttacks(),
+    special_attacks=SpecialAttacks(flag_stats_drain=True, value_agility_drain=1),
 )
 
 
