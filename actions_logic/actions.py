@@ -309,8 +309,10 @@ class MovementAction(ActionWithDirection):
 
 class SpecialAttackAction(ActionWithDirection):
     def perform(self) -> None:
-        self.engine.message_log.add_message(f"The {self.entity.name} was going to use a special attack, but it's tired.")
-
+        if self.entity.special_attacks.dict_special_attacks_flag["stats_drain"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["stats_drain"] += 1
+            self.entity.special_attacks.drain_stats_target(target)
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
