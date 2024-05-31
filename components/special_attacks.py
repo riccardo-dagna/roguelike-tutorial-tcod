@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 class SpecialAttacks(BaseComponent):
     parent: Actor
-    turns_to_recharge: int = 3
+    turns_to_recharge: int = 5
 
     def __init__(self, 
                  flag_ingest: bool = False, flag_percentile: bool = False, flag_stats_drain: bool = False, flag_rot: bool = False, flag_steal: bool = False, flag_dispel: bool = False,
@@ -60,7 +60,7 @@ class SpecialAttacks(BaseComponent):
     
     @property
     def check_turns_stats_drain(self) -> bool:
-        return self.dict_turns_recharge["stats_drain"] >= (self.turns_to_recharge - 1)
+        return self.dict_turns_recharge["stats_drain"] >= (self.turns_to_recharge - 1) or self.dict_turns_recharge["stats_drain"] == 0
     
     @property
     def check_turns_rot(self) -> bool:
@@ -74,11 +74,30 @@ class SpecialAttacks(BaseComponent):
     def check_turns_dispel(self) -> bool:
         return self.dict_turns_recharge["dispel"] >= (self.turns_to_recharge - 1)
     
+
     def drain_stats_target(self, target: Actor) -> None:
-        if target.fighter.base_power <= 0 and self.dict_special_attack_values["strenght_drain"]:
-            self.engine.message_log.add_message(f"The {self.parent.name} can't drain anymore of {target.name} strenght.")
-        if target.fighter.base_defense <= 0 and self.dict_special_attack_values["agility_drain"]:
-            self.engine.message_log.add_message(f"The {self.parent.name} can't drain anymore of {target.name} agility.")
+        if self.dict_special_attack_values["strenght_drain"] > 0:
+            if target.fighter.base_power <= 0:
+                self.engine.message_log.add_message(f"The {self.parent.name} can't drain anymore of {target.name} strenght.")
+                pass
+            else:
+                target.fighter.base_power -= self.dict_special_attack_values["strenght_drain"]
+                if target.fighter.base_power < 0:
+                    target.fighter.base_power = 0
+                self.engine.message_log.add_message(f"The {target.name} feels less strong, as it's strength it's drained.")
+        
+        if self.dict_special_attack_values["agility_drain"] > 0:
+            if target.fighter.base_defense <= 0:
+                self.engine.message_log.add_message(f"The {self.parent.name} can't drain anymore of {target.name} agility.")
+                pass
+            else:
+                target.fighter.base_defense -= self.dict_special_attack_values["agility_drain"]
+                if target.fighter.base_defense < 0:
+                    target.fighter.base_defense = 0
+                self.engine.message_log.add_message(f"The {target.name} feels less agile, as it's agility it's drained.")
+
+        
+        
 
         
 
