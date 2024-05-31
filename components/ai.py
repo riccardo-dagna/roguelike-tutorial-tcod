@@ -206,7 +206,15 @@ class SpecialEnemy(BaseAI):
         distance = max(abs(dx), abs(dy))
         if self.engine.game_map.visible[self.entity.x, self.entity.y]:
             if distance <= 1:
-                return SpecialAttackAction(self, dx, dy).perform()
+                if self.entity.special_attacks.check_turns_stats_drain:
+                    if self.entity.special_attacks.dict_turns_recharge["stats_drain"] >= self.entity.special_attacks.turns_to_recharge:
+                        self.entity.special_attacks.dict_turns_recharge["stats_drain"] = 0
+                    return SpecialAttackAction(self.entity, dx, dy).perform()
+                else:
+                    self.entity.special_attacks.dict_turns_recharge["stats_drain"] += 1
+                    print(target.name, "attacks the player")
+                    return MeleeAction(self.entity, dx, dy).perform()
+                
 
             self.path = self.get_path_to(target.x, target.y)
             
