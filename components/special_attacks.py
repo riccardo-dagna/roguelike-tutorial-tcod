@@ -52,7 +52,7 @@ class SpecialAttacks(BaseComponent):
 
     @property
     def check_turns_ingest(self) -> bool:
-        return self.dict_turns_recharge["ingest"] >= (self.turns_to_recharge - 1)
+        return self.dict_turns_recharge["ingest"] >= (self.turns_to_recharge - 1) or self.dict_turns_recharge["ingest"] == 0
 
     @property
     def check_turns_percentile(self) -> bool:
@@ -64,15 +64,15 @@ class SpecialAttacks(BaseComponent):
     
     @property
     def check_turns_rot(self) -> bool:
-        return self.dict_turns_recharge["rot"] >= (self.turns_to_recharge - 1)
+        return self.dict_turns_recharge["rot"] >= (self.turns_to_recharge - 1) or self.dict_turns_recharge["rot"] == 0
     
     @property
     def check_turns_steal(self) -> bool:
-        return self.dict_turns_recharge["steal"] >= (self.turns_to_recharge - 1)
+        return self.dict_turns_recharge["steal"] >= (self.turns_to_recharge - 1) or self.dict_turns_recharge["steal"] == 0
     
     @property
     def check_turns_dispel(self) -> bool:
-        return self.dict_turns_recharge["dispel"] >= (self.turns_to_recharge - 1)
+        return self.dict_turns_recharge["dispel"] >= (self.turns_to_recharge - 1) or self.dict_turns_recharge["dispel"] == 0
     
     @property
     def check_for_special_attack_ready(self) -> bool:
@@ -108,6 +108,31 @@ class SpecialAttacks(BaseComponent):
             damage = round((target.fighter.max_hp*self.dict_special_attack_values["percentile"])/100)
             target.fighter.hp -= damage
             self.engine.message_log.add_message(f"{target.name} feels a powerful force around him, dealing {damage}.")
+        else:
+            self.engine.message_log.add_message(f"{target.name} feels a force around him, but not strong enough to damage him.")
+
+
+    def rot_damage(self, target: Actor) -> None:
+        if target.inventory.capacity == 0:
+            target.fighter.hp -= self.dict_special_attack_damage["rot"]*2
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, and starts to rot slowly.")
+        else:
+            item_removed = False
+            for item in target.inventory.items:
+                if not item_removed:
+                    if item.is_organic and item.magic_item == False:
+                        if target.equipment.item_is_equipped(item):
+                            target.equipment.toggle_equip(item, False)
+                        target.inventory.items.remove(item)
+                        item_removed = True
+
+            target.fighter.hp -= self.dict_special_attack_damage["rot"]
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {self.dict_special_attack_damage["rot"]}.")
+
+            if item_removed:
+                self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, like something rotting.")
+
+
 
 
         
