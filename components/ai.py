@@ -211,12 +211,16 @@ class SpecialEnemy(BaseAI):
                         self.entity.special_attacks.dict_turns_recharge["percentile"] = 0
                     elif self.entity.special_attacks.dict_turns_recharge["stats_drain"] >= self.entity.special_attacks.turns_to_recharge:
                         self.entity.special_attacks.dict_turns_recharge["stats_drain"] = 0
+                    elif self.entity.special_attacks.dict_turns_recharge["rot"] >= self.entity.special_attacks.turns_to_recharge:
+                        self.entity.special_attacks.dict_turns_recharge["rot"] = 0
                     return SpecialAttackAction(self.entity, dx, dy).perform()
                 else:
                     if self.entity.special_attacks.check_attack_percentile:
                         self.entity.special_attacks.dict_turns_recharge["percentile"] += 1
                     elif self.entity.special_attacks.check_attack_stats:
                         self.entity.special_attacks.dict_turns_recharge["stats_drain"] += 1
+                    elif self.entity.special_attacks.check_attack_rot:
+                        self.entity.special_attacks.dict_turns_recharge["rot"] += 1
                     return MeleeAction(self.entity, dx, dy).perform()
                 
 

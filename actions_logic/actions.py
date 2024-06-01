@@ -321,6 +321,11 @@ class SpecialAttackAction(ActionWithDirection):
             self.entity.special_attacks.dict_turns_recharge["stats_drain"] += 1
             self.entity.special_attacks.drain_stats_target(target)
         
+        if self.entity.special_attacks.dict_special_attacks_flag["rot"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["rot"] += 1
+            self.entity.special_attacks.rot_damage(target)
+        
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
