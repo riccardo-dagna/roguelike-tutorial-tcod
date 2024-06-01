@@ -154,6 +154,8 @@ class Item(Entity):
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
+        material: str = "",
+        magic_item: bool = False,
         consumable: Optional[Consumable] = None,
         equippable: Optional[Equippable] = None,
     ):
@@ -167,6 +169,9 @@ class Item(Entity):
             render_order=RenderOrder.ITEM,
         )
 
+        self.material = material
+        self.magic_item = magic_item
+
         self.consumable = consumable
 
         if self.consumable:
@@ -176,6 +181,11 @@ class Item(Entity):
 
         if self.equippable:
             self.equippable.parent = self
+    
+    @property
+    def is_organic(self) -> bool:
+        return self.material == "paper" or self.material == "leather" or self.material == "wood"
+        
 
 
 class Chest(Entity):
