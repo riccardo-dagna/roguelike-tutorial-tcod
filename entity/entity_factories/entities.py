@@ -55,6 +55,11 @@ rot_orc = Actor(char="r", color=(63,127, 63), name="Rot Orc",
     inventory=Inventory(capacity=0), level=Level(xp_given=200), status=Status(), damage_info=DamageInfo(),
     special_attacks=SpecialAttacks(flag_rot=True, damage_rot=4),
 )
+corrosion_orc = Actor(char="c", color=(63,127, 63), name="Corrosion Orc",
+    ai_cls=SpecialEnemy, equipment=Equipment(), fighter=Fighter(hp=10, base_defense=1, base_power=2),
+    inventory=Inventory(capacity=0), level=Level(xp_given=200), status=Status(), damage_info=DamageInfo(),
+    special_attacks=SpecialAttacks(flag_corrosion=True, damage_corrosion=4),
+)
 
 
 
