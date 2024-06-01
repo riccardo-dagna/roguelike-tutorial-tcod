@@ -156,6 +156,7 @@ class Item(Entity):
         name: str = "<Unnamed>",
         material: str = "",
         magic_item: bool = False,
+        damaged: bool = False,
         consumable: Optional[Consumable] = None,
         equippable: Optional[Equippable] = None,
     ):
@@ -171,6 +172,7 @@ class Item(Entity):
 
         self.material = material
         self.magic_item = magic_item
+        self.damaged = damaged
 
         self.consumable = consumable
 
@@ -185,7 +187,10 @@ class Item(Entity):
     @property
     def is_organic(self) -> bool:
         return self.material == "paper" or self.material == "leather" or self.material == "wood"
-        
+    
+    @property
+    def is_metallic(self) -> bool:
+        return self.material == "metal" 
 
 
 class Chest(Entity):
