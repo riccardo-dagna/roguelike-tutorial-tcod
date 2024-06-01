@@ -325,7 +325,11 @@ class SpecialAttackAction(ActionWithDirection):
             target = self.target_actor
             self.entity.special_attacks.dict_turns_recharge["rot"] += 1
             self.entity.special_attacks.rot_damage(target)
-        
+
+        if self.entity.special_attacks.dict_special_attacks_flag["corrosion"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["corrosion"] += 1
+            self.entity.special_attacks.corrosion_damage(target)
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
