@@ -186,6 +186,12 @@ class RangedAction(ActionWithDirection):
                 if (target.fighter.hp <= 0 or not target.is_alive) and target.status.dict_condition_attack["grab"]:
                     self.entity.status.dict_condition_afflicted["grab"] = False
                     self.engine.message_log.add_message(f"You are free from the grab.", color.player_atk)
+                    
+            # This checks if the player is ingested and the enemy is dead, and then release the player from the ingested condition
+            if self.entity == self.engine.player and self.entity.special_attacks.check_status_ingested and (damage > 0 and damage_modificator > 0):
+                if (target.fighter.hp <= 0 or not target.is_alive) and target.special_attacks.dict_special_attacks_flag["ingest"]:
+                    self.entity.special_attacks.dict_special_attack_status["ingest"] = False
+                    self.engine.message_log.add_message(f"You are no longer devoured.", color.player_atk)
 
             # After the damage, there is the check for the conditions effect.
             self.entity.status.affect_new_status(self, target, color.player_atk)
@@ -241,6 +247,12 @@ class MeleeAction(ActionWithDirection):
             if (target.fighter.hp <= 0 or not target.is_alive) and target.status.dict_condition_attack["grab"]:
                 self.entity.status.dict_condition_afflicted["grab"] = False
                 self.engine.message_log.add_message(f"You are free from the grab.", attack_color)
+                    
+        # This checks if the player is ingested and the enemy is dead, and then release the player from the ingested condition
+        if self.entity == self.engine.player and self.entity.special_attacks.check_status_ingested and (damage > 0 and damage_modificator > 0):
+            if (target.fighter.hp <= 0 or not target.is_alive) and target.special_attacks.dict_special_attacks_flag["ingest"]:
+                self.entity.special_attacks.dict_special_attack_status["ingest"] = False
+                self.engine.message_log.add_message(f"You are no longer devoured.", color.player_atk)
 
         # After the damage, there is the check for the conditions effect.
         # This checks if the entity is an enemy or the player.
@@ -303,6 +315,9 @@ class MovementAction(ActionWithDirection):
                     self.engine.message_log.add_message(f"The {self.entity.name} is free from the grab!")
             else:
                 raise exceptions.Impossible("You are grabbed, you can't move.")
+        if self.entity.special_attacks.check_status_ingested:
+            # The entity is ingested and can't move.
+            raise exceptions.Impossible("You are ingested, you can't move.")
 
         self.entity.move(self.dx, self.dy)
 
@@ -330,6 +345,11 @@ class SpecialAttackAction(ActionWithDirection):
             target = self.target_actor
             self.entity.special_attacks.dict_turns_recharge["corrosion"] += 1
             self.entity.special_attacks.corrosion_damage(target)
+
+        if self.entity.special_attacks.dict_special_attacks_flag["ingest"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["ingest"] += 1
+            self.entity.special_attacks.ingest_target(target)
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
