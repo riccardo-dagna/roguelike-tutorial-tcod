@@ -28,6 +28,7 @@ class SpecialAttacks(BaseComponent):
         self.dict_special_attack_immunity = dict(ingest = immunity_ingest, percentile = immunity_percentile, stats_drain = immunity_stats_drain, rot = 
                                                  immunity_rot, steal = immunity_steal, dispel = immunity_dispel, corrosion = immunity_corrosion,)
         self.dict_turns_recharge = dict(ingest = 0, percentile = 0, stats_drain = 0, rot = 0, steal = 0, dispel = 0, corrosion = 0,)
+        self.dict_turns_effect = dict(ingest = 0,)
     
     @property
     def check_attack_ingest(self) -> bool:
@@ -89,6 +90,9 @@ class SpecialAttacks(BaseComponent):
     def check_for_special_attack_ready(self) -> bool:
         return (self.check_attack_ingest and self.check_turns_ingest) or (self.check_attack_percentile and self.check_turns_percentile) or (self.check_attack_stats and self.check_turns_stats_drain) or (self.check_attack_rot and self.check_turns_rot) or (self.check_attack_steal and self.check_turns_steal) or (self.check_attack_dispel and self.check_turns_dispel) or (self.check_attack_corrosion and self.check_turns_corrosion)
     
+    @property
+    def check_status_ingested(self) -> bool:
+        return self.dict_special_attack_status["ingest"]
 
     def drain_stats_target(self, target: Actor) -> None:
         if self.dict_special_attack_values["strenght_drain"] > 0:
@@ -173,7 +177,11 @@ class SpecialAttacks(BaseComponent):
 
             if item_removed:
                 self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, like something rotting.")
-
+    
+    def ingest_target(self, target: Actor) -> None:
+        if self.dict_special_attack_damage["ingest"] > 0 and target.special_attacks.dict_special_attack_status["ingest"] == False:
+            self.engine.message_log.add_message(f"{target.name} is devoured by {self.parent.name}")
+            target.special_attacks.dict_special_attack_status["ingest"] = True
 
 
 
