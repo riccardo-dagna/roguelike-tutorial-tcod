@@ -215,6 +215,8 @@ class SpecialEnemy(BaseAI):
                         self.entity.special_attacks.dict_turns_recharge["rot"] = 0
                     elif self.entity.special_attacks.dict_turns_recharge["corrosion"] >= self.entity.special_attacks.turns_to_recharge:
                         self.entity.special_attacks.dict_turns_recharge["corrosion"] = 0
+                    elif self.entity.special_attacks.dict_turns_recharge["ingest"] >= self.entity.special_attacks.turns_to_recharge:
+                        self.entity.special_attacks.dict_turns_recharge["ingest"] = 0
                     return SpecialAttackAction(self.entity, dx, dy).perform()
                 else:
                     if self.entity.special_attacks.check_attack_percentile:
@@ -225,6 +227,8 @@ class SpecialEnemy(BaseAI):
                         self.entity.special_attacks.dict_turns_recharge["rot"] += 1
                     elif self.entity.special_attacks.check_attack_corrosion:
                         self.entity.special_attacks.dict_turns_recharge["corrosion"] += 1
+                    elif self.entity.special_attacks.check_attack_ingest:
+                        self.entity.special_attacks.dict_turns_recharge["ingest"] += 1
                     return MeleeAction(self.entity, dx, dy).perform()
                 
 
