@@ -65,6 +65,12 @@ purple_worm = Actor(char="w", color=(63,127, 63), name="Purple Worm",
     inventory=Inventory(capacity=0), level=Level(xp_given=200), status=Status(), damage_info=DamageInfo(),
     special_attacks=SpecialAttacks(flag_ingest=True, damage_ingest=4),
 )
+magic_orc = Actor(char="m", color=(63,127, 63), name="Magic Ord",
+    ai_cls=SpecialEnemy, equipment=Equipment(), fighter=Fighter(hp=15, base_defense=3, base_power=2),
+    inventory=Inventory(capacity=0), level=Level(xp_given=200), status=Status(), damage_info=DamageInfo(),
+    special_attacks=SpecialAttacks(flag_dispel=True, damage_dispel=4),
+)
+
 
 
 
