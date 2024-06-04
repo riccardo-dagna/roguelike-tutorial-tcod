@@ -183,7 +183,30 @@ class SpecialAttacks(BaseComponent):
             self.engine.message_log.add_message(f"{target.name} is devoured by {self.parent.name}")
             target.special_attacks.dict_special_attack_status["ingest"] = True
 
+    def dispel_damage(self, target: Actor) -> None:
+        if target.inventory.capacity == 0:
+            target.fighter.hp -= self.dict_special_attack_damage["dispel"]*2
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, and start to fade.")
+        else:
+            item_removed = False
+            for item in target.inventory.items:
+                if not item_removed:
+                    if item.magic_item == True:
+                        if item.equippable is not None:
+                            if item.damaged is False:
+                                item.damaged = True
+                            else:
+                                target.equipment.toggle_equip(item, False)
+                                target.inventory.items.remove(item)
+                        elif item.equippable is None:
+                            target.inventory.items.remove(item)
+                        item_removed = True
 
+            target.fighter.hp -= self.dict_special_attack_damage["dispel"]
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {self.dict_special_attack_damage["rot"]}.")
+
+            if item_removed:
+                self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, and feels something losing it's power.")
 
         
 
