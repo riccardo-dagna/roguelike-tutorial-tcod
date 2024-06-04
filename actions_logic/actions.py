@@ -166,8 +166,11 @@ class RangedAction(ActionWithDirection):
             attack_desc = f"You hit the {target.name} with your {projectile_string}"
 
             # Check if the entity is the player or the enemy to calculate the type of damage        
-            if self.entity == self.engine.player and self.entity.equipment.meelee is not None:
-                damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.ranged.equippable.damage_type)
+            if self.entity == self.engine.player and self.entity.equipment.ranged is not None:
+                if self.entity.equipment.ranged.damaged is False:
+                    damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.ranged.equippable.damage_type)
+                else:
+                    damage_modificator = 1
             else:
                 damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
             damage = self.entity.fighter.power_ranged - target.fighter.defense
@@ -213,7 +216,11 @@ class MeleeAction(ActionWithDirection):
 
         # Check if the entity is the player or the enemy to calculate the type of damage        
         if self.entity == self.engine.player and self.entity.equipment.meelee is not None:
-            damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.meelee.equippable.damage_type)
+            if self.entity.equipment.meelee.damaged is False:
+                damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.meelee.equippable.damage_type)
+            else:
+                damage_modificator = 1
+            
         else:
             damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
 
@@ -350,6 +357,12 @@ class SpecialAttackAction(ActionWithDirection):
             target = self.target_actor
             self.entity.special_attacks.dict_turns_recharge["ingest"] += 1
             self.entity.special_attacks.ingest_target(target)
+            
+        if self.entity.special_attacks.dict_special_attacks_flag["dispel"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["dispel"] += 1
+            self.entity.special_attacks.dispel_damage(target)
+
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:
