@@ -220,7 +220,6 @@ class MeleeAction(ActionWithDirection):
                 damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.meelee.equippable.damage_type)
             else:
                 damage_modificator = 1
-            
         else:
             damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
 
@@ -258,7 +257,8 @@ class MeleeAction(ActionWithDirection):
         # This checks if the player is ingested and the enemy is dead, and then release the player from the ingested condition
         if self.entity == self.engine.player and self.entity.special_attacks.check_status_ingested and (damage > 0 and damage_modificator > 0):
             if (target.fighter.hp <= 0 or not target.is_alive) and target.special_attacks.dict_special_attacks_flag["ingest"]:
-                self.entity.special_attacks.dict_special_attack_status["ingest"] = False
+                self.entity.special_attacks.dict_special_attack_status["ingested"] = False
+                target.special_attacks.dict_special_attack_status["ingesting"] = False
                 self.engine.message_log.add_message(f"You are no longer devoured.", color.player_atk)
 
         # After the damage, there is the check for the conditions effect.
@@ -462,9 +462,17 @@ class BumpAction(ActionWithDirection):
                 else:
                     return MovementAction(self.entity, self.dx, self.dy).perform()
 
+        flag_found_ingester = False
+
+        if self.entity.special_attacks.dict_special_attack_status["ingested"] and self.entity is self.engine.player:
+            for actor in self.engine.game_map.actors:
+                if actor.special_attacks.dict_special_attack_status["ingesting"]:
+                    self.entity.fighter.hp -= actor.special_attacks.dict_special_attack_damage["ingest"]
+                    self.engine.message_log.add_message(f"You receive {actor.special_attacks.dict_special_attack_damage["ingest"]} damage from being devoured!")
+
 
         # After all the status, checks for the target actors or chests
-        elif self.target_actor:
+        if self.target_actor:
             return MeleeAction(self.entity, self.dx, self.dy).perform()
         elif self.target_chest and self.entity == self.engine.player:
             return ChestAction(self.entity, self.dx, self.dy).perform()
