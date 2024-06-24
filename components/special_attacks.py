@@ -16,17 +16,17 @@ class SpecialAttacks(BaseComponent):
                  flag_ingest: bool = False, flag_percentile: bool = False, flag_stats_drain: bool = False, flag_rot: bool = False, flag_steal: bool = False, flag_dispel: bool = False, flag_corrosion: bool = False,
                  values_percentile: int = 0, value_strenght_drain: int = 0, value_agility_drain: int = 0,
                  damage_ingest: int = 0, damage_stat_drain: int = 0, damage_rot: int = 0, damage_steal: int = 0, damage_dispel: int = 0, damage_corrosion: int = 0,
-                 status_ingest: bool = False,
+                 status_ingested: bool = False, status_ingesting: bool = False,
                  immunity_ingest: bool = False, immunity_percentile: bool = False, immunity_stats_drain: bool = False, immunity_rot: bool = False, immunity_steal: bool = False, immunity_dispel: bool = False, immunity_corrosion: bool = False,
                 ) -> None:
         self.dict_special_attacks_flag = dict(ingest = flag_ingest, percentile = flag_percentile, stats_drain = flag_stats_drain, rot = flag_rot, steal = flag_steal, dispel = flag_dispel,
                                               corrosion = flag_corrosion,)
         self.dict_special_attack_values = dict(percentile = values_percentile, strenght_drain = value_strenght_drain, agility_drain = value_agility_drain,)
         self.dict_special_attack_damage = dict(ingest = damage_ingest, stats_drain = damage_stat_drain, rot = damage_rot, steal = damage_steal, dispel = damage_dispel, 
-                                               corrosion = damage_corrosion)
-        self.dict_special_attack_status = dict(ingest = status_ingest,)
-        self.dict_special_attack_immunity = dict(ingest = immunity_ingest, percentile = immunity_percentile, stats_drain = immunity_stats_drain, rot = 
-                                                 immunity_rot, steal = immunity_steal, dispel = immunity_dispel, corrosion = immunity_corrosion,)
+                                               corrosion = damage_corrosion,)
+        self.dict_special_attack_status = dict(ingested = status_ingested, ingesting = status_ingesting,)
+        self.dict_special_attack_immunity = dict(ingest = immunity_ingest, percentile = immunity_percentile, stats_drain = immunity_stats_drain, rot = immunity_rot, 
+                                                 steal = immunity_steal, dispel = immunity_dispel, corrosion = immunity_corrosion,)
         self.dict_turns_recharge = dict(ingest = 0, percentile = 0, stats_drain = 0, rot = 0, steal = 0, dispel = 0, corrosion = 0,)
         self.dict_turns_effect = dict(ingest = 0,)
     
@@ -92,7 +92,7 @@ class SpecialAttacks(BaseComponent):
     
     @property
     def check_status_ingested(self) -> bool:
-        return self.dict_special_attack_status["ingest"]
+        return self.dict_special_attack_status["ingested"]
 
     def drain_stats_target(self, target: Actor) -> None:
         if self.dict_special_attack_values["strenght_drain"] > 0:
@@ -179,9 +179,10 @@ class SpecialAttacks(BaseComponent):
                 self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, like something rotting.")
     
     def ingest_target(self, target: Actor) -> None:
-        if self.dict_special_attack_damage["ingest"] > 0 and target.special_attacks.dict_special_attack_status["ingest"] == False:
+        if self.dict_special_attack_damage["ingest"] > 0 and (target is not None and target.special_attacks.dict_special_attack_status["ingested"] == False):
             self.engine.message_log.add_message(f"{target.name} is devoured by {self.parent.name}")
-            target.special_attacks.dict_special_attack_status["ingest"] = True
+            target.special_attacks.dict_special_attack_status["ingested"] = True
+            self.dict_special_attack_status["ingesting"] = True
 
     def dispel_damage(self, target: Actor) -> None:
         if target.inventory.capacity == 0:
