@@ -1,4 +1,4 @@
-from components import equippable
+from components.item import equippable
 from entity.entity import Item
 
 

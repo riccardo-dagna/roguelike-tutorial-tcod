@@ -1,6 +1,6 @@
 from components.ai import HostileMeeleeEnemy, HostileRangedEnemy, SpecialEnemy
 from components.damageinfo import DamageInfo
-from components.equipment import Equipment
+from components.item.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level

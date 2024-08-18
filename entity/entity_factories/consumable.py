@@ -1,4 +1,4 @@
-from components import consumable
+from components.item import consumable
 from entity.entity import Item
 
 #This sections contains the scrolls

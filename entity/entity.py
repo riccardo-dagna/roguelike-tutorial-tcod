@@ -8,10 +8,10 @@ from render_logic.render_order import RenderOrder
 
 if TYPE_CHECKING:
     from components.ai import BaseAI
-    from components.consumable import Consumable
+    from components.item.consumable import Consumable
     from components.damageinfo import DamageInfo
-    from components.equipment import Equipment
-    from components.equippable import Equippable
+    from components.item.equipment import Equipment
+    from components.item.equippable import Equippable
     from components.fighter import Fighter
     from components.inventory import Inventory
     from components.level import Level
