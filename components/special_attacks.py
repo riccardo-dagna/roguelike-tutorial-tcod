@@ -129,7 +129,7 @@ class SpecialAttacks(BaseComponent):
 
     def rot_damage(self, target: Actor) -> None:
         if target.inventory.capacity == 0:
-            target.fighter.hp -= self.dict_special_attack_damage["rot"]*2
+            target.fighter.hp -= (self.dict_special_attack_damage["rot"]*2 - target.fighter.defense)
             self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, and starts to rot slowly.")
         else:
             item_removed = False
@@ -146,8 +146,8 @@ class SpecialAttacks(BaseComponent):
                             target.inventory.items.remove(item)
                         item_removed = True
 
-            target.fighter.hp -= self.dict_special_attack_damage["rot"]
-            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {self.dict_special_attack_damage["rot"]}.")
+            target.fighter.hp -= (self.dict_special_attack_damage["rot"] - target.fighter.defense)
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {(self.dict_special_attack_damage["rot"] - target.fighter.defense)}.")
 
             if item_removed:
                 self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, like something rotting.")
@@ -155,7 +155,7 @@ class SpecialAttacks(BaseComponent):
 
     def corrosion_damage(self, target: Actor) -> None:
         if target.inventory.capacity == 0:
-            target.fighter.hp -= self.dict_special_attack_damage["corrosion"]*2
+            target.fighter.hp -= (self.dict_special_attack_damage["corrosion"]*2 - target.fighter.defense)
             self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, and starts to corrode slowly.")
         else:
             item_removed = False
@@ -172,8 +172,8 @@ class SpecialAttacks(BaseComponent):
                             target.inventory.items.remove(item)
                         item_removed = True
 
-            target.fighter.hp -= self.dict_special_attack_damage["corrosion"]
-            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {self.dict_special_attack_damage["corrosion"]}.")
+            target.fighter.hp -= (self.dict_special_attack_damage["corrosion"] - target.fighter.defense)
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {(self.dict_special_attack_damage["corrosion"] - target.fighter.defense)}.")
 
             if item_removed:
                 self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, like something rotting.")
@@ -186,7 +186,7 @@ class SpecialAttacks(BaseComponent):
 
     def dispel_damage(self, target: Actor) -> None:
         if target.inventory.capacity == 0:
-            target.fighter.hp -= self.dict_special_attack_damage["dispel"]*2
+            target.fighter.hp -= (self.dict_special_attack_damage["dispel"]*2 - target.fighter.defense)
             self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, and start to fade.")
         else:
             item_removed = False
@@ -203,13 +203,31 @@ class SpecialAttacks(BaseComponent):
                             target.inventory.items.remove(item)
                         item_removed = True
 
-            target.fighter.hp -= self.dict_special_attack_damage["dispel"]
-            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {self.dict_special_attack_damage["rot"]}.")
+            target.fighter.hp -= (self.dict_special_attack_damage["dispel"] - target.fighter.defense)
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {self.dict_special_attack_damage["dispel"] - target.fighter.defense}.")
 
             if item_removed:
                 self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, and feels something losing it's power.")
 
-        
+    def steal_from_target(self, target: Actor) -> None:
+        if target.inventory.capacity == 0:
+            target.fighter.hp -= (self.dict_special_attack_damage["steal"]*2 - target.fighter.defense)
+            self.engine.message_log.add_message(f"{target.name} feels like the target is trying to steal something, but failed.") 
+        else:
+            item_removed = False
+            for item in target.inventory.items:
+                if not item_removed:
+                    if item.equippable is not None:
+                        target.inventory.items.remove(item)
+                        item_removed = True
+            
+            target.fighter.hp -= (self.dict_special_attack_damage["steal"] - target.fighter.defense)
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {(self.dict_special_attack_damage["steal"] - target.fighter.defense)}.")
+
+            if item_removed:
+                self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, and feels something is missing.")
+
+
 
         
 
