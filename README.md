@@ -53,6 +53,7 @@ Mechanics to add in the game:
 - New monster and items
 - Shopkeeper (with random item)
 - Boss monster (with special attack)
+- Balancing the game (monster spawn, item spawn, damage & costs, etc.)
 
 
 If in playing the game you find any bugs, feel free to let me know.
