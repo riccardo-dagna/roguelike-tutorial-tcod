@@ -362,6 +362,11 @@ class SpecialAttackAction(ActionWithDirection):
             target = self.target_actor
             self.entity.special_attacks.dict_turns_recharge["dispel"] += 1
             self.entity.special_attacks.dispel_damage(target)
+        
+        if self.entity.special_attacks.dict_special_attacks_flag["steal"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["steal"] += 1
+            self.entity.special_attacks.steal_from_target(target)
 
 
 class BumpAction(ActionWithDirection):
