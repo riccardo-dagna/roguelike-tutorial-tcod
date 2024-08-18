@@ -210,6 +210,31 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             x = 0
 
         y = 0
+        
+        if self.engine.player.status.dict_condition_afflicted["bleed"]:
+            string_status = "bleeding"
+        elif self.engine.player.status.dict_condition_afflicted["poison"]:
+            string_status = "poisoned"
+        elif self.engine.player.status.dict_condition_afflicted["stun"]:
+            string_status = "stunned"
+        elif self.engine.player.status.dict_condition_afflicted["confusion"]:
+            string_status = "confused"
+        elif self.engine.player.status.dict_condition_afflicted["grab"]:
+            string_status = "grabbed"
+        elif self.engine.player.status.dict_condition_afflicted["condemnation"]:
+            string_status = "condemned"
+        elif self.engine.player.status.dict_condition_afflicted["petrification"]:
+            string_status = "petrifying"
+        elif self.engine.player.status.dict_condition_afflicted["fear"]:
+            string_status = "afraid"
+        elif self.engine.player.status.dict_condition_afflicted["blindness"]:
+            string_status = "blindness"
+        elif self.engine.player.status.dict_condition_afflicted["charm"]:
+            string_status = "charmed"
+        elif self.engine.player.status.dict_condition_afflicted["rage"]:
+            string_status = "enraged"
+        else:
+            string_status = "healthy"
 
         width = len(self.TITLE) + 4
 
@@ -217,7 +242,7 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             x=x,
             y=y,
             width=width,
-            height=8,
+            height=9,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -232,26 +257,10 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             string=f"XP for next Level: {self.engine.player.level.experience_to_next_level}",
         )
 
-        console.print(x=x + 1, y=y + 4, string=f"Attack: {self.engine.player.fighter.power}")
-        console.print(x=x + 1, y=y + 5, string=f"Defense: {self.engine.player.fighter.defense}")
-        if self.engine.player.status.dict_condition_afflicted["bleed"]:
-            console.print(x=x + 1, y=y + 6, string=f"Status: bleeding")
-        elif self.engine.player.status.dict_condition_afflicted["poison"]:
-            console.print(x=x + 1, y=y + 6, string=f"Status: poisoned")
-        elif self.engine.player.status.dict_condition_afflicted["stun"]:
-            console.print(x=x + 1, y=y + 6, string=f"Status: stunned")
-        elif self.engine.player.status.dict_condition_afflicted["confusion"]:
-            console.print(x=x + 1, y=y + 6, string=f"Status: confused")
-        elif self.engine.player.status.dict_condition_afflicted["grab"]:
-            console.print(x=x + 1, y=y + 6, string=f"Status: grabbed")
-        elif self.engine.player.status.dict_condition_afflicted["condemnation"]:
-            console.print(x=x + 1, y=y + 6, string=f"Status: condemned")
-        elif self.engine.player.status.dict_condition_afflicted["petrification"]:
-            console.print(x=x + 1, y=y + 6, string=f"Status: petrifying")
-        elif self.engine.player.status.dict_condition_afflicted["blindness"]:
-            console.print(x=x + 1, y=y + 6, string=f"Status: blindness")
-        else:
-            console.print(x=x + 1, y=y + 6, string=f"Status: healthy")
+        console.print(x=x + 1, y=y + 4, string=f"Meelee power: {self.engine.player.fighter.power_meelee}")
+        console.print(x=x + 1, y=y + 5, string=f"Ranged Power: {self.engine.player.fighter.power_ranged}")
+        console.print(x=x + 1, y=y + 6, string=f"Defense: {self.engine.player.fighter.defense}")
+        console.print(x=x + 1, y=y + 7, string=f"Status: {string_status}")
 
 
 class LevelUpEventHandler(AskUserEventHandler):
@@ -287,12 +296,12 @@ class LevelUpEventHandler(AskUserEventHandler):
         console.print(
             x=x + 1,
             y=5,
-            string=f"b) Strength (+1 attack, from {self.engine.player.fighter.power})",
+            string=f"b) Strength (+1 attack, from {self.engine.player.fighter.base_power})",
         )
         console.print(
             x=x + 1,
             y=6,
-            string=f"c) Agility (+1 defense, from {self.engine.player.fighter.defense})",
+            string=f"c) Agility (+1 defense, from {self.engine.player.fighter.base_defense})",
         )
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:

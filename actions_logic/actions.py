@@ -151,15 +151,28 @@ class RangedAction(ActionWithDirection):
         #Checks for the various condition before attacking
         self.entity.status.status_check_in_turn(self.entity, self.engine)
 
+        # This values if the entity is the player or an enemy
+        if self.entity is self.engine.player:
+            projectile_string = self.entity.equipment.ranged.equippable.projectile_name
+        else:
+            projectile_string = "arrow"
+        
         # If dx/dy is different than 0, it has a target
         if self.dx == 0 and self.dy == 0:
-            self.engine.message_log.add_message(f"You hear the {self.entity.equipment.ranged.equippable.projectile_name} hit a wall in the distance.")
+            self.engine.message_log.add_message(f"You hear the {projectile_string} hit a wall in the distance.")
         else:
             target = self.target_actor
 
-            attack_desc = f"You hit the {target.name} with your {self.entity.equipment.ranged.equippable.projectile_name}"
+            attack_desc = f"You hit the {target.name} with your {projectile_string}"
 
-            damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.meelee.equippable.damage_type)
+            # Check if the entity is the player or the enemy to calculate the type of damage        
+            if self.entity == self.engine.player and self.entity.equipment.ranged is not None:
+                if self.entity.equipment.ranged.damaged is False:
+                    damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.ranged.equippable.damage_type)
+                else:
+                    damage_modificator = 1
+            else:
+                damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
             damage = self.entity.fighter.power_ranged - target.fighter.defense
             
             # Calculate the damage to inflict to the target and elemental resistance/vulnerability
@@ -176,6 +189,12 @@ class RangedAction(ActionWithDirection):
                 if (target.fighter.hp <= 0 or not target.is_alive) and target.status.dict_condition_attack["grab"]:
                     self.entity.status.dict_condition_afflicted["grab"] = False
                     self.engine.message_log.add_message(f"You are free from the grab.", color.player_atk)
+                    
+            # This checks if the player is ingested and the enemy is dead, and then release the player from the ingested condition
+            if self.entity == self.engine.player and self.entity.special_attacks.check_status_ingested and (damage > 0 and damage_modificator > 0):
+                if (target.fighter.hp <= 0 or not target.is_alive) and target.special_attacks.dict_special_attacks_flag["ingest"]:
+                    self.entity.special_attacks.dict_special_attack_status["ingest"] = False
+                    self.engine.message_log.add_message(f"You are no longer devoured.", color.player_atk)
 
             # After the damage, there is the check for the conditions effect.
             self.entity.status.affect_new_status(self, target, color.player_atk)
@@ -197,7 +216,10 @@ class MeleeAction(ActionWithDirection):
 
         # Check if the entity is the player or the enemy to calculate the type of damage        
         if self.entity == self.engine.player and self.entity.equipment.meelee is not None:
-            damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.meelee.equippable.damage_type)
+            if self.entity.equipment.meelee.damaged is False:
+                damage_modificator = target.damage_info.calculate_damage(self.entity.equipment.meelee.equippable.damage_type)
+            else:
+                damage_modificator = 1
         else:
             damage_modificator = target.damage_info.calculate_damage(self.entity.damage_info.attack_type_return())
 
@@ -231,6 +253,13 @@ class MeleeAction(ActionWithDirection):
             if (target.fighter.hp <= 0 or not target.is_alive) and target.status.dict_condition_attack["grab"]:
                 self.entity.status.dict_condition_afflicted["grab"] = False
                 self.engine.message_log.add_message(f"You are free from the grab.", attack_color)
+                    
+        # This checks if the player is ingested and the enemy is dead, and then release the player from the ingested condition
+        if self.entity == self.engine.player and self.entity.special_attacks.check_status_ingested and (damage > 0 and damage_modificator > 0):
+            if (target.fighter.hp <= 0 or not target.is_alive) and target.special_attacks.dict_special_attacks_flag["ingest"]:
+                self.entity.special_attacks.dict_special_attack_status["ingested"] = False
+                target.special_attacks.dict_special_attack_status["ingesting"] = False
+                self.engine.message_log.add_message(f"You are no longer devoured.", color.player_atk)
 
         # After the damage, there is the check for the conditions effect.
         # This checks if the entity is an enemy or the player.
@@ -293,8 +322,55 @@ class MovementAction(ActionWithDirection):
                     self.engine.message_log.add_message(f"The {self.entity.name} is free from the grab!")
             else:
                 raise exceptions.Impossible("You are grabbed, you can't move.")
+        if self.entity.special_attacks.check_status_ingested:
+            # The entity is ingested and can't move.
+            raise exceptions.Impossible("You are ingested, you can't move.")
 
         self.entity.move(self.dx, self.dy)
+
+
+class SpecialAttackAction(ActionWithDirection):
+    def perform(self) -> None:
+        # This part checks if it has this specific flag for the attack percentile
+        if self.entity.special_attacks.dict_special_attacks_flag["percentile"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["percentile"] += 1
+            self.entity.special_attacks.percentile_damage(target)
+        
+        # This part checks if it has this specific flag for the attack stats drain 
+        if self.entity.special_attacks.dict_special_attacks_flag["stats_drain"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["stats_drain"] += 1
+            self.entity.special_attacks.drain_stats_target(target)
+        
+        if self.entity.special_attacks.dict_special_attacks_flag["rot"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["rot"] += 1
+            self.entity.special_attacks.rot_damage(target)
+
+        if self.entity.special_attacks.dict_special_attacks_flag["corrosion"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["corrosion"] += 1
+            self.entity.special_attacks.corrosion_damage(target)
+
+        if self.entity.special_attacks.dict_special_attacks_flag["ingest"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["ingest"] += 1
+            self.entity.special_attacks.ingest_target(target)
+            
+        if self.entity.special_attacks.dict_special_attacks_flag["dispel"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["dispel"] += 1
+            self.entity.special_attacks.dispel_damage(target)
+        
+        if self.entity.special_attacks.dict_special_attacks_flag["steal"]:
+            target = self.target_actor
+            self.entity.special_attacks.dict_turns_recharge["steal"] += 1
+            self.entity.special_attacks.steal_from_target(target)
+        
+        if self.entity.special_attacks.dict_special_attacks_flag["armor_pen"]:
+            target = self.target_actor
+            self.entity.special_attacks.armor_penetrating_attack(target)
 
 
 class BumpAction(ActionWithDirection):
@@ -395,9 +471,17 @@ class BumpAction(ActionWithDirection):
                 else:
                     return MovementAction(self.entity, self.dx, self.dy).perform()
 
+        flag_found_ingester = False
+
+        if self.entity.special_attacks.dict_special_attack_status["ingested"] and self.entity is self.engine.player:
+            for actor in self.engine.game_map.actors:
+                if actor.special_attacks.dict_special_attack_status["ingesting"]:
+                    self.entity.fighter.hp -= actor.special_attacks.dict_special_attack_damage["ingest"]
+                    self.engine.message_log.add_message(f"You receive {actor.special_attacks.dict_special_attack_damage["ingest"]} damage from being devoured!")
+
 
         # After all the status, checks for the target actors or chests
-        elif self.target_actor:
+        if self.target_actor:
             return MeleeAction(self.entity, self.dx, self.dy).perform()
         elif self.target_chest and self.entity == self.engine.player:
             return ChestAction(self.entity, self.dx, self.dy).perform()

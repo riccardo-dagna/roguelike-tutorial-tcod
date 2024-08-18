@@ -25,16 +25,34 @@ class Equipment(BaseComponent):
         bonus = 0
 
         if self.meelee is not None and self.meelee.equippable is not None:
-            bonus += self.meelee.equippable.defense_bonus
+            if self.meelee.damaged is False:
+                bonus += self.meelee.equippable.defense_bonus
+            else:
+                bonus += round(self.meelee.equippable.defense_bonus/2)
 
+        if self.ranged is not None and self.ranged.equippable is not None:
+            if self.ranged.damaged is False:
+                bonus += self.ranged.equippable.defense_bonus
+            else:
+                bonus += round(self.ranged.equippable.defense_bonus/2)
+        
         if self.armor is not None and self.armor.equippable is not None:
-            bonus += self.armor.equippable.defense_bonus
+            if self.armor.damaged is False:
+                bonus += self.armor.equippable.defense_bonus
+            else:
+                bonus += round(self.armor.equippable.defense_bonus/2)
         
         if self.accessory_1 is not None and self.accessory_1.equippable is not None:
-            bonus += self.accessory_1.equippable.defense_bonus
+            if self.accessory_1.damaged is False:
+                bonus += self.accessory_1.equippable.defense_bonus
+            else:
+                bonus += round(self.accessory_1.equippable.defense_bonus/2)
         
         if self.accessory_2 is not None and self.accessory_2.equippable is not None:
-            bonus += self.accessory_2.equippable.defense_bonus
+            if self.accessory_2.damaged is False:
+                bonus += self.accessory_2.equippable.power_bonus
+            else:
+                bonus += round(self.accessory_2.equippable.defense_bonus/2)
 
         return bonus
 
@@ -43,16 +61,29 @@ class Equipment(BaseComponent):
         bonus = 0
 
         if self.meelee is not None and self.meelee.equippable is not None:
-            bonus += self.meelee.equippable.power_bonus
+            if self.meelee.damaged is False:
+                bonus += self.meelee.equippable.power_bonus
+            else:
+                bonus += round(self.meelee.equippable.power_bonus/2)
 
         if self.armor is not None and self.armor.equippable is not None:
-            bonus += self.armor.equippable.power_bonus
+            if self.armor.damaged is False:
+                bonus += self.armor.equippable.power_bonus
+            else:
+                bonus += round(self.armor.equippable.power_bonus/2)
         
         if self.accessory_1 is not None and self.accessory_1.equippable is not None:
-            bonus += self.accessory_1.equippable.power_bonus
+            if self.accessory_1.damaged is False:
+                bonus += self.accessory_1.equippable.power_bonus
+            else:
+                bonus += round(self.accessory_1.equippable.power_bonus/2)
         
         if self.accessory_2 is not None and self.accessory_2.equippable is not None:
-            bonus += self.accessory_2.equippable.power_bonus
+            if self.accessory_2.damaged is False:
+                bonus += self.accessory_2.equippable.power_bonus
+            else:
+                bonus += round(self.accessory_2.equippable.power_bonus/2)
+
 
         return bonus
     
@@ -61,16 +92,28 @@ class Equipment(BaseComponent):
         bonus = 0
 
         if self.ranged is not None and self.ranged.equippable is not None:
-            bonus += self.ranged.equippable.power_bonus
+            if self.ranged.damaged is False:
+                bonus += self.ranged.equippable.power_bonus
+            else:
+                bonus += round(self.meelee.equippable.power_bonus/2)
 
         if self.armor is not None and self.armor.equippable is not None:
-            bonus += self.armor.equippable.power_bonus
+            if self.armor.damaged is False:
+                bonus += self.armor.equippable.power_bonus
+            else:
+                bonus += round(self.armor.equippable.power_bonus/2)
         
         if self.accessory_1 is not None and self.accessory_1.equippable is not None:
-            bonus += self.accessory_1.equippable.power_bonus
+            if self.accessory_1.damaged is False:
+                bonus += self.accessory_1.equippable.power_bonus
+            else:
+                bonus += round(self.accessory_1.equippable.power_bonus/2)
         
         if self.accessory_2 is not None and self.accessory_2.equippable is not None:
-            bonus += self.accessory_2.equippable.power_bonus
+            if self.accessory_2.damaged is False:
+                bonus += self.accessory_2.equippable.power_bonus
+            else:
+                bonus += round(self.accessory_2.equippable.power_bonus/2)
 
         return bonus
 

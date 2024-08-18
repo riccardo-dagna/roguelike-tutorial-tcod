@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from components.fighter import Fighter
     from components.inventory import Inventory
     from components.level import Level
+    from components.special_attacks import SpecialAttacks
     from components.status import Status
     from game_map import GameMap
 
@@ -102,7 +103,8 @@ class Actor(Entity):
         inventory: Inventory,
         level: Level,
         status: Status,
-        damage_info: DamageInfo
+        damage_info: DamageInfo,
+        special_attacks: SpecialAttacks,
     ):
         super().__init__(
             x=x,
@@ -133,6 +135,9 @@ class Actor(Entity):
 
         self.damage_info = damage_info
         self.damage_info.parent = self
+        
+        self.special_attacks = special_attacks
+        self.special_attacks.parent = self
 
     @property
     def is_alive(self) -> bool:
@@ -149,6 +154,9 @@ class Item(Entity):
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
+        material: str = "",
+        magic_item: bool = False,
+        damaged: bool = False,
         consumable: Optional[Consumable] = None,
         equippable: Optional[Equippable] = None,
     ):
@@ -162,6 +170,10 @@ class Item(Entity):
             render_order=RenderOrder.ITEM,
         )
 
+        self.material = material
+        self.magic_item = magic_item
+        self.damaged = damaged
+
         self.consumable = consumable
 
         if self.consumable:
@@ -171,6 +183,14 @@ class Item(Entity):
 
         if self.equippable:
             self.equippable.parent = self
+    
+    @property
+    def is_organic(self) -> bool:
+        return self.material == "paper" or self.material == "leather" or self.material == "wood"
+    
+    @property
+    def is_metallic(self) -> bool:
+        return self.material == "metal" 
 
 
 class Chest(Entity):
