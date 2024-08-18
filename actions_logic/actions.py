@@ -367,6 +367,10 @@ class SpecialAttackAction(ActionWithDirection):
             target = self.target_actor
             self.entity.special_attacks.dict_turns_recharge["steal"] += 1
             self.entity.special_attacks.steal_from_target(target)
+        
+        if self.entity.special_attacks.dict_special_attacks_flag["armor_pen"]:
+            target = self.target_actor
+            self.entity.special_attacks.armor_penetrating_attack(target)
 
 
 class BumpAction(ActionWithDirection):
