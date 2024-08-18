@@ -42,14 +42,13 @@ Mechanics added in the game, already tested:
 Mechanics added in the game, to test:
 - Chests (to correct random item generation by floor, and to tests)
 - Special attacks (stats drain (for the enemy), percentile (for the enemy), rot (for the enemy), corrosion (for the enemy), dispel (for the enemy, only damage and magic items), steal (for 
-  the enemy))
+  the enemy), armor penetrating damage (for the enemy))
 
 Mechanics added in the game, to correct:
 - Special attacks (engulf/digest (to add damage every turn))
 
 Mechanics to add in the game:
 - Extra effect of elemental damage
-- Special attacks (armor penetrating damage)
 - Spells, spellbook and magic system
 - New monster and items
 - Shopkeeper (with random item)
