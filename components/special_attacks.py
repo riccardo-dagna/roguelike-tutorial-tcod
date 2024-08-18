@@ -13,14 +13,14 @@ class SpecialAttacks(BaseComponent):
     turns_to_recharge: int = 5
 
     def __init__(self, 
-                 flag_ingest: bool = False, flag_percentile: bool = False, flag_stats_drain: bool = False, flag_rot: bool = False, flag_steal: bool = False, flag_dispel: bool = False, flag_corrosion: bool = False,
+                 flag_ingest: bool = False, flag_percentile: bool = False, flag_stats_drain: bool = False, flag_rot: bool = False, flag_steal: bool = False, flag_dispel: bool = False, flag_corrosion: bool = False, flag_armor_penetrating: bool = False,
                  values_percentile: int = 0, value_strenght_drain: int = 0, value_agility_drain: int = 0,
                  damage_ingest: int = 0, damage_stat_drain: int = 0, damage_rot: int = 0, damage_steal: int = 0, damage_dispel: int = 0, damage_corrosion: int = 0,
                  status_ingested: bool = False, status_ingesting: bool = False,
                  immunity_ingest: bool = False, immunity_percentile: bool = False, immunity_stats_drain: bool = False, immunity_rot: bool = False, immunity_steal: bool = False, immunity_dispel: bool = False, immunity_corrosion: bool = False,
                 ) -> None:
         self.dict_special_attacks_flag = dict(ingest = flag_ingest, percentile = flag_percentile, stats_drain = flag_stats_drain, rot = flag_rot, steal = flag_steal, dispel = flag_dispel,
-                                              corrosion = flag_corrosion,)
+                                              corrosion = flag_corrosion, armor_pen = flag_armor_penetrating,)
         self.dict_special_attack_values = dict(percentile = values_percentile, strenght_drain = value_strenght_drain, agility_drain = value_agility_drain,)
         self.dict_special_attack_damage = dict(ingest = damage_ingest, stats_drain = damage_stat_drain, rot = damage_rot, steal = damage_steal, dispel = damage_dispel, 
                                                corrosion = damage_corrosion,)
@@ -57,6 +57,10 @@ class SpecialAttacks(BaseComponent):
     @property
     def check_attack_corrosion(self) -> bool:
         return self.dict_special_attacks_flag["corrosion"]
+    
+    @property
+    def check_attack_armor_penetrating(self) -> bool:
+        return self.dict_special_attacks_flag["armor_pen"]        
 
     @property
     def check_turns_ingest(self) -> bool:
@@ -88,7 +92,7 @@ class SpecialAttacks(BaseComponent):
     
     @property
     def check_for_special_attack_ready(self) -> bool:
-        return (self.check_attack_ingest and self.check_turns_ingest) or (self.check_attack_percentile and self.check_turns_percentile) or (self.check_attack_stats and self.check_turns_stats_drain) or (self.check_attack_rot and self.check_turns_rot) or (self.check_attack_steal and self.check_turns_steal) or (self.check_attack_dispel and self.check_turns_dispel) or (self.check_attack_corrosion and self.check_turns_corrosion)
+        return (self.check_attack_ingest and self.check_turns_ingest) or (self.check_attack_percentile and self.check_turns_percentile) or (self.check_attack_stats and self.check_turns_stats_drain) or (self.check_attack_rot and self.check_turns_rot) or (self.check_attack_steal and self.check_turns_steal) or (self.check_attack_dispel and self.check_turns_dispel) or (self.check_attack_corrosion and self.check_turns_corrosion) or self.check_attack_armor_penetrating
     
     @property
     def check_status_ingested(self) -> bool:
@@ -227,7 +231,8 @@ class SpecialAttacks(BaseComponent):
             if item_removed:
                 self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, and feels something is missing.")
 
+    def armor_penetrating_attack(self, target: Actor) -> None:
+        target.fighter.hp -= self.parent.fighter.power_meelee
+        self.engine.message_log.add_message(f"{self.name} ignore the armor of his enemy, dealing severe damage.")
 
-
-        
 
