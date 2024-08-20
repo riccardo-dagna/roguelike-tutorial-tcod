@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from components.special_attacks import SpecialAttacks
     from components.status import Status
     from game_map import GameMap
+    from components.spells.spellbook import Spellbook
 
 T = TypeVar("T", bound="Entity")
 
@@ -105,6 +106,7 @@ class Actor(Entity):
         status: Status,
         damage_info: DamageInfo,
         special_attacks: SpecialAttacks,
+        spellbook: Spellbook,
     ):
         super().__init__(
             x=x,
@@ -138,6 +140,10 @@ class Actor(Entity):
         
         self.special_attacks = special_attacks
         self.special_attacks.parent = self
+
+        self.spellbook = spellbook
+        self.spellbook.parent = self
+
 
     @property
     def is_alive(self) -> bool:
