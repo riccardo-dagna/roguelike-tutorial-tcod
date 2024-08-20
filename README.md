@@ -44,12 +44,14 @@ Mechanics added in the game, to test:
 - Special attacks (stats drain (for the enemy), percentile (for the enemy), rot (for the enemy), corrosion (for the enemy), dispel (for the enemy, only damage and magic items), steal (for 
   the enemy), armor penetrating damage (for the enemy))
 
-Mechanics added in the game, to correct:
+Mechanics added in the game, to correct or to add:
 - Special attacks (engulf/digest (to add damage every turn))
+- Spells (to correct spells with AreaRangedHandler or SingleAttackHandler)
+- Spellbook (added menu in game with some default spells, to correct adding the spells)
 
 Mechanics to add in the game:
 - Extra effect of elemental damage
-- Spells, spellbook and magic system
+- Add status spell (debuff for the enemy, and buff for the player)
 - New monster and items
 - Shopkeeper (with random item)
 - Boss monster (with special attack)
