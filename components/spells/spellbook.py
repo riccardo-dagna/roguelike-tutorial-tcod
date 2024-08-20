@@ -23,17 +23,17 @@ class Spellbook(BaseComponent):
         Add a spell to the spellbook. If it's already present, it does nothing
         """
         spell_present = False
-
-        for spell in self.spells:
-            if spell_to_add.name == spell.name and not spell_present:
-                spell_present = True
-
         if len(self.spells) >= self.capacity:
             raise Impossible("Your spellbook is full.")
-        elif spell_present:
-            self.engine.message_log.add_message(f"The {spell.name} is already present in your spellbook!")
         else:
-            self.spells.append(spell)
-            self.engine.message_log.add_message(f"You learned the {spell.name}!")
+            for spell in self.spells:
+                if spell_to_add.name == spell.name and not spell_present:
+                    spell_present = True
+
+            if spell_present:
+                self.engine.message_log.add_message(f"The {spell_to_add.name} is already present in your spellbook!")
+            else:
+                self.spells.append(spell_to_add)
+                self.engine.message_log.add_message(f"You learned the {spell_to_add.name}!")
 
 
