@@ -16,6 +16,7 @@ import utility_files.exceptions as exceptions
 if TYPE_CHECKING:
     from game_logic.engine import Engine
     from entity.entity import Item
+    from components.spells.spell import Spell
 
 
 MOVE_KEYS = {
@@ -430,17 +431,83 @@ class InventoryDropHandler(InventoryEventHandler):
         return actions.DropItem(self.engine.player, item)
 
 
+class SpellbookEventHandler(AskUserEventHandler):
+    """
+    This handler lets the user select a spell, and use it.
+    """
+    TITLE = "Select a spell to cast"
+
+    def on_render(self, console: tcod.Console) -> None:
+        """Render a spellbook menu, which displays the spell in the spellbook, and the letter to select them.
+        Will move to a different position based on where the player is located, so the player can always see where
+        they are.
+        """
+        super().on_render(console)
+        number_of_spells = len(self.engine.player.spellbook.spells)
+
+        height = number_of_spells + 2
+
+        if height <= 3:
+            height = 3
+
+        if self.engine.player.x <= 30:
+            x = 40
+        else:
+            x = 0
+
+        y = 0
+
+        width = len(self.TITLE) + 4
+
+        console.draw_frame(
+            x=x,
+            y=y,
+            width=width,
+            height=height,
+            clear=True,
+            fg=(255, 255, 255),
+            bg=(0, 0, 0),
+        )
+        console.print(x + 1, y, f" {self.TITLE} ", fg=(0, 0, 0), bg=(255, 255, 255))
+
+        if number_of_spells > 0:
+            for i, spell in enumerate(self.engine.player.spellbook.spells):
+                spell_key = chr(ord("a") + i)
+
+                console.print(x + 1, y + i + 1, f"({spell_key}) {spell.name}")
+        else:
+            console.print(x + 1, y + 1, "(Empty)")
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
+        player = self.engine.player
+        key = event.sym
+        index = key - tcod.event.KeySym.a
+        if 0 <= index <= 26:
+            try:
+                selected_spell = player.spellbook.spells[index]
+            except IndexError:
+                self.engine.message_log.add_message("Invalid entry.", color.invalid)
+                return None
+            return self.on_spell_selected(selected_spell)
+        return super().ev_keydown(event)
+    
+    def on_spell_selected(self, spell: Spell) -> Optional[ActionOrHandler]:
+        return actions.SpellAction(self.engine.player, spell)
+
 class SelectIndexHandler(AskUserEventHandler):
     """Handles asking the user for an index on the map."""
 
     def __init__(self, engine: Engine):
         """Sets the cursor to the player when this handler is constructed."""
+        print("pappaperoinit")
         super().__init__(engine)
         player = self.engine.player
         engine.mouse_location = player.x, player.y
+        print("pappaperopostinit")
 
     def on_render(self, console: tcod.Console) -> None:
         """Highlight the tile under the cursor."""
+        print("pappapero1")
         super().on_render(console)
         x, y = self.engine.mouse_location
         console.rgb["bg"][x, y] = color.white
@@ -525,17 +592,14 @@ class NormalRangedAttackHandler(AskUserEventHandler):
         else:
             self.engine.message_log.add_message(f"You don't have any ranged weapons.")
         return self.on_exit()
-        
-        
-        
 
 
 class SingleRangedAttackHandler(SelectIndexHandler):
     """Handles targeting a single enemy. Only the enemy selected will be affected."""
 
-    def __init__(self, engine: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]):
+    def __init__(self, engine: Engine, radius: int, callback: Callable[[Tuple[int, int]], Optional[Action]]):
         super().__init__(engine)
-
+        self.radius = radius
         self.callback = callback
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
@@ -552,7 +616,6 @@ class AreaRangedAttackHandler(SelectIndexHandler):
         callback: Callable[[Tuple[int, int]], Optional[Action]],
     ):
         super().__init__(engine)
-
         self.radius = radius
         self.callback = callback
 
@@ -633,6 +696,8 @@ class MainGameEventHandler(EventHandler):
                 return InventoryActivateHandler(self.engine)
             elif key == tcod.event.KeySym.d:
                 return InventoryDropHandler(self.engine)
+            elif key == tcod.event.KeySym.s:
+                return SpellbookEventHandler(self.engine)
 
             elif key == tcod.event.KeySym.ESCAPE:
                 raise SystemExit()
