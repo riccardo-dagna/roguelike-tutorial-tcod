@@ -18,6 +18,7 @@ from entity.entity_factories import entities
 from entity.entity_factories import equipment
 from entity.entity_factories import consumable
 import actions_logic.input_handlers as input_handlers
+import components.spells.spell_list as spell_list
 from utility_files.utility import resource_path
 
 # Load the background image.  Pillow returns an object convertable into a NumPy array.
@@ -68,6 +69,14 @@ def new_game() -> Engine:
     
     player.inventory.items.append(bow)
     player.equipment.toggle_equip(bow, add_message=False)
+
+    fireball = spell_list.Fireball(player)
+    lightning_bolt = spell_list.LightningBolt(player)
+    ice_dart = spell_list.IceDart(player)
+
+    player.spellbook.spells.append(fireball)
+    player.spellbook.spells.append(lightning_bolt)
+    player.spellbook.spells.append(ice_dart)
 
     return engine
 
