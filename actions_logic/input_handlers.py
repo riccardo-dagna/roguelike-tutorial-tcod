@@ -492,22 +492,19 @@ class SpellbookEventHandler(AskUserEventHandler):
         return super().ev_keydown(event)
     
     def on_spell_selected(self, spell: Spell) -> Optional[ActionOrHandler]:
-        return actions.SpellAction(self.engine.player, spell)
+        return spell.cast(self.engine.player)
 
 class SelectIndexHandler(AskUserEventHandler):
     """Handles asking the user for an index on the map."""
 
     def __init__(self, engine: Engine):
         """Sets the cursor to the player when this handler is constructed."""
-        print("pappaperoinit")
         super().__init__(engine)
         player = self.engine.player
         engine.mouse_location = player.x, player.y
-        print("pappaperopostinit")
 
     def on_render(self, console: tcod.Console) -> None:
         """Highlight the tile under the cursor."""
-        print("pappapero1")
         super().on_render(console)
         x, y = self.engine.mouse_location
         console.rgb["bg"][x, y] = color.white

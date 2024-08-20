@@ -96,7 +96,7 @@ class SpellAction(Action):
 
     def perform(self) -> None:
         """Invoke the items ability, this action will be given to provide context."""
-        self.spell.cast(self.entity)
+        self.spell.activate_spell(self.target_xy)
 
 
 

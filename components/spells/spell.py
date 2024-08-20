@@ -36,7 +36,7 @@ class Spell(BaseComponent):
             )
         else:
             xy = (self.parent.x, self.parent.y)
-            self.activate_spell(xy)
+            return actions.SpellAction(caster, self, xy)
     
     def activate_spell(self, xy) -> None:
         if self.type == "damage":
@@ -65,7 +65,7 @@ class Spell(BaseComponent):
                 raise exceptions.Impossible("There are no targets in the radius.")
             
         elif self.handler == SingleRangedAttackHandler:
-            target = self.gamemap.get_actor_at_location(xy)
+            target = self.gamemap.get_actor_at_location(*xy)
 
             if not self.engine.game_map.visible[xy]:
                 raise exceptions.Impossible("You cannot target an area that you cannot see.")
