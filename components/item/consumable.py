@@ -42,6 +42,7 @@ class ConfusionConsumable(Consumable):
         self.engine.message_log.add_message("Select a target location.", color.needs_target)
         return SingleRangedAttackHandler(
             self.engine,
+            radius=0,
             callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
         )
 
@@ -69,6 +70,7 @@ class FearConsumable(Consumable):
         self.engine.message_log.add_message("Select a target location.", color.needs_target)
         return SingleRangedAttackHandler(
             self.engine,
+            radius=0,
             callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
         )
 
@@ -199,6 +201,7 @@ class StunConsumable(Consumable):
         self.engine.message_log.add_message("Select a target location.", color.needs_target)
         return SingleRangedAttackHandler(
             self.engine,
+            radius=0,
             callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
         )
     
