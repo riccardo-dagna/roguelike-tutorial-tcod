@@ -10,6 +10,7 @@ import game_map.color as color
 import components.ai as ai
 import components.inventory
 import components.status
+import components.spells.spell_list as spell_list
 
 if TYPE_CHECKING:
     from entity.entity import Actor, Item
@@ -106,6 +107,10 @@ class FireballDamageConsumable(Consumable):
             radius=self.radius,
             callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
         )
+        
+        """self.engine.message_log.add_message("You wish to add the Fireball spell to your spellbook.", color.needs_target)
+        fireball = spell_list.Fireball(consumer)
+        consumer.spellbook.learn_spell(fireball)"""
 
     def activate(self, action: actions.ItemAction) -> None:
         target_xy = action.target_xy
