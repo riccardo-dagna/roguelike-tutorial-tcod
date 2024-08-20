@@ -31,6 +31,7 @@ max_monsters_by_floor = [
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
     0: [(consumable.health_potion, 35)],
     0: [(consumable.status_potion, 35)],
+    0: [(consumable.fireball_scroll, 25)],
     2: [(consumable.stun_scroll, 80)],
     2: [(consumable.confusion_scroll, 80)],
     4: [(consumable.lightning_scroll, 25)],
@@ -39,9 +40,9 @@ item_chances: Dict[int, List[Tuple[Entity, int]]] = {
 
 # This is the dictionary that contain the spawning enemy and weight
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    #0: [(entities.meelee_orc, 80), (entities.ranged_orc, 80)],
+    0: [(entities.meelee_orc, 80)],#, (entities.ranged_orc, 80)],
     #0: [(entities.vampire, 80)],
-    0: [(entities.magic_orc, 80)],
+    #0: [(entities.magic_orc, 80)],
     3: [(entities.troll, 15)],
     5: [(entities.troll, 30)],
     7: [(entities.troll, 60)],
