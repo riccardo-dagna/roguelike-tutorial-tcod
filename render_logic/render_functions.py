@@ -20,15 +20,15 @@ def get_names_at_location(x: int, y: int, game_map: GameMap) -> str:
     return names.capitalize()
 
 
-def render_bar(console: Console, current_value: int, maximum_value: int, total_width: int) -> None:
+def render_bar(console: Console, string_title: str, current_value: int, maximum_value: int, total_width: int, y: int) -> None:
     bar_width = int(float(current_value) / maximum_value * total_width)
 
-    console.draw_rect(x=0, y=45, width=20, height=1, ch=1, bg=color.bar_empty)
+    console.draw_rect(x=0, y=y, width=20, height=1, ch=1, bg=color.bar_empty)
 
     if bar_width > 0:
-        console.draw_rect(x=0, y=45, width=bar_width, height=1, ch=1, bg=color.bar_filled)
+        console.draw_rect(x=0, y=y, width=bar_width, height=1, ch=1, bg=color.bar_filled)
 
-    console.print(x=1, y=45, string=f"HP: {current_value}/{maximum_value}", fg=color.bar_text)
+    console.print(x=1, y=y, string=f"{string_title}: {current_value}/{maximum_value}", fg=color.bar_text)
 
 
 def render_dungeon_level(console: Console, dungeon_level: int, location: Tuple[int, int]) -> None:

@@ -50,15 +50,26 @@ class Engine:
 
         render_functions.render_bar(
             console=console,
+            string_title="HP",
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
             total_width=20,
+            y=45,
+        )
+
+        render_functions.render_bar(
+            console=console,
+            string_title="Mana",
+            current_value=self.player.fighter.mana,
+            maximum_value=self.player.fighter.max_mana,
+            total_width=20,
+            y=47,
         )
 
         render_functions.render_dungeon_level(
             console=console,
             dungeon_level=self.game_world.current_floor,
-            location=(0, 47),
+            location=(0, 49),
         )
 
         render_functions.render_names_at_mouse_location(console=console, x=21, y=44, engine=self)
