@@ -9,6 +9,7 @@ import utility_files.exceptions as exceptions
 if TYPE_CHECKING:
     from game_logic.engine import Engine
     from entity.entity import Actor, Entity, Item, Chest
+    from components.spells.spell import Spell
     from components.damageinfo import DamageInfo
     #from components.status import confusion_direction
 
@@ -78,6 +79,25 @@ class ItemAction(Action):
         """Invoke the items ability, this action will be given to provide context."""
         if self.item.consumable:
             self.item.consumable.activate(self)
+
+
+class SpellAction(Action):
+    def __init__(self, caster: Actor, spell: Spell, target_xy: Optional[Tuple[int, int]] = None):
+        super().__init__(caster)
+        self.spell = spell
+        if not target_xy:
+            target_xy = caster.x, caster.y
+        self.target_xy = target_xy
+
+    @property
+    def target_actor(self) -> Optional[Actor]:
+        """Return the actor at this actions destination."""
+        return self.engine.game_map.get_actor_at_location(*self.target_xy)
+
+    def perform(self) -> None:
+        """Invoke the items ability, this action will be given to provide context."""
+        self.spell.cast(self.entity)
+
 
 
 class DropItem(ItemAction):
