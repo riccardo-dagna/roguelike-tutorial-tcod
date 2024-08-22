@@ -46,7 +46,7 @@ Mechanics added in the game, to test:
 
 Mechanics added in the game, to correct or to add:
 - Special attacks (engulf/digest (to add damage every turn))
-- Spells (to correct spells with AreaRangedHandler or SingleAttackHandler)
+- Spells (to add buff spell)
 - Spellbook (added menu in game with some default spells, to correct adding the spells)
 
 Mechanics to add in the game:
