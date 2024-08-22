@@ -80,7 +80,7 @@ class HostileMeeleeEnemy(BaseAI):
                     distance = max(abs(dx), abs(dy)) # Chebyshev distance.
                     if self.engine.game_map.visible[self.entity.x, self.entity.y]:
                         if distance <= 1:
-                            return MeleeAction(self.entity, dx, dy).perform()
+                            return BumpAction(self.entity, dx, dy).perform()
                         
                         self.path = self.get_path_to(target.x, target.y)
 
@@ -90,7 +90,7 @@ class HostileMeeleeEnemy(BaseAI):
                             if not self.entity.status.dict_condition_afflicted["blindness"]:
                                 if self.path:
                                     dest_x, dest_y = self.path.pop(0)
-                                    return MovementAction(
+                                    return BumpAction(
                                         self.entity,
                                         dest_x - self.entity.x,
                                         dest_y - self.entity.y,
@@ -103,7 +103,7 @@ class HostileMeeleeEnemy(BaseAI):
                         else:
                             if self.path:
                                 dest_x, dest_y = self.path.pop(0)
-                                return MovementAction(
+                                return BumpAction(
                                     self.entity,
                                     -(dest_x - self.entity.x),
                                     -(dest_y - self.entity.y),
@@ -151,7 +151,7 @@ class HostileRangedEnemy(BaseAI):
                     dy = target.y - self.entity.y
                     distance = max(abs(dx), abs(dy)) # Chebyshev distance.
                     if self.engine.game_map.visible[self.entity.x, self.entity.y]:
-                        if distance <= 3 and ((dx != 0 and self.entity.y == target.y) or (dy != 0 and self.entity.x == target.x)):
+                        if distance <= 3 and ((dx != 0 and self.entity.y == target.y) or (dy != 0 and self.entity.x == target.x)) and self.entity.status.dict_condition_afflicted["stun"] == False:
                             return RangedAction(self.entity, dx, dy).perform()
                         
                         self.path = self.get_path_to(target.x, target.y)
@@ -162,7 +162,7 @@ class HostileRangedEnemy(BaseAI):
                             if not self.entity.status.dict_condition_afflicted["blindness"]:
                                 if self.path:
                                     dest_x, dest_y = self.path.pop(0)
-                                    return MovementAction(
+                                    return BumpAction(
                                         self.entity,
                                         dest_x - self.entity.x,
                                         dest_y - self.entity.y,
@@ -175,7 +175,7 @@ class HostileRangedEnemy(BaseAI):
                         else:
                             if self.path:
                                 dest_x, dest_y = self.path.pop(0)
-                                return MovementAction(
+                                return BumpAction(
                                     self.entity,
                                     -(dest_x - self.entity.x),
                                     -(dest_y - self.entity.y),
