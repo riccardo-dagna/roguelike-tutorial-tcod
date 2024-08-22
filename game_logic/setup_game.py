@@ -73,10 +73,18 @@ def new_game() -> Engine:
     fireball = spell_list.Fireball(player)
     lightning_bolt = spell_list.LightningBolt(player)
     ice_dart = spell_list.IceDart(player)
+    confusion = spell_list.Confusion(player)
+    fear = spell_list.Fear(player)
+    stun = spell_list.Stun(player)
+    heal = spell_list.Heal(player)
 
     player.spellbook.spells.append(fireball)
     player.spellbook.spells.append(lightning_bolt)
     player.spellbook.spells.append(ice_dart)
+    player.spellbook.spells.append(confusion)
+    player.spellbook.spells.append(fear)
+    player.spellbook.spells.append(stun)
+    player.spellbook.spells.append(heal)
 
     return engine
 
