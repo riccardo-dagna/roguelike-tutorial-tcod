@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from game_logic.engine import Engine
 
 class Spell(BaseComponent):
-    def __init__(self, name: str, damage: int, mana: int, max_range: int, radius: int, status: str, type: str, parent:Entity, handler: SelectIndexHandler = None) -> None:
+    def __init__(self, name: str, damage: int = 0, mana: int = 1, max_range: int = 0, radius: int = 0, status: str = None, type: str = None, parent: Entity = None, handler: SelectIndexHandler = None) -> None:
         self.name = name
         self.damage = damage
         self.mana = mana
@@ -43,6 +43,10 @@ class Spell(BaseComponent):
             self.damage_effect_spell(xy)
         elif self.type == "status":
             self.status_effect_spell(xy)
+        elif self.type == "cure":
+            self.cure_effect_spell(xy)
+        else:
+            pass
             
     
     def damage_effect_spell(self, xy: Optional[Tuple[int, int]]) -> None:
@@ -102,5 +106,71 @@ class Spell(BaseComponent):
 
         caster.fighter.mana -= self.mana
 
-    def status_effect_spell(self) -> None:
-        pass
+    def status_effect_spell(self, xy: Optional[Tuple[int, int]]) -> None:
+        caster = self.parent
+
+        if self.handler == SingleRangedAttackHandler:
+            target = self.gamemap.get_actor_at_location(*xy)
+
+            if not self.engine.game_map.visible[xy]:
+                raise exceptions.Impossible("You cannot target an area that you cannot see.")
+            if not target:
+                raise exceptions.Impossible("You must select an enemy to target.")
+            if target is caster:
+                raise exceptions.Impossible("You cannot cast this spell on yourself!")
+
+            if self.status == "confusion":                    
+                self.engine.message_log.add_message(
+                f"The eyes of the {target.name} look vacant, as it starts to stumble around!",
+                    color.status_effect_applied,
+                )
+                target.status.dict_condition_afflicted["confusion"] = True
+                target.status.dict_turns_passed["confusion"] = 0
+            elif self.status == "fear":
+                self.engine.message_log.add_message(
+                    f"The face of the {target.name} look scared, as it starts to run away from you!",
+                    color.status_effect_applied,
+                )
+                target.status.dict_condition_afflicted["fear"] = True
+                target.status.dict_turns_passed["fear"] = 0
+            elif self.status == "stun":
+                self.engine.message_log.add_message(
+                    f"The {target.name} is trying to focus, but it can't!",
+                    color.status_effect_applied,
+                )
+                target.status.dict_condition_afflicted["stun"] = True
+                target.status.dict_turns_passed["stun"] = 0
+        elif self.handler == AreaRangedAttackHandler:
+            pass
+        else:
+            pass
+        
+        caster.fighter.mana -= self.mana
+
+
+    def cure_effect_spell(self, xy: Optional[Tuple[int, int]]) -> None:
+        caster = self.parent
+
+        if caster.fighter.hp >= caster.fighter.max_hp:
+            raise exceptions.Impossible("Your health is full!")
+        else:
+            if self.status is not None:
+                caster.status.dict_condition_afflicted["bleed"] = False
+                caster.status.dict_condition_afflicted["poison"] = False
+                caster.status.dict_condition_afflicted["condemnation"] = False
+                caster.status.dict_condition_afflicted["petrification"] = False
+                caster.status.dict_condition_afflicted["blindness"] = False
+                self.engine.message_log.add_message(
+                    f"You are healed from your affliction!",
+                    color.health_recovered,
+                )
+        
+            amount_recovered = caster.fighter.heal(self.damage)   
+            self.engine.message_log.add_message(
+                f"You cast the {self.name} spell, and recover {amount_recovered} HP!",
+                color.health_recovered,
+            )
+            caster.fighter.mana -= self.mana
+
+
+
