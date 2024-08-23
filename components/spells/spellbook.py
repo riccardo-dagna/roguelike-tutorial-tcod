@@ -18,22 +18,13 @@ class Spellbook(BaseComponent):
         self.capacity = capacity
         self.spells = start_list
 
-    def learn_spell(self, spell_to_add: Spell) -> bool:
+    def check_if_spell_is_present(self, spell_to_add: Spell) -> bool:
         """
         Add a spell to the spellbook. If it's already present, it does nothing
         """
         spell_present = False
-        if len(self.spells) >= self.capacity:
-            raise Impossible("Your spellbook is full.")
-        else:
-            for spell in self.spells:
+        for spell in self.spells:
                 if spell_to_add.name == spell.name and not spell_present:
                     spell_present = True
-
-            if spell_present:
-                self.engine.message_log.add_message(f"The {spell_to_add.name} is already present in your spellbook!")
-            else:
-                self.spells.append(spell_to_add)
-                self.engine.message_log.add_message(f"You learned the {spell_to_add.name}!")
-
+        return spell_present
 
