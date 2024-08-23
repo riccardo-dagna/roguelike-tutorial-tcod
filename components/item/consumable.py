@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class Consumable(BaseComponent):
     parent: Item
 
-    def get_action(self, consumer: Actor) -> Optional[ActionOrHandler]:
+    def get_action(self, consumer: Actor, string: str = "") -> Optional[ActionOrHandler]:
         """Try to return the action for this item."""
         return actions.ItemAction(consumer, self.parent)
 
@@ -39,7 +39,7 @@ class Consumable(BaseComponent):
 
 
 class ConfusionConsumable(Consumable):
-    def get_action(self, consumer: Actor) -> SingleRangedAttackHandler:
+    def get_action(self, consumer: Actor, string: str = "") -> SingleRangedAttackHandler:
         self.engine.message_log.add_message("Select a target location.", color.needs_target)
         return SingleRangedAttackHandler(
             self.engine,
@@ -67,7 +67,7 @@ class ConfusionConsumable(Consumable):
         self.consume()
 
 class FearConsumable(Consumable):
-    def get_action(self, consumer: Actor) -> SingleRangedAttackHandler:
+    def get_action(self, consumer: Actor, string: str = "") -> SingleRangedAttackHandler:
         self.engine.message_log.add_message("Select a target location.", color.needs_target)
         return SingleRangedAttackHandler(
             self.engine,
@@ -100,17 +100,13 @@ class FireballDamageConsumable(Consumable):
         self.damage = damage
         self.radius = radius
 
-    def get_action(self, consumer: Actor) -> AreaRangedAttackHandler:
+    def get_action(self, consumer: Actor, string: str = "") -> AreaRangedAttackHandler:
         self.engine.message_log.add_message("Select a target location.", color.needs_target)
         return AreaRangedAttackHandler(
             self.engine,
             radius=self.radius,
             callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
         )
-        
-        """self.engine.message_log.add_message("You wish to add the Fireball spell to your spellbook.", color.needs_target)
-        fireball = spell_list.Fireball(consumer)
-        consumer.spellbook.learn_spell(fireball)"""
 
     def activate(self, action: actions.ItemAction) -> None:
         target_xy = action.target_xy
@@ -202,7 +198,7 @@ class LightningDamageConsumable(Consumable):
             raise Impossible("No enemy is close enough to strike.")
 
 class StunConsumable(Consumable):    
-    def get_action(self, consumer: actions.Actor) -> SingleRangedAttackHandler:
+    def get_action(self, consumer: Actor, string: str = "") -> SingleRangedAttackHandler:
         self.engine.message_log.add_message("Select a target location.", color.needs_target)
         return SingleRangedAttackHandler(
             self.engine,
