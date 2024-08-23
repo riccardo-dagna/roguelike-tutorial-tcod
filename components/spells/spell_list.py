@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from actions_logic.input_handlers import SelectIndexHandler
+from actions_logic.input_handlers import SelectIndexHandler, SingleRangedAttackHandler, AreaRangedAttackHandler
 from components.base_component import BaseComponent
 from components.spells.spell import Spell
-from actions_logic.input_handlers import SingleRangedAttackHandler, AreaRangedAttackHandler
 from entity.entity import Entity
 from game_logic.engine import Engine
 
