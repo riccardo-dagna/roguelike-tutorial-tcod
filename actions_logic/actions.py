@@ -99,6 +99,25 @@ class SpellAction(Action):
         self.spell.activate_spell(self.target_xy)
 
 
+class LearnSpellAction(Action):
+    def __init__(self, caster: Actor, item: Item, spell_scroll: Spell):
+        super().__init__(caster)
+        self.spell_scroll = spell_scroll
+        self.item = item
+    
+    def perform(self) -> None:
+        """Add a spell to the spellbook, if it's already present it cast the item."""
+        spell_present = False
+        if len(self.entity.spellbook.spells) >= self.entity.spellbook.capacity:
+            raise exceptions.Impossible("Your spellbook is full.")
+        else:
+            self.entity.spellbook.spells.append(self.spell_scroll)
+            self.engine.message_log.add_message(f"You learned the {self.spell_scroll.name}!")
+            self.item.consumable.consume()
+
+        
+
+
 
 class DropItem(ItemAction):
     def perform(self) -> None:
