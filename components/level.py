@@ -70,3 +70,12 @@ class Level(BaseComponent):
         self.engine.message_log.add_message("Your movements are getting swifter!")
 
         self.increase_level()
+
+    def increase_magic(self, amount: int = 1) -> None:
+        self.parent.spellbook.capacity += amount
+        self.parent.fighter.max_mana += amount * 10
+        self.parent.fighter.mana += amount * 10
+
+        self.engine.message_log.add_message("Your magic prowess is increasing!")
+
+        self.increase_level()
