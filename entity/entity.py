@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from components.status import Status
     from game_map import GameMap
     from components.spells.spellbook import Spellbook
+    from components.spells.spell import Spell
 
 T = TypeVar("T", bound="Entity")
 
@@ -161,6 +162,8 @@ class Item(Entity):
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
         material: str = "",
+        scroll: bool = False,
+        spell_correspondent: Spell = None,
         magic_item: bool = False,
         damaged: bool = False,
         consumable: Optional[Consumable] = None,
@@ -179,6 +182,7 @@ class Item(Entity):
         self.material = material
         self.magic_item = magic_item
         self.damaged = damaged
+        self.scroll = scroll
 
         self.consumable = consumable
 
@@ -186,6 +190,8 @@ class Item(Entity):
             self.consumable.parent = self
 
         self.equippable = equippable
+        
+        self.spell_correspondent = spell_correspondent
 
         if self.equippable:
             self.equippable.parent = self
