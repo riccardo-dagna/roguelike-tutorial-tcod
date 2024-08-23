@@ -279,7 +279,7 @@ class LevelUpEventHandler(AskUserEventHandler):
             x=x,
             y=0,
             width=35,
-            height=8,
+            height=9,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -304,19 +304,26 @@ class LevelUpEventHandler(AskUserEventHandler):
             y=6,
             string=f"c) Agility (+1 defense, from {self.engine.player.fighter.base_defense})",
         )
+        console.print(
+            x=x + 1,
+            y=7,
+            string=f"d) Magic (+1 capacity, from {self.engine.player.spellbook.capacity} and +5 mana)",
+        )
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         player = self.engine.player
         key = event.sym
         index = key - tcod.event.KeySym.a
 
-        if 0 <= index <= 2:
+        if 0 <= index <= 3:
             if index == 0:
                 player.level.increase_max_hp()
             elif index == 1:
                 player.level.increase_power()
-            else:
+            elif index == 2:
                 player.level.increase_defense()
+            else:
+                player.level.increase_magic()
         else:
             self.engine.message_log.add_message("Invalid entry.", color.invalid)
 
@@ -414,7 +421,14 @@ class InventoryActivateHandler(InventoryEventHandler):
     def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
         if item.consumable:
             # Return the action for the selected item.
-            return item.consumable.get_action(self.engine.player)
+            if item.spell_correspondent is not None:
+                if self.engine.player.spellbook.capacity > 0:
+                    spell_scroll = item.spell_correspondent(self.engine.player)
+                    if not self.engine.player.spellbook.check_if_spell_is_present(spell_scroll):
+                        return actions.LearnSpellAction(self.engine.player, item, spell_scroll)
+                    else:
+                        self.engine.message_log.add_message(f"The {spell_scroll.name} is already present in your spellbook!")
+            return item.consumable.get_action(self.engine.player, "")
         elif item.equippable:
             return actions.EquipAction(self.engine.player, item)
         else:
