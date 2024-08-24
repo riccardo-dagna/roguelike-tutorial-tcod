@@ -134,7 +134,7 @@ class HealingConsumable(Consumable):
 
     def activate(self, action: actions.ItemAction) -> None:
         consumer = action.entity
-        amount_recovered = consumer.fighter.heal(self.amount)
+        amount_recovered = consumer.fighter.heal_hp(self.amount)
 
         if amount_recovered > 0:
             self.engine.message_log.add_message(
@@ -152,7 +152,7 @@ class HealingStatusConsumable(Consumable):
     
     def activate(self, action: actions.ItemAction) -> None:
         consumer = action.entity
-        amount_recovered = consumer.fighter.heal(self.amount)
+        amount_recovered = consumer.fighter.heal_hp(self.amount)
         flag_status = consumer.status.dict_condition_afflicted["bleed"] or consumer.status.dict_condition_afflicted["poison"] or consumer.status.dict_condition_afflicted["condemnation"] or consumer.status.dict_condition_afflicted["petrification"] or consumer.status.dict_condition_afflicted["blindness"]
         
         if amount_recovered > 0 or flag_status:
@@ -196,6 +196,25 @@ class LightningDamageConsumable(Consumable):
             self.consume()
         else:
             raise Impossible("No enemy is close enough to strike.")
+        
+
+class ManaConsumable(Consumable):
+    def __init__(self, amount: int):
+        self.amount = amount
+
+    def activate(self, action: actions.ItemAction) -> None:
+        consumer = action.entity
+        amount_recovered = consumer.fighter.heal_mana(self.amount)
+
+        if amount_recovered > 0:
+            self.engine.message_log.add_message(
+                f"You consume the {self.parent.name}, and recover {amount_recovered} mana!",
+                color.health_recovered,
+            )
+            self.consume()
+        else:
+            raise Impossible("Your mana is already full.")
+
 
 class StunConsumable(Consumable):    
     def get_action(self, consumer: Actor, string: str = "") -> SingleRangedAttackHandler:
