@@ -13,3 +13,4 @@ stun_scroll = Item(char="~", color=(255, 255, 0), name="Stun Scroll", scroll=Tru
 #This sections contains the potions
 health_potion = Item(char="!", color=(127, 0, 255), name="Health Potion", material="liquid", magic_item=True, consumable=consumable.HealingConsumable(amount=4),)
 status_potion = Item(char="!", color=(127, 0, 255), name="Status Potion", material="liquid", magic_item=True, consumable=consumable.HealingStatusConsumable(amount=2),)
+mana_potion = Item(char="!", color=(127, 0, 255), name="Mana Potion", material="liquid", magic_item=True, consumable=consumable.ManaConsumable(amount=10),)
