@@ -22,6 +22,9 @@ The list of commands is below:
 - "c" to open the Character Sheet
 - "i" to open inventory to use an item
 - "d" to open inventory to drop an item
+- "s" to open the spellbook to cast a spell
+- "v" to view the history of the game
+- "ESC" to exit the game
 
 
 ## List of mechanics
@@ -48,10 +51,10 @@ Mechanics added in the game, to correct or to add:
 - Special attacks (engulf/digest (to add damage every turn))
 - Spells (to add buff spell)
 - Spellbook (added menu in game with some default spells, to correct adding the spells)
+- Status spell (status and heal)
 
 Mechanics to add in the game:
 - Extra effect of elemental damage
-- Add status spell (debuff for the enemy, and buff for the player)
 - New monster and items
 - Shopkeeper (with random item)
 - Boss monster (with special attack)
