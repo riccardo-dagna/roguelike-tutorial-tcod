@@ -72,6 +72,7 @@ class Fighter(BaseComponent):
         else:
             return 0
 
+
     def die(self) -> None:
         if self.engine.player is self.parent:
             death_message = "You died!"
@@ -91,7 +92,8 @@ class Fighter(BaseComponent):
 
         self.engine.player.level.add_xp(self.parent.level.xp_given)
 
-    def heal(self, amount: int) -> int:
+
+    def heal_hp(self, amount: int) -> int:
         if self.hp == self.max_hp:
             return 0
 
@@ -105,6 +107,23 @@ class Fighter(BaseComponent):
         self.hp = new_hp_value
 
         return amount_recovered
+    
+
+    def heal_mana(self, amount: int) -> int:
+        if self.mana == self.max_mana:
+            return 0
+
+        new_mana_value = self.mana + amount
+
+        if new_mana_value > self.max_mana:
+            new_mana_value = self.max_mana
+
+        amount_recovered = new_mana_value - self.mana
+
+        self.mana = new_mana_value
+
+        return amount_recovered
+        
 
     def take_damage(self, amount: int) -> None:
         self.hp -= amount
