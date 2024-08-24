@@ -8,8 +8,10 @@ import game_map.color as color
 
 if TYPE_CHECKING:
     from entity.entity import Actor
+    from components.classes.character_class import CharacterClass
 
 
+#class Fighter(CharacterClass):
 class Fighter(BaseComponent):
     parent: Actor
 
