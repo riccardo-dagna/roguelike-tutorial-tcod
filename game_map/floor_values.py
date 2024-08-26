@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Dict, List, Tuple
-from entity.entity_factories import entities
 from entity.entity_factories import equipment
 from entity.entity_factories import consumable
+from entity.entity_factories import enemies
 
 if TYPE_CHECKING:
     from entity.entity import Entity, Item
@@ -38,12 +38,12 @@ item_chances: Dict[int, List[Tuple[Entity, int]]] = {
 
 # This is the dictionary that contain the spawning enemy and weight
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entities.meelee_orc, 80), (entities.ranged_orc, 80)],
-    #0: [(entities.vampire, 80)],
-    #0: [(entities.magic_orc, 80)],
-    3: [(entities.troll, 15)],
-    5: [(entities.troll, 30)],
-    7: [(entities.troll, 60)],
+    0: [(enemies.meelee_orc, 80), (enemies.ranged_orc, 80)],
+    #0: [(enemies.vampire, 80)],
+    #0: [(enemies.magic_orc, 80)],
+    3: [(enemies.troll, 15)],
+    5: [(enemies.troll, 30)],
+    7: [(enemies.troll, 60)],
 }
 
 # This is the dictionary that contain the spawning items in chances and weight
