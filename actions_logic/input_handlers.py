@@ -102,8 +102,8 @@ class PopupMessage(BaseEventHandler):
     def on_render(self, console: tcod.console.Console) -> None:
         """Render the parent and dim the result, then print the message on top."""
         self.parent.on_render(console)
-        console.tiles_rgb["fg"] //= 8
-        console.tiles_rgb["bg"] //= 8
+        console.rgb["fg"] //= 8
+        console.rgb["bg"] //= 8
 
         console.print(
             console.width // 2,
@@ -111,7 +111,7 @@ class PopupMessage(BaseEventHandler):
             self.text,
             fg=color.white,
             bg=color.black,
-            alignment=tcod.CENTER,
+            alignment=libtcodpy.CENTER,
         )
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[BaseEventHandler]:
@@ -243,7 +243,7 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             x=x,
             y=y,
             width=width,
-            height=9,
+            height=11,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -261,7 +261,9 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         console.print(x=x + 1, y=y + 4, string=f"Meelee power: {self.engine.player.fighter.power_meelee}")
         console.print(x=x + 1, y=y + 5, string=f"Ranged Power: {self.engine.player.fighter.power_ranged}")
         console.print(x=x + 1, y=y + 6, string=f"Defense: {self.engine.player.fighter.defense}")
-        console.print(x=x + 1, y=y + 7, string=f"Status: {string_status}")
+        console.print(x=x + 1, y=y + 7, string=f"Spells learned: {len(self.engine.player.spellbook.spells)}")
+        console.print(x=x + 1, y=y + 8, string=f"Max spells: {self.engine.player.spellbook.capacity}")
+        console.print(x=x + 1, y=y + 9, string=f"Status: {string_status}")
 
 
 class LevelUpEventHandler(AskUserEventHandler):
