@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from components.damageinfo import DamageInfo
     from components.item.equipment import Equipment
     from components.item.equippable import Equippable
+    from components.classes.character_class import CharacterClass
     from components.classes.fighter import Fighter
     from components.inventory import Inventory
     from components.level import Level
@@ -101,7 +102,7 @@ class Actor(Entity):
         name: str = "<Unnamed>",
         ai_cls: Type[BaseAI],
         equipment: Equipment,
-        fighter: Fighter,
+        fighter: CharacterClass,
         inventory: Inventory,
         level: Level,
         status: Status,
