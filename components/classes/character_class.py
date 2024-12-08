@@ -40,15 +40,24 @@ class CharacterClass(BaseComponent):
 
     @property
     def defense(self) -> int:
-        return self.base_defense + self.defense_bonus
+        if self.parent.buffs.dict_flag_buffs["defense"]:
+            return (self.base_defense + self.defense_bonus)*2
+        else:
+            return (self.base_defense + self.defense_bonus)
 
     @property
     def power_meelee(self) -> int:
-        return self.base_power + self.power_meelee_bonus
+        if self.parent.buffs.dict_flag_buffs["strenght"]:
+            return (self.base_power + self.power_meelee_bonus)*2
+        else:
+            return self.base_power + self.power_meelee_bonus
     
     @property
     def power_ranged(self) -> int:
-        return self.base_power + self.power_ranged_bonus
+        if self.parent.buffs.dict_flag_buffs["dexterity"]:
+            return (self.base_power + self.power_ranged_bonus)*2
+        else:
+            return self.base_power + self.power_ranged_bonus
 
     @property
     def defense_bonus(self) -> int:
