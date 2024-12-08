@@ -138,11 +138,11 @@ class Status(BaseComponent):
 
     def effect_hp_damage(self) -> None:
         if self.dict_condition_afflicted["poison"]:
-            self.parent.fighter.hp -= self.damage_bleed
+            self.parent.classes.hp -= self.damage_bleed
             self.engine.message_log.add_message(f"You receive {self.damage_bleed} damage from the bleeding!")
             self.dict_turns_passed["bleed"] = 0
         if self.dict_condition_afflicted["poison"]:
-            self.parent.fighter.hp -= self.damage_poison
+            self.parent.classes.hp -= self.damage_poison
             self.engine.message_log.add_message(f"You receive {self.damage_poison} damage from the poison!")
             self.dict_turns_passed["poison"] = 0
 
@@ -362,7 +362,7 @@ class Status(BaseComponent):
                     self.engine.message_log.add_message(f"The weight of your condemnation reaches you!")
                 else:
                     self.engine.message_log.add_message(f"The weight of your condemnation reaches the {self.entity.name}!")
-                actor.fighter.hp = 0
+                actor.classes.hp = 0
             # Else, it adds a turns for the condemnation
             else:
                 actor.status.dict_turns_passed["condemnation"] += 1
@@ -377,7 +377,7 @@ class Status(BaseComponent):
                     self.engine.message_log.add_message(f"All your body is now turned to stone!")
                 else:
                     self.engine.message_log.add_message(f"All of {self.entity.name} body is now turned to stone!")
-                actor.fighter.hp = 0
+                actor.classes.hp = 0
             # Else, it adds a turns for the petrification
             else:
                 actor.status.dict_turns_passed["petrification"] += 1
