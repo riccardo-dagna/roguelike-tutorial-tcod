@@ -12,3 +12,15 @@ class Fighter(CharacterClass):
 
     def __init__(self, hp: int, base_defense: int, base_power: int, mana: int = 0):
         super().__init__(hp, base_defense, base_power, mana)
+
+class Thief(CharacterClass):
+    parent: Actor
+
+    def __init__(self, hp: int, base_defense: int, base_power: int, mana: int = 0):
+        super().__init__(hp, base_defense, base_power, mana)
+
+class Mage(CharacterClass):
+    parent: Actor
+
+    def __init__(self, hp: int, base_defense: int, base_power: int, mana: int = 0):
+        super().__init__(hp, base_defense, base_power, mana)
