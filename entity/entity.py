@@ -13,11 +13,12 @@ if TYPE_CHECKING:
     from components.item.equipment import Equipment
     from components.item.equippable import Equippable
     from components.classes.character_class import CharacterClass
-    from components.classes.fighter import Fighter
+    from components.classes.fighter import Fighter, Mage, Thief
     from components.inventory import Inventory
     from components.level import Level
     from components.special_attacks import SpecialAttacks
-    from components.status import Status
+    from components.statuses_buffs.status import Status
+    from components.statuses_buffs.buffs import Buffs
     from game_map import GameMap
     from components.spells.spellbook import Spellbook
     from components.spells.spell import Spell
@@ -102,10 +103,11 @@ class Actor(Entity):
         name: str = "<Unnamed>",
         ai_cls: Type[BaseAI],
         equipment: Equipment,
-        fighter: CharacterClass,
+        classes: CharacterClass,
         inventory: Inventory,
         level: Level,
         status: Status,
+        buffs: Buffs,
         damage_info: DamageInfo,
         special_attacks: SpecialAttacks,
         spellbook: Spellbook,
@@ -125,8 +127,8 @@ class Actor(Entity):
         self.equipment: Equipment = equipment
         self.equipment.parent = self
 
-        self.fighter = fighter
-        self.fighter.parent = self
+        self.classes = classes
+        self.classes.parent = self
 
         self.inventory = inventory
         self.inventory.parent = self
@@ -136,6 +138,9 @@ class Actor(Entity):
 
         self.status = status
         self.status.parent = self
+
+        self.buffs = buffs
+        self.buffs.parent = self
 
         self.damage_info = damage_info
         self.damage_info.parent = self
