@@ -24,6 +24,7 @@ class Engine:
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
+        self.first_turn = True
 
     def handle_enemy_turns(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:
@@ -32,6 +33,11 @@ class Engine:
                     entity.ai.perform()
                 except exceptions.Impossible:
                     pass  # Ignore impossible action exceptions from AI.
+
+    def handle_enemy_passes(self) -> None:
+        for entity in set(self.game_map.actors) - {self.player}:
+            if entity.ai:
+                pass
 
     def update_fov(self, radius) -> None:
         """Recompute the visible area based on the players point of view."""
@@ -51,8 +57,8 @@ class Engine:
         render_functions.render_bar(
             console=console,
             string_title="HP",
-            current_value=self.player.fighter.hp,
-            maximum_value=self.player.fighter.max_hp,
+            current_value=self.player.classes.hp,
+            maximum_value=self.player.classes.max_hp,
             total_width=20,
             y=45,
         )
@@ -60,8 +66,8 @@ class Engine:
         render_functions.render_bar(
             console=console,
             string_title="Mana",
-            current_value=self.player.fighter.mana,
-            maximum_value=self.player.fighter.max_mana,
+            current_value=self.player.classes.mana,
+            maximum_value=self.player.classes.max_mana,
             total_width=20,
             y=47,
         )
