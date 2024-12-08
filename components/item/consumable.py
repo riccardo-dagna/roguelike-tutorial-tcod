@@ -9,7 +9,7 @@ import actions_logic.actions as actions
 import game_map.color as color
 import components.ai as ai
 import components.inventory
-import components.status
+import components.statuses_buffs.status
 import components.spells.spell_list as spell_list
 
 if TYPE_CHECKING:
@@ -120,7 +120,7 @@ class FireballDamageConsumable(Consumable):
                 self.engine.message_log.add_message(
                     f"The {actor.name} is engulfed in a fiery explosion, taking {self.damage} damage!"
                 )
-                actor.fighter.take_damage(self.damage)
+                actor.classes.take_damage(self.damage)
                 targets_hit = True
 
         if not targets_hit:
@@ -134,7 +134,7 @@ class HealingConsumable(Consumable):
 
     def activate(self, action: actions.ItemAction) -> None:
         consumer = action.entity
-        amount_recovered = consumer.fighter.heal_hp(self.amount)
+        amount_recovered = consumer.classes.heal_hp(self.amount)
 
         if amount_recovered > 0:
             self.engine.message_log.add_message(
@@ -152,7 +152,7 @@ class HealingStatusConsumable(Consumable):
     
     def activate(self, action: actions.ItemAction) -> None:
         consumer = action.entity
-        amount_recovered = consumer.fighter.heal_hp(self.amount)
+        amount_recovered = consumer.classes.heal_hp(self.amount)
         flag_status = consumer.status.dict_condition_afflicted["bleed"] or consumer.status.dict_condition_afflicted["poison"] or consumer.status.dict_condition_afflicted["condemnation"] or consumer.status.dict_condition_afflicted["petrification"] or consumer.status.dict_condition_afflicted["blindness"]
         
         if amount_recovered > 0 or flag_status:
@@ -192,7 +192,7 @@ class LightningDamageConsumable(Consumable):
             self.engine.message_log.add_message(
                 f"A lighting bolt strikes the {target.name} with a loud thunder, for {self.damage} damage!"
             )
-            target.fighter.take_damage(self.damage)
+            target.classes.take_damage(self.damage)
             self.consume()
         else:
             raise Impossible("No enemy is close enough to strike.")
@@ -204,7 +204,7 @@ class ManaConsumable(Consumable):
 
     def activate(self, action: actions.ItemAction) -> None:
         consumer = action.entity
-        amount_recovered = consumer.fighter.heal_mana(self.amount)
+        amount_recovered = consumer.classes.heal_mana(self.amount)
 
         if amount_recovered > 0:
             self.engine.message_log.add_message(
