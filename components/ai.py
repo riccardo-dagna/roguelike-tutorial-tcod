@@ -11,7 +11,7 @@ from entity.entity import Actor
 
 if TYPE_CHECKING:
     from entity.entity import Actor
-    from components.status import confusion_direction
+    from components.statuses_buffs.status import confusion_direction
 
 
 class BaseAI(Action):

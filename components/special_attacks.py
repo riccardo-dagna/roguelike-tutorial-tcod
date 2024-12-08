@@ -100,32 +100,32 @@ class SpecialAttacks(BaseComponent):
 
     def drain_stats_target(self, target: Actor) -> None:
         if self.dict_special_attack_values["strenght_drain"] > 0:
-            if target.fighter.base_power <= 0:
+            if target.classes.base_power <= 0:
                 self.engine.message_log.add_message(f"The {self.parent.name} can't drain anymore of {target.name} strenght.")
                 pass
             else:
-                target.fighter.base_power -= self.dict_special_attack_values["strenght_drain"]
-                if target.fighter.base_power < 0:
-                    target.fighter.base_power = 0
-                target.fighter.hp -= self.dict_special_attack_damage["stats_drain"]
+                target.classes.base_power -= self.dict_special_attack_values["strenght_drain"]
+                if target.classes.base_power < 0:
+                    target.classes.base_power = 0
+                target.classes.hp -= self.dict_special_attack_damage["stats_drain"]
                 self.engine.message_log.add_message(f"The {target.name} feels less strong, as it's strength it's drained.")
         
         if self.dict_special_attack_values["agility_drain"] > 0:
-            if target.fighter.base_defense <= 0:
+            if target.classes.base_defense <= 0:
                 self.engine.message_log.add_message(f"The {self.parent.name} can't drain anymore of {target.name} agility.")
                 pass
             else:
-                target.fighter.base_defense -= self.dict_special_attack_values["agility_drain"]
-                if target.fighter.base_defense < 0:
-                    target.fighter.base_defense = 0
-                target.fighter.hp -= self.dict_special_attack_damage["stats_drain"]
+                target.classes.base_defense -= self.dict_special_attack_values["agility_drain"]
+                if target.classes.base_defense < 0:
+                    target.classes.base_defense = 0
+                target.classes.hp -= self.dict_special_attack_damage["stats_drain"]
                 self.engine.message_log.add_message(f"The {target.name} feels less agile, as it's agility it's drained.")
 
     
     def percentile_damage(self, target: Actor) -> None:
         if self.dict_special_attack_values["percentile"] > 0:
-            damage = round((target.fighter.max_hp*self.dict_special_attack_values["percentile"])/100)
-            target.fighter.hp -= damage
+            damage = round((target.classes.max_hp*self.dict_special_attack_values["percentile"])/100)
+            target.classes.hp -= damage
             self.engine.message_log.add_message(f"{target.name} feels a powerful force around him, dealing {damage}.")
         else:
             self.engine.message_log.add_message(f"{target.name} feels a force around him, but not strong enough to damage him.")
@@ -133,7 +133,7 @@ class SpecialAttacks(BaseComponent):
 
     def rot_damage(self, target: Actor) -> None:
         if target.inventory.capacity == 0:
-            target.fighter.hp -= (self.dict_special_attack_damage["rot"]*2 - target.fighter.defense)
+            target.classes.hp -= (self.dict_special_attack_damage["rot"]*2 - target.classes.defense)
             self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, and starts to rot slowly.")
         else:
             item_removed = False
@@ -150,8 +150,8 @@ class SpecialAttacks(BaseComponent):
                             target.inventory.items.remove(item)
                         item_removed = True
 
-            target.fighter.hp -= (self.dict_special_attack_damage["rot"] - target.fighter.defense)
-            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {(self.dict_special_attack_damage["rot"] - target.fighter.defense)}.")
+            target.classes.hp -= (self.dict_special_attack_damage["rot"] - target.classes.defense)
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {(self.dict_special_attack_damage["rot"] - target.classes.defense)}.")
 
             if item_removed:
                 self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, like something rotting.")
@@ -159,7 +159,7 @@ class SpecialAttacks(BaseComponent):
 
     def corrosion_damage(self, target: Actor) -> None:
         if target.inventory.capacity == 0:
-            target.fighter.hp -= (self.dict_special_attack_damage["corrosion"]*2 - target.fighter.defense)
+            target.classes.hp -= (self.dict_special_attack_damage["corrosion"]*2 - target.classes.defense)
             self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, and starts to corrode slowly.")
         else:
             item_removed = False
@@ -176,8 +176,8 @@ class SpecialAttacks(BaseComponent):
                             target.inventory.items.remove(item)
                         item_removed = True
 
-            target.fighter.hp -= (self.dict_special_attack_damage["corrosion"] - target.fighter.defense)
-            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {(self.dict_special_attack_damage["corrosion"] - target.fighter.defense)}.")
+            target.classes.hp -= (self.dict_special_attack_damage["corrosion"] - target.classes.defense)
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {(self.dict_special_attack_damage["corrosion"] - target.classes.defense)}.")
 
             if item_removed:
                 self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, like something rotting.")
@@ -190,7 +190,7 @@ class SpecialAttacks(BaseComponent):
 
     def dispel_damage(self, target: Actor) -> None:
         if target.inventory.capacity == 0:
-            target.fighter.hp -= (self.dict_special_attack_damage["dispel"]*2 - target.fighter.defense)
+            target.classes.hp -= (self.dict_special_attack_damage["dispel"]*2 - target.classes.defense)
             self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, and start to fade.")
         else:
             item_removed = False
@@ -207,15 +207,15 @@ class SpecialAttacks(BaseComponent):
                             target.inventory.items.remove(item)
                         item_removed = True
 
-            target.fighter.hp -= (self.dict_special_attack_damage["dispel"] - target.fighter.defense)
-            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {self.dict_special_attack_damage["dispel"] - target.fighter.defense}.")
+            target.classes.hp -= (self.dict_special_attack_damage["dispel"] - target.classes.defense)
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {self.dict_special_attack_damage["dispel"] - target.classes.defense}.")
 
             if item_removed:
                 self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, and feels something losing it's power.")
 
     def steal_from_target(self, target: Actor) -> None:
         if target.inventory.capacity == 0:
-            target.fighter.hp -= (self.dict_special_attack_damage["steal"]*2 - target.fighter.defense)
+            target.classes.hp -= (self.dict_special_attack_damage["steal"]*2 - target.classes.defense)
             self.engine.message_log.add_message(f"{target.name} feels like the target is trying to steal something, but failed.") 
         else:
             item_removed = False
@@ -225,14 +225,14 @@ class SpecialAttacks(BaseComponent):
                         target.inventory.items.remove(item)
                         item_removed = True
             
-            target.fighter.hp -= (self.dict_special_attack_damage["steal"] - target.fighter.defense)
-            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {(self.dict_special_attack_damage["steal"] - target.fighter.defense)}.")
+            target.classes.hp -= (self.dict_special_attack_damage["steal"] - target.classes.defense)
+            self.engine.message_log.add_message(f"{target.name} is hit by a powerful spell, dealing {(self.dict_special_attack_damage["steal"] - target.classes.defense)}.")
 
             if item_removed:
                 self.engine.message_log.add_message(f"{target.name} hears a rumor from it's backpack, and feels something is missing.")
 
     def armor_penetrating_attack(self, target: Actor) -> None:
-        target.fighter.hp -= self.parent.fighter.power_meelee
+        target.classes.hp -= self.parent.classes.power_meelee
         self.engine.message_log.add_message(f"{self.name} ignore the armor of his enemy, dealing severe damage.")
 
 

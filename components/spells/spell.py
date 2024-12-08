@@ -27,7 +27,7 @@ class Spell(BaseComponent):
         self.parent = parent
 
     def cast(self, caster: Actor) -> Optional[SelectIndexHandler]:
-        if self.handler is not None:
+        if self.handler is not None and caster is self.engine.player:
             self.engine.message_log.add_message("Select a target location.", color.needs_target)
             return self.handler(
                 self.engine, 
@@ -62,7 +62,7 @@ class Spell(BaseComponent):
                     self.engine.message_log.add_message(
                         f"The {actor.name} is hit by {self.name}, taking {self.damage} damage!"
                     )
-                    actor.fighter.take_damage(self.damage)
+                    actor.classes.take_damage(self.damage)
                     targets_hit = True
 
             if not targets_hit:
@@ -82,7 +82,7 @@ class Spell(BaseComponent):
                 f"The {target.name} is hit by {self.name}, taking {self.damage} damage!",
                 color.status_effect_applied,
             )
-            target.fighter.take_damage(self.damage)
+            target.classes.take_damage(self.damage)
 
         else:
             target = None
@@ -100,11 +100,11 @@ class Spell(BaseComponent):
                 self.engine.message_log.add_message(
                     f"The {target.name} is hit by {self.name}, for {self.damage} damage!"
                 )
-                target.fighter.take_damage(self.damage)
+                target.classes.take_damage(self.damage)
             else:
                 raise exceptions.Impossible("No enemy is close enough to strike.")
 
-        caster.fighter.mana -= self.mana
+        caster.classes.mana -= self.mana
 
     def status_effect_spell(self, xy: Optional[Tuple[int, int]]) -> None:
         caster = self.parent
@@ -145,13 +145,13 @@ class Spell(BaseComponent):
         else:
             pass
         
-        caster.fighter.mana -= self.mana
+        caster.classes.mana -= self.mana
 
 
     def cure_effect_spell(self, xy: Optional[Tuple[int, int]]) -> None:
         caster = self.parent
 
-        if caster.fighter.hp >= caster.fighter.max_hp:
+        if caster.classes.hp >= caster.classes.max_hp:
             raise exceptions.Impossible("Your health is full!")
         else:
             if self.status is not None:
@@ -165,12 +165,12 @@ class Spell(BaseComponent):
                     color.health_recovered,
                 )
         
-            amount_recovered = caster.fighter.heal(self.damage)   
+            amount_recovered = caster.classes.heal(self.damage)   
             self.engine.message_log.add_message(
                 f"You cast the {self.name} spell, and recover {amount_recovered} HP!",
                 color.health_recovered,
             )
-            caster.fighter.mana -= self.mana
+            caster.classes.mana -= self.mana
 
 
 
