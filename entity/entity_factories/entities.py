@@ -20,7 +20,7 @@ player_fighter = Actor(
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
     status=Status(),
-    buffs=Buffs(flag_haste=True),
+    buffs=Buffs(),
     damage_info=DamageInfo(),
     special_attacks=SpecialAttacks(),
     spellbook=Spellbook(capacity=0, start_list=[])
@@ -36,7 +36,7 @@ player_thief = Actor(
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
     status=Status(),
-    buffs=Buffs(flag_haste=True),
+    buffs=Buffs(),
     damage_info=DamageInfo(),
     special_attacks=SpecialAttacks(),
     spellbook=Spellbook(capacity=0, start_list=[])
@@ -52,7 +52,7 @@ player_mage = Actor(
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
     status=Status(),
-    buffs=Buffs(flag_haste=True),
+    buffs=Buffs(),
     damage_info=DamageInfo(),
     special_attacks=SpecialAttacks(),
     spellbook=Spellbook(capacity=10, start_list=[])
