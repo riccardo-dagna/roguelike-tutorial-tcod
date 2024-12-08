@@ -152,7 +152,19 @@ class EventHandler(BaseEventHandler):
             self.engine.message_log.add_message(exc.args[0], color.impossible)
             return False  # Skip enemy turn on exceptions.
 
-        self.engine.handle_enemy_turns()
+        """
+        This handle the haste effect by having the enemy forced to pass their turn
+        Next it will handle the slow effect
+        """
+        if self.engine.player.buffs.dict_flag_buffs["haste"]:
+            if self.engine.first_turn:
+                self.engine.first_turn = False;
+                self.engine.handle_enemy_passes();
+            else:
+                self.engine.first_turn = True;
+                self.engine.handle_enemy_turns()
+        else:
+            self.engine.handle_enemy_turns()
 
         if self.engine.player.status.dict_condition_afflicted["blindness"]:
             self.engine.update_fov(radius=1)
@@ -258,9 +270,9 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             string=f"XP for next Level: {self.engine.player.level.experience_to_next_level}",
         )
 
-        console.print(x=x + 1, y=y + 4, string=f"Meelee power: {self.engine.player.fighter.power_meelee}")
-        console.print(x=x + 1, y=y + 5, string=f"Ranged Power: {self.engine.player.fighter.power_ranged}")
-        console.print(x=x + 1, y=y + 6, string=f"Defense: {self.engine.player.fighter.defense}")
+        console.print(x=x + 1, y=y + 4, string=f"Meelee power: {self.engine.player.classes.power_meelee}")
+        console.print(x=x + 1, y=y + 5, string=f"Ranged Power: {self.engine.player.classes.power_ranged}")
+        console.print(x=x + 1, y=y + 6, string=f"Defense: {self.engine.player.classes.defense}")
         console.print(x=x + 1, y=y + 7, string=f"Spells learned: {len(self.engine.player.spellbook.spells)}")
         console.print(x=x + 1, y=y + 8, string=f"Max spells: {self.engine.player.spellbook.capacity}")
         console.print(x=x + 1, y=y + 9, string=f"Status: {string_status}")
@@ -294,17 +306,17 @@ class LevelUpEventHandler(AskUserEventHandler):
         console.print(
             x=x + 1,
             y=4,
-            string=f"a) Constitution (+20 HP, from {self.engine.player.fighter.max_hp})",
+            string=f"a) Constitution (+20 HP, from {self.engine.player.classes.max_hp})",
         )
         console.print(
             x=x + 1,
             y=5,
-            string=f"b) Strength (+1 attack, from {self.engine.player.fighter.base_power})",
+            string=f"b) Strength (+1 attack, from {self.engine.player.classes.base_power})",
         )
         console.print(
             x=x + 1,
             y=6,
-            string=f"c) Agility (+1 defense, from {self.engine.player.fighter.base_defense})",
+            string=f"c) Agility (+1 defense, from {self.engine.player.classes.base_defense})",
         )
         console.print(
             x=x + 1,
