@@ -28,7 +28,14 @@ class CharacterClass(BaseComponent):
     def hp(self, value: int) -> None:
         self._hp = max(0, min(value, self.max_hp))
         if self._hp == 0 and self.parent.ai:
-            self.die()
+            if self.parent.buffs.dict_flag_buffs["revive"] == False:
+                self.die()
+            else:
+                # This code handles the revive buff, and resets it
+                self.hp = self.max_hp / 2
+                self.engine.player.buffs.dict_flag_buffs["revive"] = False
+                self.engine.message_log.add_message("You survived a fatal hit.")
+
 
     @property
     def mana(self) -> int:
