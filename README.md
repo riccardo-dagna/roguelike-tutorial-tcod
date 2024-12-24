@@ -53,7 +53,7 @@ Mechanics added in the game, to correct or to add:
 - Spellbook (added menu in game with some default spells, to correct adding the spells)
 - Status spell (status and heal)
 - Character classes with different starting stats, equipment, spell capacity and abilities
-- Buffs (added haste and bonus to defense/ranged/meelee, to test and add new buffs)
+- Buffs (added haste and bonus to defense/ranged/meelee and auto-revive, to test and add new buffs)
 
 Mechanics to add in the game:
 - Extra effect of elemental damage
