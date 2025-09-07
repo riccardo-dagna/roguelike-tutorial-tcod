@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from game_logic.engine import Engine
 
 class Spell(BaseComponent):
-    def __init__(self, name: str, damage: int = 0, mana: int = 1, max_range: int = 0, radius: int = 0, status: str = None, type: str = None, parent: Entity = None, handler: SelectIndexHandler = None) -> None:
+    def __init__(self, name: str, damage: int = 0, mana: int = 1, max_range: int = 0, radius: int = 0, status: str = None, type: str = None, parent: Entity = None, handler: SelectIndexHandler = None, buff: str = None) -> None:
         self.name = name
         self.damage = damage
         self.mana = mana
@@ -22,6 +22,7 @@ class Spell(BaseComponent):
         self.radius = radius
         self.status = status
         self.handler = handler
+        self.buff = buff
         self.type = type
 
         self.parent = parent
@@ -45,6 +46,8 @@ class Spell(BaseComponent):
             self.status_effect_spell(xy)
         elif self.type == "cure":
             self.cure_effect_spell(xy)
+        elif self.type == "buff":
+            self.buff_effect_spell(xy)
         else:
             pass
             
@@ -147,7 +150,6 @@ class Spell(BaseComponent):
         
         caster.classes.mana -= self.mana
 
-
     def cure_effect_spell(self, xy: Optional[Tuple[int, int]]) -> None:
         caster = self.parent
 
@@ -172,5 +174,6 @@ class Spell(BaseComponent):
             )
             caster.classes.mana -= self.mana
 
-
+    def buff_effect_spell(self, xy: Optional[Tuple[int, int]]) -> None:
+        pass
 

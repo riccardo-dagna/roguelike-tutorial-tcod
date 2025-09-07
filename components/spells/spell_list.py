@@ -8,6 +8,7 @@ from components.spells.spell import Spell
 from entity.entity import Entity
 from game_logic.engine import Engine
 
+#Damage spells 
 class Fireball(Spell):
     def __init__(self, parent: Entity) -> None:
         super().__init__(name="Fireball", damage=12, mana=1, radius=3, type="damage", parent=parent, handler=AreaRangedAttackHandler)
@@ -20,6 +21,7 @@ class IceDart(Spell):
     def __init__(self, parent: Entity) -> None:
         super().__init__(name="Ice dart", damage=20, mana=1, type="damage", parent=parent, handler=SingleRangedAttackHandler)
 
+#Negative status spells
 class Confusion(Spell):
     def __init__(self, parent: Entity) -> None:
         super().__init__(name="Confusion", mana=1, status="confusion", type="status", parent=parent, handler=SingleRangedAttackHandler)
@@ -32,7 +34,12 @@ class Stun(Spell):
     def __init__(self, parent: Entity) -> None:
         super().__init__(name="Stun", mana=1, status="stun", type="status", parent=parent, handler=SingleRangedAttackHandler)
 
+#Cure spells
 class Heal(Spell):
     def __init__(self, parent: Entity) -> None:
         super().__init__(name="Heal", damage=10, mana=1, type="cure", parent=parent)
 
+#Positive status spells
+class Strenght_Spell(Spell):
+    def __init__(self, parent: Entity) -> None:
+        super().__init__(name="Strenght Spell", damage=10, mana=1, type="buff", parent=parent)

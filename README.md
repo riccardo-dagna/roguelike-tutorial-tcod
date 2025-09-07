@@ -64,4 +64,13 @@ Mechanics to add in the game:
 - Total refactor of the game (streamline the code, render it more modular, ecc.)
 
 
+## Things to add next (to track the list of new development)
+
+- Debuffs -> Limb Loss, Fracture, Infection
+- Buffs -> Counter Attacks, Evasion
+- Spells -> Buff Spells
+- Classes -> Add special abilities
+
+
+
 If in playing the game you find any bugs, feel free to let me know.

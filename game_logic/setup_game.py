@@ -24,7 +24,7 @@ from utility_files.utility import resource_path
 # Load the background image.  Pillow returns an object convertable into a NumPy array.
 background_image = Image.open(resource_path("data/menu_background.png"))
 
-def choose_player_character(character_choice: int) -> Engine:
+def choose_player_character(character_choice: int) -> Actor:
     """Spawn a different player and equipment based on the character choice"""
     if character_choice == 1:
         player = copy.deepcopy(entities.player_fighter)
@@ -84,7 +84,6 @@ def choose_player_character(character_choice: int) -> Engine:
         player.inventory.items.append(bow)
         player.equipment.toggle_equip(bow, add_message=False)
     return player
-
 
 
 def new_game(character_choice: int = 1) -> Engine:
